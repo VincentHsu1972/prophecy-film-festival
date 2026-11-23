@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <title>預言成真影展｜決策智慧 2026</title>
 <meta name="description" content="科幻電影說的未來，2026 已經上映。《2026 決策智慧》22 篇文章，22 場預言成真的放映。">
@@ -39,7 +39,7 @@
 <header class="top">
   <a class="brand" href="#top">預言成真影展<small>DECISION INTELLIGENCE 2026</small></a>
   <nav class="nav">
-    <a href="#timeline">預言時間軸</a><a href="#halls">放映廳</a>
+    <a href="#destiny">命運選片</a><a href="#timeline">預言時間軸</a><a href="#halls">放映廳</a><button class="idx-btn" id="idxBtn">☰ 22 場索引</button>
     <button id="soundBtn" class="icon" aria-pressed="false" aria-label="放映機音效">🔇</button>
     <button class="wallet-btn" id="walletBtn" aria-label="打開票根夾">🎟 <b id="wCount">0/22</b></button>
   </nav>
@@ -57,8 +57,17 @@
     <p class="mono dim">決策智慧 十週年特映 · NOW SHOWING</p>
     <h2 class="hero-title">科幻電影<br>不再講未來。</h2>
     <p class="lede">《銀翼殺手》、《雲端情人》、《駭客任務》……它們當年的預言，一部部成了今天的新聞。<br>《2026 決策智慧》的 22 篇文章，就是這些電影的續集：<b>預言成真之後，品牌該怎麼辦？</b></p>
-    <div class="hero-btns"><a class="btn solid" href="#timeline">看預言時間軸 ↓</a><button class="btn" id="randomBtn">🎲 隨機入場</button></div>
+    <div class="hero-btns"><a class="btn solid" href="#destiny">🔮 幫我選片</a><a class="btn" href="#timeline">預言時間軸 ↓</a><button class="btn" id="randomBtn">🎲 隨機入場</button></div>
   </div>
+</section>
+
+<!-- ============ DESTINY ============ -->
+<section id="destiny" class="destiny wrap">
+  <p class="mono dim">THE DESTINY SCREENING · 命運選片機</p>
+  <h2>今晚，你想逃離哪種現實？</h2>
+  <p class="dim">選一個最接近你現在心情的答案，我們從 22 場放映中，為你排好今晚的片單。</p>
+  <div class="moods" id="moods" role="group" aria-label="選擇心情"></div>
+  <div class="lineup" id="lineup" aria-live="polite"></div>
 </section>
 
 <!-- ============ MANIFESTO ============ -->

@@ -161,7 +161,7 @@ function openReader(n){
   r.innerHTML=`
   <div class="rbar"><span class="t">SCREEN ${pad(a.n)} · ${h.name} · 《${esc(a.film.zh)}》續集</span>
     <span class="reel"><svg viewBox="0 0 40 40" id="reelSvg"><circle cx="20" cy="20" r="18" fill="none" stroke="currentColor"/><g id="reelG">${[0,72,144,216,288].map(d=>`<circle cx="${20+10*Math.cos(d*Math.PI/180)}" cy="${20+10*Math.sin(d*Math.PI/180)}" r="3.4" fill="currentColor"/>`).join('')}</g><circle cx="20" cy="20" r="2.4" fill="currentColor"/></svg><span id="reelPct">0%</span></span>
-    <button class="x" id="closeR">✕ 離場</button><div class="prog" id="prog"></div></div>
+    <span class="jump"><button data-j="sTrailer">預告片</button><button data-j="sReview">影評</button><button data-j="sFeature">正片</button></span><button class="x" id="closeR">✕ 離場</button><div class="prog" id="prog"></div></div>
   <section class="opening" id="opening">
     <div class="bgposter">${poster(a,true)}</div><div class="lbt"></div><div class="lbb"></div>
     <div class="inner">
@@ -175,21 +175,23 @@ function openReader(n){
     <div><span class="mono">${a.film.year} · 電影的預言 PROPHECY</span><p>${esc(a.film.prophecy)}</p><span class="big">${a.film.year}</span></div>
     <div><span class="mono">2026 · 已經上映 PREMIERE</span><p>${esc(a.film.reality)}</p><span class="big">2026</span></div>
   </div>
-  <div class="sec"><div class="mono">01 · 預告片 TRAILER · 30 秒</div><p class="trailer rv">${esc(a.summary||a.hook)}</p></div>
-  <div class="sec"><div class="mono">02 · 影評 REVIEW · 必看三要素</div><div class="review rv">${fmtMust(a.must)}</div></div>
-  <div class="sec"><div class="mono">03 · 正片 FEATURE · 全文 ${a.mins} 分鐘</div>${still}<div class="body">${fmtBody(a.paras)}</div></div>
+  <div class="sec" id="sTrailer"><div class="mono">01 · 預告片 TRAILER · 30 秒</div><p class="trailer rv">${esc(a.summary||a.hook)}</p></div>
+  <div class="sec" id="sReview"><div class="mono">02 · 影評 REVIEW · 必看三要素</div><div class="review rv">${fmtMust(a.must)}</div></div>
+  <div class="sec" id="sFeature"><div class="mono">03 · 正片 FEATURE · 全文 ${a.mins} 分鐘</div>${still}<div class="body">${fmtBody(a.paras)}</div></div>
   <div class="credits"><span class="mono">— 片尾字幕 · END CREDITS —</span><dl>
     <div><dt>WRITTEN BY 作者</dt><dd>${esc(a.authorFull||a.author)}</dd></div>
     <div><dt>ORIGINAL 原文出處</dt><dd>《2026 決策智慧 Decision Intelligence》第 ${a.p[0]}–${a.p[1]} 頁</dd></div>
     <div><dt>INSPIRED BY 致敬電影</dt><dd>《${esc(a.film.zh)}》${esc(a.film.en)}（${a.film.year}）</dd></div>
     <div><dt>CURATION 策展</dt><dd>電影配對與預言／現實對照為本站策展詮釋</dd></div></dl></div>
   <div class="endcta"><button class="tearbtn" id="tearBtn">${seen.has(a.n)?'🎟 再看一次我的票根':'🎟 散場了，領取票根'}</button></div>
+  ${relatedHTML(a)}
   <div class="nextp">${prev?`<button data-n="${prev.n}"><small>← PREVIOUS · 上一場</small><span>《${esc(prev.film.zh)}》${esc(prev.short)}</span></button>`:'<span></span>'}
     ${next?`<button data-n="${next.n}"><small>NEXT · 下一場 →</small><span>《${esc(next.film.zh)}》${esc(next.short)}</span></button>`:`<button data-fin="1"><small>ALL DONE →</small><span>前往閉幕片</span></button>`}</div>`;
   r.scrollTop=0; document.body.style.overflow='hidden'; r.focus({preventScroll:true});
   $('#closeR').onclick=()=>{ location.hash='hall-'+a.zone; };
   $('#tearBtn').onclick=()=>showTicket(a);
-  r.querySelectorAll('.nextp [data-n]').forEach(b=>b.onclick=()=>go(+b.dataset.n));
+  r.querySelectorAll('.nextp [data-n], .related .pick').forEach(b=>b.onclick=()=>go(+b.dataset.n));
+  r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
   const op=$('#opening'), odo=$('#odo'); flick(); tick();
@@ -202,9 +204,16 @@ function openReader(n){
   if(rio) rio.disconnect();
   rio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); rio.unobserve(e.target);} }),{root:r,threshold:.1});
   r.querySelectorAll('.rv').forEach(el=>rio.observe(el));
-  r.onscroll=()=>{ const p=Math.min(1,r.scrollTop/(r.scrollHeight-r.clientHeight)); $('#prog').style.width=(p*100)+'%'; $('#reelPct').textContent=Math.round(p*100)+'%'; $('#reelG').setAttribute('transform',`rotate(${r.scrollTop/3} 20 20)`); };
+  r.onscroll=()=>{ const p=Math.min(1,r.scrollTop/(r.scrollHeight-r.clientHeight)); $('#prog').style.width=(p*100)+'%'; $('#reelPct').textContent=p>.98?'散場':`${Math.round(p*100)}% · 剩 ${Math.max(1,Math.ceil(a.mins*(1-p)))} 分`; $('#reelG').setAttribute('transform',`rotate(${r.scrollTop/3} 20 20)`); };
 }
 function closeReader(){ const r=$('#reader'); if(!r.classList.contains('open')) return; r.className='reader'; r.innerHTML=''; document.body.style.overflow=''; cur=null; }
+
+function relatedHTML(a){
+  const g=SIX.find(s=>s[2].includes(a.n)); if(!g) return '';
+  const others=g[2].filter(n=>n!==a.n).map(byN).slice(0,3);
+  return `<section class="related"><span class="mono">SAME THEME · 同主題連映</span><h3>「${g[0]}」系列，接著看</h3><p class="dim">${esc(g[1])}這幾場從不同角度回答同一個問題。</p>
+  <div class="picks">${others.map(o=>`<button class="pick z-${o.zone}" data-n="${o.n}"><div class="pp">${poster(o,true)}</div><div class="pb"><span class="ord">SCREEN ${pad(o.n)} · 《${esc(o.film.zh)}》 ${seen.has(o.n)?'· 已看':''}</span><h4>${esc(o.title)}</h4><q>${esc(o.hook)}</q><span class="go">進場 · ${o.mins} 分鐘 ▶</span></div></button>`).join('')}</div></section>`;
+}
 
 /* ---------- ticket ---------- */
 const today=()=>{ const d=new Date(); return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`; };
@@ -214,7 +223,7 @@ function showTicket(a){
   st.innerHTML=`<div class="tk-wrap"><div class="tk" id="tk">
     <div class="a"><span class="k">預言成真影展 · PROPHECY FILM FESTIVAL · ADMIT ONE</span>
       <h3>《${esc(a.film.zh)}》續集</h3><div class="ar">${esc(a.title)}</div>
-      <div class="row"><div>HALL<b>${h.name}</b></div><div>SEAT<b>${h.row}-${pad(a.n)}</b></div><div>RUNTIME<b>${a.mins} MIN</b></div><div>DATE<b>${today()}</b></div></div></div>
+      <div class="row"><div>HALL<b>${h.name}</b></div><div>SEAT<b>${h.row}-${pad(a.n)}</b></div><div>RUNTIME<b>${a.mins} MIN</b></div><div>DATE<b>${today()}</b></div></div><div class="take"><i>今天帶走的一句話 · TAKEAWAY</i>${esc(a.hook)}</div></div>
     <div class="b"><small>SCREEN</small><span class="no">${pad(a.n)}</span><small>${a.film.year} → 2026</small></div></div>
     <p class="tk-msg">${had?'這張票根已經在你的票根夾裡了。':'沿著虛線撕下票根，收進票根夾。'}</p>
     <div class="tk-actions">${had?'':'<button class="btn solid" id="tkTear">✂ 撕下票根</button>'}<button class="btn" id="tkDl">⬇ 下載票券圖</button><button class="btn" id="tkClose">繼續觀賞</button></div></div>`;
@@ -252,8 +261,8 @@ function renderWallet(){
   <div class="finale ${all?'unlocked':''}"><span class="mono dim">CLOSING FILM · 閉幕片</span><h3 style="font-family:var(--serif);margin:6px 0 0">22 則預言，6 個答案</h3>
   <p>${all?'你看完了整本刊物，閉幕片為你開放。':'集滿 22 張票根解鎖。它會把整本刊物收成一張地圖：預言成真之後，品牌該做的六件事。'}</p>
   <button id="finBtn" ${all?'':'disabled'}>${all?'▶ 進場觀賞':'🔒 尚未解鎖'}</button></div>
-  <button class="reset" id="resetW">清除我的觀影紀錄</button>`;
-  $('#closeW').onclick=closeWallet;
+  <p style="margin-top:20px"><button class="btn" id="wIdx">☰ 全部場次索引</button></p><button class="reset" id="resetW">清除我的觀影紀錄</button>`;
+  $('#closeW').onclick=closeWallet; $('#wIdx').onclick=openIndex;
   d.querySelectorAll('.stubs button').forEach(b=>b.onclick=()=>{ closeWallet(); go(+b.dataset.n); });
   $('#resetW').onclick=()=>{ if(!seen.size) return; seen=new Set(); save(); markSeen(); renderWallet(); toast('觀影紀錄已清除'); };
   if(all) $('#finBtn').onclick=()=>{ closeWallet(); location.hash='finale'; };
@@ -282,6 +291,38 @@ function openFinale(){
   $('#closeR').onclick=()=>{ location.hash='halls'; };
 }
 
+/* ---------- destiny screening ---------- */
+const MOODS=[
+ {k:'heart',e:'💔',l:'人心太難懂',d:'信任、真實與關係',t:'真實之夜',sub:'當什麼都能被生成，人還願意相信什麼？',ns:[3,6,9]},
+ {k:'ai',e:'🤖',l:'AI 要取代我了？',d:'人與 AI 的分工與判斷',t:'人機對決之夜',sub:'AI 改變的是分工，沒改變的是判斷。',ns:[1,14,22]},
+ {k:'future',e:'🔮',l:'想偷看未來',d:'Agent 時代的品牌與旅程',t:'未來特映之夜',sub:'當 AI 替消費者做選擇，品牌要站在哪裡？',ns:[2,13,18]},
+ {k:'work',e:'🎭',l:'工作讓我懷疑人生',d:'組織、策略與創造力',t:'職場突圍之夜',sub:'轉型的阻力不在技術，而在人與組織。',ns:[16,5,20]},
+ {k:'cut',e:'⏱',l:'只有 15 分鐘',d:'導演剪輯版：五場精華',t:'導演剪輯版',sub:'每場只看預告片＋影評，約 3 分鐘，五場串起全刊的主線：靠近人 → 守住真實 → 理解人 → 人做判斷 → 被記住。',ns:[2,3,12,14,19],cut:true}
+];
+let mood='ai';
+function renderMoods(){
+  $('#moods').innerHTML=MOODS.map(m=>`<button class="mood ${m.cut?'cut':''}" data-k="${m.k}" aria-pressed="${mood===m.k}"><span class="e">${m.e}</span><b>${m.l}</b><span>${m.d}</span></button>`).join('');
+  $$('.mood').forEach(b=>b.onclick=()=>{ mood=b.dataset.k; renderMoods(); renderLineup(); tick(); flick(); });
+}
+function renderLineup(){
+  const m=MOODS.find(x=>x.k===mood), list=m.ns.map(byN), mins=list.reduce((s,a)=>s+(m.cut?3:a.mins),0);
+  $('#lineup').innerHTML=`<div class="lineup-head"><div><span class="mono dim">TONIGHT'S PROGRAM · ${list.length} 場 · 約 ${mins} 分鐘</span><h3>${m.e} ${m.t}</h3></div><p>${esc(m.sub)}</p></div>
+  <div class="picks ${m.cut?'five':''}">${list.map((a,i)=>`<button class="pick z-${a.zone}" data-n="${a.n}"><div class="pp">${poster(a,true)}</div><div class="pb">
+   <span class="ord">第 ${i+1} 場 · SCREEN ${pad(a.n)} · 《${esc(a.film.zh)}》</span><h4>${esc(a.title)}</h4>
+   <q>${esc(a.hook)}</q><span class="go">${m.cut?'看預告片＋影評 ▶':`進場 · ${a.mins} 分鐘 ▶`}</span></div></button>`).join('')}</div>`;
+  $$('.pick').forEach(b=>b.onclick=()=>go(+b.dataset.n));
+}
+
+/* ---------- index ---------- */
+function openIndex(){
+  const d=$('#drawer'); d.innerHTML=`<button class="x" id="closeW" style="float:right">關閉</button><div class="idx"><span class="mono dim">INDEX · 22 SCREENINGS</span><h2>全部場次索引</h2>
+  ${HALLS.map(h=>{const items=DATA.filter(a=>a.zone===h.z);return `<section class="z-${h.z}"><div class="hn"><span>HALL ${h.no} · ${h.name}</span><span>${items.length} 場</span></div>
+   ${items.map(a=>`<button class="row" data-n="${a.n}"><span class="rn ${seen.has(a.n)?'ok':''}">${seen.has(a.n)?'✓':pad(a.n)}</span><span class="rt">${esc(a.title)}<small>${esc(a.author)} ・《${esc(a.film.zh)}》${a.film.year}</small></span><span class="rm">${a.mins}′</span></button>`).join('')}</section>`;}).join('')}</div>`;
+  $('#closeW').onclick=closeWallet; d.querySelectorAll('.row').forEach(b=>b.onclick=()=>{ closeWallet(); go(+b.dataset.n); });
+  d.classList.add('open'); $('#scrim').classList.add('open'); d.scrollTop=0; tick();
+}
+$('#idxBtn').onclick=openIndex;
+
 /* ---------- router ---------- */
 function route(){
   const h=location.hash, m=h.match(/^#screen-(\d+)$/);
@@ -294,6 +335,6 @@ addEventListener('hashchange',route);
 document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if($('#tStage').classList.contains('on')){ $('#tStage').className='ticket-stage'; $('#tStage').innerHTML=''; } else if($('#drawer').classList.contains('open')) closeWallet(); else if($('#reader').classList.contains('open')) location.hash=cur?'hall-'+cur.zone:'halls'; });
 $('#randomBtn').onclick=()=>{ const pool=DATA.filter(a=>!seen.has(a.n)); const L=pool.length?pool:DATA; go(L[Math.floor(Math.random()*L.length)].n); };
 
-buildTimeline(); renderFilters(); renderHalls(); applyFilter();
+renderMoods(); renderLineup(); buildTimeline(); renderFilters(); renderHalls(); applyFilter();
 if(!document.body.classList.contains('gated')) route();
 })();
