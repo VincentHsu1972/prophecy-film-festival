@@ -593,3 +593,12 @@ body.gated .dock{display:none}
 /* 22 2001 太空漫遊：極慢地浮現，最後亮起紅光 */
 .tfx-slow{--k:k-slow;--d:3.2s;--s:30ms}@keyframes k-slow{0%{opacity:0;letter-spacing:.5em}80%{opacity:1;text-shadow:none}100%{opacity:1;letter-spacing:normal;text-shadow:0 0 14px rgba(255,50,40,.55)}}
 @media (prefers-reduced-motion:reduce){.tfx .ch,.opening.titled .tfx .ch{animation:none!important;opacity:1!important}.opening.titled h1.tfx{animation:none!important}.opsk.drawn svg{animation:none}}
+.opening .fn b,.opening .fn-en{white-space:nowrap}
+@media (max-width:640px){
+ .opening .fn{letter-spacing:.14em}
+ .opening .fn-sep{display:none}
+ .opening .fn-k,.opening .fn-t{display:block}
+ .opening .fn-k{font-size:11px;margin-bottom:6px}
+ .opening .fn-t{letter-spacing:.06em}
+ .opening .fn-en{font-size:12px}
+}

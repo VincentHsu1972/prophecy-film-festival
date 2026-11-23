@@ -187,7 +187,7 @@ function openReader(n){
   <section class="opening" id="opening">
     <div class="bgposter">${poster(a,true)}</div><div class="opsk fx-${TFX[a.n]}" id="opsk">${window.SKETCH?window.SKETCH(a.n):''}</div><div class="lbt"></div><div class="lbb"></div>
     <div class="inner">
-      <div class="fn">${h.en} · SCREEN ${pad(a.n)} &nbsp;|&nbsp; <b>《${esc(a.film.zh)}》</b> ${esc(a.film.en)}</div>
+      <div class="fn"><span class="fn-k">${h.en} · SCREEN ${pad(a.n)}</span><span class="fn-sep"> &nbsp;|&nbsp; </span><span class="fn-t"><b>《${esc(a.film.zh)}》</b> <span class="fn-en">${esc(a.film.en)}</span></span></div>
       <div class="odo" id="odo">${a.film.year}</div>
       <h1 class="tfx tfx-${TFX[a.n]}" aria-label="${esc(a.title)}" style="--n:${[...a.title].length}">${splitTitle(a.title,TFX[a.n])}</h1>
       <div class="meta">${esc(a.author)} ・ 片長約 ${a.mins} 分鐘</div>
