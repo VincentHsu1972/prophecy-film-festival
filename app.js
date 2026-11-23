@@ -1,0 +1,299 @@
+(function(){
+'use strict';
+const DATA = window.DATA || [];
+const HALLS = [
+  {z:'intro', no:'00', name:'序幕廳', en:'PROLOGUE', art:'intro', row:'S',
+   desc:'兩位領導者為整本刊物定調：AI 時代，什麼變了、什麼沒變。先看這兩場，後面 20 場會更有感。'},
+  {z:'people', no:'01', name:'People 廳', en:'PEOPLE', art:'people', row:'P',
+   desc:'人仍然是一切的起點。真實、信任、情緒與共同記憶，是 AI 最難複製的東西。'},
+  {z:'model', no:'02', name:'Model 廳', en:'MODEL', art:'model', row:'M',
+   desc:'把對人的理解變成模型：數位分身、被選擇的場域、人的判斷，還有看不見的組織文化。'},
+  {z:'ai', no:'03', name:'A.I. 廳', en:'A.I.', art:'ai', row:'A',
+   desc:'讓 AI 真正上工：體驗優化、GEO、從生成力到交付力，以及 Agent 可以被授權到哪裡。'}
+];
+const TIMES=[{k:'all',l:'不限',f:()=>true},{k:'s',l:'10 分鐘內',f:m=>m<=10},{k:'m',l:'10–15 分鐘',f:m=>m>10&&m<=15},{k:'l',l:'15 分鐘以上',f:m=>m>15}];
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const byN=n=>DATA.find(a=>a.n===n);
+const hallOf=z=>HALLS.find(h=>h.z===z);
+const COLORS={people:'#d4e38a',model:'#efc7c7',ai:'#a8d8e2',intro:'#e8d4a2'};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- storage ---------- */
+let seen=new Set();
+try{seen=new Set(JSON.parse(localStorage.getItem('dw-stubs')||'[]'));}catch(e){}
+const save=()=>{try{localStorage.setItem('dw-stubs',JSON.stringify([...seen]));}catch(e){}};
+
+/* ---------- sound (WebAudio, generated, no files) ---------- */
+let ac=null, hum=null, soundOn=false;
+function audio(){ if(!ac){ try{ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return ac; }
+function beep(f=1000,d=.09,v=.18){ if(!soundOn||!audio()) return; const o=ac.createOscillator(),g=ac.createGain(); o.frequency.value=f; o.type='sine'; g.gain.value=v; g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d); o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+d); }
+function tick(){ if(!soundOn||!audio()) return; const b=ac.createBuffer(1,ac.sampleRate*.02,ac.sampleRate),d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,4); const s=ac.createBufferSource(),g=ac.createGain(); g.gain.value=.25; s.buffer=b; s.connect(g).connect(ac.destination); s.start(); }
+function startHum(){ if(!audio()||hum) return; const len=ac.sampleRate*2, b=ac.createBuffer(1,len,ac.sampleRate), d=b.getChannelData(0); let last=0;
+  for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.5 + ((i%(ac.sampleRate/24|0))<60?(Math.random()*2-1)*.5:0); }
+  const s=ac.createBufferSource(); s.buffer=b; s.loop=true; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=900; const g=ac.createGain(); g.gain.value=0; s.connect(f).connect(g).connect(ac.destination); s.start(); hum={s,g}; }
+function setSound(on){ soundOn=on; const b=$('#soundBtn'); b.textContent=on?'🔊':'🔇'; b.setAttribute('aria-pressed',on);
+  if(on){ audio(); if(ac&&ac.state==='suspended') ac.resume(); startHum(); if(hum) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.4); }
+  else if(hum&&ac){ hum.g.gain.setTargetAtTime(0,ac.currentTime,.2); } }
+$('#soundBtn').onclick=()=>setSound(!soundOn);
+function flick(){ const f=$('.flicker'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
+
+/* ---------- dust particles in projector light ---------- */
+(function dust(){ const c=$('#dust'); if(!c||reduce) return; const x=c.getContext('2d'); let W,H,P=[];
+  const rs=()=>{W=c.width=innerWidth;H=c.height=innerHeight;P=Array.from({length:Math.min(70,W/18|0)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.12-.03,a:Math.random()*.5+.1}));};
+  rs(); addEventListener('resize',rs);
+  (function loop(){ x.clearRect(0,0,W,H); for(const p of P){ p.x+=p.vx;p.y+=p.vy; if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0; x.fillStyle=`rgba(255,244,220,${p.a})`; x.beginPath(); x.arc(p.x,p.y,p.r,0,6.283); x.fill(); } requestAnimationFrame(loop); })();
+})();
+
+/* ---------- generative original posters ---------- */
+function rng(seed){ let s=seed*9301+49297; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; }
+function poster(a,bare){
+  const c=COLORS[a.zone], r=rng(a.n*7+3), W=200,H=300; let g='';
+  const t=a.n%6;
+  if(t===0){ for(let i=9;i>0;i--) g+=`<circle cx="${100+ (r()-.5)*20}" cy="${120}" r="${i*11}" fill="none" stroke="${i%3?'#fff':c}" stroke-opacity="${i%3?.18:.9}" stroke-width="${i%3?1:3}"/>`; }
+  else if(t===1){ for(let y=0;y<14;y++)for(let x=0;x<10;x++){ const on=r()<.16; g+=`<rect x="${12+x*18}" y="${18+y*16}" width="${on?14:3}" height="${on?12:3}" fill="${on?c:'#fff'}" fill-opacity="${on?.95:.25}"/>`; } }
+  else if(t===2){ for(let i=0;i<22;i++){ const y=10+i*11; g+=`<rect x="0" y="${y}" width="${40+r()*160}" height="${i%5===0?6:2}" fill="${i%5===0?c:'#fff'}" fill-opacity="${i%5===0?.95:.22}"/>`; } }
+  else if(t===3){ for(let i=0;i<7;i++){ const rr=30+i*16; g+=`<path d="M${100-rr} 130 A${rr} ${rr} 0 0 1 ${100+rr} 130" fill="none" stroke="${i===3?c:'#fff'}" stroke-width="${i===3?4:1}" stroke-opacity="${i===3?1:.25}" transform="rotate(${r()*360} 100 130)"/>`; } g+=`<circle cx="100" cy="130" r="10" fill="${c}"/>`; }
+  else if(t===4){ for(let y=0;y<18;y++)for(let x=0;x<12;x++){ const d=Math.hypot(x-6,y-7)/9, rad=Math.max(.3,3.2*(1-d)+r()*.6); g+=`<circle cx="${10+x*16.5}" cy="${12+y*14}" r="${rad}" fill="${d<.35?c:'#fff'}" fill-opacity="${d<.35?.95:.5}"/>`; } }
+  else { for(let i=0;i<9;i++){ const x=r()*200,y=r()*230,s=20+r()*60; g+=`<polygon points="${x},${y} ${x+s},${y+s*.3} ${x+s*.2},${y+s}" fill="${i===4?c:'none'}" stroke="${i===4?'none':'#fff'}" stroke-opacity=".3"/>`; } }
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect width="${W}" height="${H}" fill="#0c0c0d"/>${g}${bare?'':`
+  <text x="12" y="${H-118}" font-family="Georgia,serif" font-size="54" fill="#fff" fill-opacity=".92">${a.film.year}</text>
+  <text x="14" y="${H-100}" font-family="monospace" font-size="7.5" letter-spacing="1.5" fill="${c}">${esc(a.film.en.toUpperCase()).slice(0,34)}</text>`}</svg>`;
+}
+
+/* ---------- gate ---------- */
+const gate=$('#gate');
+function endGate(){ gate.classList.add('letterbox'); setTimeout(()=>{ gate.classList.add('gone'); document.body.classList.remove('gated'); route(); },850); try{sessionStorage.setItem('dw-gate','1');}catch(e){} }
+function runLeader(){
+  $('#gateIntro').classList.add('hide'); const L=$('#leader'); L.classList.add('on');
+  const sw=$('#sweep'), num=$('#lnum'); let n=3, t0=performance.now(); const per=reduce?300:900;
+  if(soundOn) tick();
+  (function f(now){ const p=((now-t0)%per)/per, ang=p*2*Math.PI, R=200;
+    const x=200+R*Math.sin(ang), y=200-R*Math.cos(ang); sw.setAttribute('d',`M200 200 L200 0 A${R} ${R} 0 ${p>.5?1:0} 1 ${x} ${y} Z`);
+    const k=3-Math.floor((now-t0)/per); if(k!==n){ n=k; if(n>0){ num.textContent=n; beep(n===1?1200:1000); flick(); } }
+    if(n<=0){ L.classList.remove('on'); endGate(); return; } requestAnimationFrame(f); })(t0);
+  beep(1000); flick();
+}
+$('#enterSound').onclick=()=>{ setSound(true); runLeader(); };
+$('#enterMute').onclick=()=>runLeader();
+$('#skip').onclick=()=>endGate();
+let skipGate=false; try{ skipGate=sessionStorage.getItem('dw-gate')==='1'; }catch(e){}
+if(skipGate || /^#(screen-\d+|finale)$/.test(location.hash)){ gate.classList.add('gone'); document.body.classList.remove('gated'); }
+
+/* ---------- timeline ---------- */
+function buildTimeline(){
+  const tl=$('#tl'); const Y0=1930,Y1=2026, L=60; const width=()=>tl.clientWidth-60-160;
+  const items=[...DATA].sort((a,b)=>a.film.year-b.film.year||a.n-b.n);
+  const count={}; const frag=[];
+  for(let y=1930;y<=2020;y+=10) frag.push(`<span class="tl-yr" data-y="${y}">${y}</span>`);
+  items.forEach((a,i)=>{ const k=a.film.year; count[k]=(count[k]||0)+1; a._lv=(i%3)+ (count[k]-1)*0; a._st=count[k]; });
+  tl.insertAdjacentHTML('beforeend',frag.join('')+items.map(a=>`<div class="tl-stem" data-n="${a.n}"></div><button class="tl-dot z-${a.zone}" data-n="${a.n}" aria-label="${a.film.year}《${esc(a.film.zh)}》"><i></i><span>${esc(a.film.zh)}</span></button>`).join(''));
+  function place(){ const w=width();
+    $$('.tl-yr').forEach(e=>{ e.style.left=(L+(+e.dataset.y-Y0)/(Y1-Y0)*w)+'px'; });
+    const used={};
+    items.forEach((a,i)=>{ let x=L+(a.film.year-Y0)/(Y1-Y0)*w; const key=a.film.year; used[key]=(used[key]||0); x+=used[key]*22; used[key]++;
+      const h=[70,130,190][i%3]; const d=tl.querySelector(`.tl-dot[data-n="${a.n}"]`), s=tl.querySelector(`.tl-stem[data-n="${a.n}"]`);
+      d.style.left=x+'px'; d.style.top=(300-h)+'px'; s.style.left=x+'px'; s.style.top=(300-h)+'px'; s.style.height=h+'px'; });
+  }
+  place(); addEventListener('resize',place);
+  const sc=$('#tlScroll'); if(sc.scrollWidth>sc.clientWidth+40) sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)*.78;
+  $$('.tl-dot').forEach(d=>{ const a=byN(+d.dataset.n);
+    const show=()=>{ $$('.tl-dot').forEach(x=>x.classList.toggle('sel',x===d)); const h=hallOf(a.zone);
+      const c=$('#tlCard'); c.className='tl-card z-'+a.zone;
+      c.innerHTML=`<div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(a.film.prophecy)}</h3><span class="arrow">↓ 2026 · ${h.name} · SCREEN ${pad(a.n)}</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">看續集 ▶</button>`;
+      c.querySelector('[data-go]').onclick=()=>go(a.n); tick(); };
+    d.onmouseenter=show; d.onfocus=show; d.onclick=e=>{ e.preventDefault(); go(a.n); }; d.title=`點擊進場：${a.film.year}《${a.film.zh}》的續集`; });
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ $('#tlFill').style.width='100%';
+    items.forEach((a,i)=>setTimeout(()=>tl.querySelector(`.tl-dot[data-n="${a.n}"]`).classList.add('in'),reduce?0:120+i*90));
+    setTimeout(()=>{ const d=tl.querySelector('.tl-dot[data-n="3"]'); if(d&&!$('.tl-dot.sel')) d.onmouseenter(); }, reduce?0:2400); io.disconnect(); } }),{threshold:.2});
+  io.observe($('#timeline'));
+}
+
+/* ---------- halls ---------- */
+let ft='all';
+function renderFilters(){ const box=$('#fTime'); box.innerHTML=''; TIMES.forEach(t=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=t.l; b.setAttribute('aria-pressed',ft===t.k); b.onclick=()=>{ft=t.k;renderFilters();applyFilter();}; box.appendChild(b); }); }
+function applyFilter(){ const f=TIMES.find(t=>t.k===ft).f; let n=0; $$('.frame').forEach(fr=>{ const a=byN(+fr.dataset.n), ok=f(a.mins); fr.classList.toggle('dim',!ok); if(ok) n++; });
+  $('#fHint').textContent= ft==='all'?'片長依全文字數估算（每分鐘約 450 字）':`${n} 場符合，其他場次已變暗`; }
+function renderHalls(){
+  const root=$('#hallList');
+  root.innerHTML=HALLS.map(h=>{ const items=DATA.filter(a=>a.zone===h.z); const mins=items.reduce((s,a)=>s+a.mins,0);
+    return `<section class="hall z-${h.z}" id="hall-${h.z}">
+    <div class="hall-gate">
+      <div class="hall-art"><img src="img/hall/${h.art}.webp" alt="${h.name}篇章藝術（取自刊物）" loading="lazy"><span class="band"></span><span class="hall-num">${h.no}</span></div>
+      <div class="hall-txt"><span class="vt">${h.en}</span><span class="meta">HALL ${h.no} · ${items.length} SCREENINGS · ${mins} MIN</span><h3>${h.name}</h3><p>${h.desc}</p>
+      <div class="hall-prog"><i data-hall="${h.z}"></i></div><p class="dim small" data-hallcount="${h.z}"></p></div>
+    </div>
+    <div class="strip-wrap"><div class="strip-nav"><span class="mono dim">← 滑動膠卷 · DRAG THE REEL →</span><span><button data-dir="-1" aria-label="往左">‹</button> <button data-dir="1" aria-label="往右">›</button></span></div>
+    <div class="strip" tabindex="0" aria-label="${h.name}場次">${items.map(a=>`
+      <button class="frame z-${a.zone}" data-n="${a.n}" aria-label="第 ${a.n} 場：${esc(a.title)}，片長 ${a.mins} 分鐘">
+        <div class="poster">${poster(a)}
+          <div class="ptop"><b>SCREEN ${pad(a.n)}</b><span>${a.mins} MIN</span></div><span class="seen">ADMITTED</span>
+          <div class="pinfo"><span class="en">《${esc(a.film.zh)}》續集</span><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
+        </div>
+      </button>`).join('')}</div></div>
+    </section>`; }).join('');
+  $$('.frame').forEach(f=>f.onclick=()=>go(+f.dataset.n));
+  $$('.strip-nav button').forEach(b=>b.onclick=()=>{ const s=b.closest('.strip-wrap').querySelector('.strip'); s.scrollBy({left:+b.dataset.dir*360,behavior:'smooth'}); tick(); });
+  // drag to scroll
+  $$('.strip').forEach(s=>{ let down=false,sx=0,sl=0,moved=false; s.addEventListener('pointerdown',e=>{ if(e.pointerType!=='mouse')return; down=true;moved=false;sx=e.clientX;sl=s.scrollLeft; });
+    addEventListener('pointerup',()=>{down=false;}); s.addEventListener('pointermove',e=>{ if(!down)return; const dx=e.clientX-sx; if(Math.abs(dx)>5){moved=true;s.scrollLeft=sl-dx;} });
+    s.addEventListener('click',e=>{ if(moved){e.stopPropagation();e.preventDefault();moved=false;} },true); });
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }),{threshold:.08});
+  $$('.hall').forEach(h=>io.observe(h));
+  markSeen();
+}
+function markSeen(){ $$('.frame').forEach(f=>f.classList.toggle('isseen',seen.has(+f.dataset.n)));
+  HALLS.forEach(h=>{ const t=DATA.filter(a=>a.zone===h.z), s=t.filter(a=>seen.has(a.n)).length; const i=$(`[data-hall="${h.z}"]`); if(i) i.style.width=(s/t.length*100)+'%'; const p=$(`[data-hallcount="${h.z}"]`); if(p) p.textContent=`你已看 ${s} / ${t.length} 場`; });
+  $('#wCount').textContent=`${seen.size}/22`; }
+
+/* ---------- reader ---------- */
+const isHead=p=>p.length<=26 && !/[。！？，、；：」』）)…]$/.test(p) && !/[。！？]/.test(p);
+const fmtBody=ps=>ps.map(p=>/^(註解|註|資料來源|參考資料)/.test(p)?`<p class="note">${esc(p)}</p>`:isHead(p)?`<h3 class="rv">${esc(p)}</h3>`:`<p class="rv">${esc(p)}</p>`).join('');
+const fmtMust=t=>String(t||'').split(/\n+/).map(s=>s.trim()).filter(Boolean).map(s=>s.startsWith('🎯')?`<p class="h">${esc(s)}</p>`:s.startsWith('*')?`<p class="k">${esc(s.replace(/^\*\s*/,''))}</p>`:`<p>${esc(s)}</p>`).join('');
+let cur=null, rio=null;
+function go(n){ location.hash='screen-'+n; }
+function openReader(n){
+  const a=byN(n); if(!a) return; cur=a; const h=hallOf(a.zone), i=DATA.indexOf(a), prev=DATA[i-1], next=DATA[i+1];
+  const r=$('#reader'); r.className='reader open z-'+a.zone;
+  const still=a.still?`<figure class="still rv"><img src="img/still/${pad(a.n)}.webp" alt="《2026 決策智慧》第 ${a.n} 篇文章插圖" loading="lazy" width="${a.still[0]}" height="${a.still[1]}"><figcaption>刊物插圖 · 《2026 決策智慧》p.${a.p[0]}–${a.p[1]}</figcaption></figure>`:'';
+  r.innerHTML=`
+  <div class="rbar"><span class="t">SCREEN ${pad(a.n)} · ${h.name} · 《${esc(a.film.zh)}》續集</span>
+    <span class="reel"><svg viewBox="0 0 40 40" id="reelSvg"><circle cx="20" cy="20" r="18" fill="none" stroke="currentColor"/><g id="reelG">${[0,72,144,216,288].map(d=>`<circle cx="${20+10*Math.cos(d*Math.PI/180)}" cy="${20+10*Math.sin(d*Math.PI/180)}" r="3.4" fill="currentColor"/>`).join('')}</g><circle cx="20" cy="20" r="2.4" fill="currentColor"/></svg><span id="reelPct">0%</span></span>
+    <button class="x" id="closeR">✕ 離場</button><div class="prog" id="prog"></div></div>
+  <section class="opening" id="opening">
+    <div class="bgposter">${poster(a,true)}</div><div class="lbt"></div><div class="lbb"></div>
+    <div class="inner">
+      <div class="fn">${h.en} · SCREEN ${pad(a.n)} &nbsp;|&nbsp; <b>《${esc(a.film.zh)}》</b> ${esc(a.film.en)}</div>
+      <div class="odo" id="odo">${a.film.year}</div>
+      <h1>${esc(a.title)}</h1>
+      <div class="meta">${esc(a.author)} ・ 片長約 ${a.mins} 分鐘 ・ 刊物 p.${a.p[0]}–${a.p[1]}</div>
+    </div><span class="cue">SCROLL TO PLAY ↓</span>
+  </section>
+  <div class="vs">
+    <div><span class="mono">${a.film.year} · 電影的預言 PROPHECY</span><p>${esc(a.film.prophecy)}</p><span class="big">${a.film.year}</span></div>
+    <div><span class="mono">2026 · 已經上映 PREMIERE</span><p>${esc(a.film.reality)}</p><span class="big">2026</span></div>
+  </div>
+  <div class="sec"><div class="mono">01 · 預告片 TRAILER · 30 秒</div><p class="trailer rv">${esc(a.summary||a.hook)}</p></div>
+  <div class="sec"><div class="mono">02 · 影評 REVIEW · 必看三要素</div><div class="review rv">${fmtMust(a.must)}</div></div>
+  <div class="sec"><div class="mono">03 · 正片 FEATURE · 全文 ${a.mins} 分鐘</div>${still}<div class="body">${fmtBody(a.paras)}</div></div>
+  <div class="credits"><span class="mono">— 片尾字幕 · END CREDITS —</span><dl>
+    <div><dt>WRITTEN BY 作者</dt><dd>${esc(a.authorFull||a.author)}</dd></div>
+    <div><dt>ORIGINAL 原文出處</dt><dd>《2026 決策智慧 Decision Intelligence》第 ${a.p[0]}–${a.p[1]} 頁</dd></div>
+    <div><dt>INSPIRED BY 致敬電影</dt><dd>《${esc(a.film.zh)}》${esc(a.film.en)}（${a.film.year}）</dd></div>
+    <div><dt>CURATION 策展</dt><dd>電影配對與預言／現實對照為本站策展詮釋</dd></div></dl></div>
+  <div class="endcta"><button class="tearbtn" id="tearBtn">${seen.has(a.n)?'🎟 再看一次我的票根':'🎟 散場了，領取票根'}</button></div>
+  <div class="nextp">${prev?`<button data-n="${prev.n}"><small>← PREVIOUS · 上一場</small><span>《${esc(prev.film.zh)}》${esc(prev.short)}</span></button>`:'<span></span>'}
+    ${next?`<button data-n="${next.n}"><small>NEXT · 下一場 →</small><span>《${esc(next.film.zh)}》${esc(next.short)}</span></button>`:`<button data-fin="1"><small>ALL DONE →</small><span>前往閉幕片</span></button>`}</div>`;
+  r.scrollTop=0; document.body.style.overflow='hidden'; r.focus({preventScroll:true});
+  $('#closeR').onclick=()=>{ location.hash='hall-'+a.zone; };
+  $('#tearBtn').onclick=()=>showTicket(a);
+  r.querySelectorAll('.nextp [data-n]').forEach(b=>b.onclick=()=>go(+b.dataset.n));
+  const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
+  // opening sequence
+  const op=$('#opening'), odo=$('#odo'); flick(); tick();
+  setTimeout(()=>op.classList.add('go'),reduce?0:250);
+  const y0=a.film.year, y1=2026, dur=reduce?0:1500, t0=performance.now()+500; let last=y0;
+  (function f(now){ const p=Math.min(1,Math.max(0,(now-t0)/dur)); const e=1-Math.pow(1-p,3); const y=Math.round(y0+(y1-y0)*e);
+    if(y!==last){ odo.textContent=y; last=y; if(y%2===0) tick(); }
+    if(p<1) requestAnimationFrame(f); else { odo.textContent=y1; odo.classList.add('done'); op.classList.add('titled'); beep(1320,.12,.12); } })(performance.now());
+  // reveal + progress
+  if(rio) rio.disconnect();
+  rio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); rio.unobserve(e.target);} }),{root:r,threshold:.1});
+  r.querySelectorAll('.rv').forEach(el=>rio.observe(el));
+  r.onscroll=()=>{ const p=Math.min(1,r.scrollTop/(r.scrollHeight-r.clientHeight)); $('#prog').style.width=(p*100)+'%'; $('#reelPct').textContent=Math.round(p*100)+'%'; $('#reelG').setAttribute('transform',`rotate(${r.scrollTop/3} 20 20)`); };
+}
+function closeReader(){ const r=$('#reader'); if(!r.classList.contains('open')) return; r.className='reader'; r.innerHTML=''; document.body.style.overflow=''; cur=null; }
+
+/* ---------- ticket ---------- */
+const today=()=>{ const d=new Date(); return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`; };
+function showTicket(a){
+  const h=hallOf(a.zone), st=$('#tStage'), had=seen.has(a.n);
+  st.className='ticket-stage on z-'+a.zone;
+  st.innerHTML=`<div class="tk-wrap"><div class="tk" id="tk">
+    <div class="a"><span class="k">預言成真影展 · PROPHECY FILM FESTIVAL · ADMIT ONE</span>
+      <h3>《${esc(a.film.zh)}》續集</h3><div class="ar">${esc(a.title)}</div>
+      <div class="row"><div>HALL<b>${h.name}</b></div><div>SEAT<b>${h.row}-${pad(a.n)}</b></div><div>RUNTIME<b>${a.mins} MIN</b></div><div>DATE<b>${today()}</b></div></div></div>
+    <div class="b"><small>SCREEN</small><span class="no">${pad(a.n)}</span><small>${a.film.year} → 2026</small></div></div>
+    <p class="tk-msg">${had?'這張票根已經在你的票根夾裡了。':'沿著虛線撕下票根，收進票根夾。'}</p>
+    <div class="tk-actions">${had?'':'<button class="btn solid" id="tkTear">✂ 撕下票根</button>'}<button class="btn" id="tkDl">⬇ 下載票券圖</button><button class="btn" id="tkClose">繼續觀賞</button></div></div>`;
+  tick(); flick();
+  const close=()=>{ st.className='ticket-stage'; st.innerHTML=''; };
+  $('#tkClose').onclick=close; st.onclick=e=>{ if(e.target===st) close(); };
+  $('#tkDl').onclick=()=>downloadTicket(a);
+  const t=$('#tkTear'); if(t) t.onclick=()=>{ $('#tk').classList.add('torn'); tick(); setTimeout(tick,120); stamp(a.n); t.remove(); $('.tk-msg').textContent=seen.size===DATA.length?'🎬 22 張全部集滿！閉幕片已為你解鎖。':`收進票根夾了 · ${seen.size}/22 · ${hallDoneMsg(a)}`; const tb=$('#tearBtn'); if(tb) tb.textContent='🎟 再看一次我的票根'; };
+}
+function hallDoneMsg(a){ const h=hallOf(a.zone); const t=DATA.filter(x=>x.zone===a.zone); const s=t.filter(x=>seen.has(x.n)).length; return s===t.length?`${h.name}全部看完！`:`${h.name}還剩 ${t.length-s} 場`; }
+function stamp(n){ if(seen.has(n)) return; seen.add(n); save(); markSeen(); const b=$('#walletBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); beep(880,.08,.1); setTimeout(()=>beep(1320,.12,.1),90); }
+function downloadTicket(a){
+  try{ const h=hallOf(a.zone), c=document.createElement('canvas'), s=2; c.width=1120; c.height=440; const x=c.getContext('2d'); const W=c.width,H=c.height;
+    x.fillStyle='#09090a'; x.fillRect(0,0,W,H);
+    x.fillStyle='#f1ebdc'; x.fillRect(40,40,W-80,H-80); x.fillStyle=COLORS[a.zone]; x.fillRect(40,40,20,H-80); x.fillRect(W-300,40,260,H-80);
+    x.setLineDash([10,8]); x.strokeStyle='#9c937c'; x.lineWidth=3; x.beginPath(); x.moveTo(W-300,50); x.lineTo(W-300,H-50); x.stroke(); x.setLineDash([]);
+    x.fillStyle='#6f6857'; x.font='18px monospace'; x.fillText('預言成真影展 · PROPHECY FILM FESTIVAL · ADMIT ONE',90,95);
+    x.fillStyle='#141414'; x.font='bold 52px serif'; x.fillText(`《${a.film.zh}》續集`,90,170);
+    x.font='28px serif'; const t=a.title.length>30?a.title.slice(0,30)+'…':a.title; x.fillText(t,90,220);
+    x.fillStyle='#6f6857'; x.font='16px monospace'; [['HALL',h.name],['SEAT',`${h.row}-${pad(a.n)}`],['RUNTIME',a.mins+' MIN'],['DATE',today()]].forEach((p,i)=>{ x.fillStyle='#6f6857'; x.font='16px monospace'; x.fillText(p[0],90+i*190,300); x.fillStyle='#141414'; x.font='bold 26px sans-serif'; x.fillText(p[1],90+i*190,336); });
+    x.fillStyle='#141414'; x.font='16px monospace'; x.textAlign='center'; x.fillText('SCREEN',W-170,150); x.font='bold 110px serif'; x.fillText(pad(a.n),W-170,260); x.font='18px monospace'; x.fillText(`${a.film.year} → 2026`,W-170,310);
+    x.textAlign='left'; x.fillStyle='#6f6857'; x.font='14px monospace'; x.fillText('《2026 決策智慧 Decision Intelligence》10th Anniversary',90,H-70);
+    c.toBlob(b=>{ try{ const u=URL.createObjectURL(b), l=document.createElement('a'); l.href=u; l.download=`prophecy-ticket-${pad(a.n)}.png`; document.body.appendChild(l); l.click(); l.remove(); setTimeout(()=>URL.revokeObjectURL(u),2000); toast('票券圖已下載'); }catch(e){ toast('此環境不支援下載，請改用截圖'); } });
+  }catch(e){ toast('此環境不支援下載，請改用截圖'); }
+}
+let tt; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2600); }
+
+/* ---------- wallet ---------- */
+function renderWallet(){
+  const d=$('#drawer'), all=seen.size===DATA.length, left=DATA.filter(a=>!seen.has(a.n)).reduce((s,a)=>s+a.mins,0);
+  d.innerHTML=`<button class="x" id="closeW" style="float:right">關閉</button><span class="mono dim">MY TICKETS</span><h2>我的票根夾</h2>
+  <p class="dim" style="font-size:14px;margin:0">已看 ${seen.size} 場 · 再約 ${left} 分鐘就能看完全刊</p>
+  <div class="stubs">${DATA.map(a=>`<button class="z-${a.zone} ${seen.has(a.n)?'on':''}" data-n="${a.n}" title="《${esc(a.film.zh)}》${esc(a.short)}">${pad(a.n)}</button>`).join('')}</div>
+  <div class="hallsum">${HALLS.map(h=>{const t=DATA.filter(a=>a.zone===h.z),s=t.filter(a=>seen.has(a.n)).length;return `<div class="z-${h.z}"><span>${h.name}</span><b>${s}/${t.length}</b></div>`}).join('')}</div>
+  <div class="finale ${all?'unlocked':''}"><span class="mono dim">CLOSING FILM · 閉幕片</span><h3 style="font-family:var(--serif);margin:6px 0 0">22 則預言，6 個答案</h3>
+  <p>${all?'你看完了整本刊物，閉幕片為你開放。':'集滿 22 張票根解鎖。它會把整本刊物收成一張地圖：預言成真之後，品牌該做的六件事。'}</p>
+  <button id="finBtn" ${all?'':'disabled'}>${all?'▶ 進場觀賞':'🔒 尚未解鎖'}</button></div>
+  <button class="reset" id="resetW">清除我的觀影紀錄</button>`;
+  $('#closeW').onclick=closeWallet;
+  d.querySelectorAll('.stubs button').forEach(b=>b.onclick=()=>{ closeWallet(); go(+b.dataset.n); });
+  $('#resetW').onclick=()=>{ if(!seen.size) return; seen=new Set(); save(); markSeen(); renderWallet(); toast('觀影紀錄已清除'); };
+  if(all) $('#finBtn').onclick=()=>{ closeWallet(); location.hash='finale'; };
+}
+function openWallet(){ renderWallet(); $('#drawer').classList.add('open'); $('#scrim').classList.add('open'); tick(); }
+function closeWallet(){ $('#drawer').classList.remove('open'); $('#scrim').classList.remove('open'); }
+$('#walletBtn').onclick=openWallet; $('#scrim').onclick=closeWallet;
+
+/* ---------- finale ---------- */
+const SIX=[['被相信','真實越稀缺，信任越值錢。',[3,6,9]],['被記得','曝光買得到，記憶買不到。',[8,10,11,19]],['被選擇','AI 替人篩選的時代，要站上被選擇的場域。',[7,13,18]],['會判斷','模型給方向，人給判斷與授權的邊界。',[12,14,22]],['能交付','從生成力到交付力，從創意到創新。',[1,4,5,20,21]],['看得見','先看見顧客的猶豫與組織的暗流，改變才會發生。',[2,15,16,17]]];
+function openFinale(){
+  const r=$('#reader'); r.className='reader open z-intro'; document.body.style.overflow='hidden'; r.scrollTop=0;
+  const bar=`<div class="rbar"><span class="t">CLOSING FILM · 閉幕片</span><button class="x" id="closeR">✕ 離場</button></div>`;
+  if(seen.size<DATA.length){
+    r.innerHTML=bar+`<div class="sec" style="text-align:center;padding-top:16vh"><div class="mono" style="justify-content:center">🔒 LOCKED</div><p class="trailer">閉幕片要集滿 22 張票根才會開放。<br>你目前有 ${seen.size} 張，還差 ${DATA.length-seen.size} 場。</p><p style="margin-top:30px"><button class="btn solid" id="nextUnseen">看下一場還沒看的 ▶</button></p></div>`;
+    const nu=DATA.find(a=>!seen.has(a.n)); $('#nextUnseen').onclick=()=>go(nu.n);
+  } else {
+    r.innerHTML=bar+`<section class="opening go titled"><div class="lbt"></div><div class="lbb"></div><div class="inner"><div class="fn">CLOSING FILM · 1936 → 2026</div><div class="odo done">2026</div><h1>預言都成真了，然後呢？</h1><div class="meta">策展人的話 · 非刊物原文</div></div></section>
+    <div class="sec fin"><p>從《摩登時代》的生產線，到《雲端情人》裡懂你的 AI，九十年來科幻電影都在問同一個問題：<b>當機器什麼都能做，人還剩下什麼？</b></p>
+    <p>看完 22 場，這本刊物的答案出奇一致：AI 改變的是速度、分工與做法；不變的是，品牌必須被人相信、被人記得、被人選擇。</p>
+    <div class="six">${SIX.map(s=>`<div><b>${s[0]}</b><span>${s[1]}</span><small>SCREEN ${s[2].map(pad).join(' · ')}</small></div>`).join('')}</div>
+    <p>電影裡的未來總有個反派。2026 年的現實沒有反派，只有兩種公司：一種把 AI 用來變得更快，一種把 AI 用來更懂人。</p>
+    <p class="dim" style="font-size:15px">— 感謝觀賞。片尾彩蛋：從頭再看一次，你會發現 22 篇其實在講同一件事。</p></div><div style="height:90px"></div>`;
+    beep(660,.2,.1); setTimeout(()=>beep(990,.3,.1),180);
+  }
+  $('#closeR').onclick=()=>{ location.hash='halls'; };
+}
+
+/* ---------- router ---------- */
+function route(){
+  const h=location.hash, m=h.match(/^#screen-(\d+)$/);
+  if(m){ openReader(+m[1]); return; }
+  if(h==='#finale'){ openFinale(); return; }
+  closeReader();
+  if(h&&h.length>1){ const el=document.getElementById(h.slice(1)); if(el) setTimeout(()=>el.scrollIntoView(),30); }
+}
+addEventListener('hashchange',route);
+document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if($('#tStage').classList.contains('on')){ $('#tStage').className='ticket-stage'; $('#tStage').innerHTML=''; } else if($('#drawer').classList.contains('open')) closeWallet(); else if($('#reader').classList.contains('open')) location.hash=cur?'hall-'+cur.zone:'halls'; });
+$('#randomBtn').onclick=()=>{ const pool=DATA.filter(a=>!seen.has(a.n)); const L=pool.length?pool:DATA; go(L[Math.floor(Math.random()*L.length)].n); };
+
+buildTimeline(); renderFilters(); renderHalls(); applyFilter();
+if(!document.body.classList.contains('gated')) route();
+})();

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>預言成真影展｜決策智慧 2026</title>
+<meta name="description" content="科幻電影說的未來，2026 已經上映。《2026 決策智慧》22 篇文章，22 場預言成真的放映。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="gated">
+<canvas id="dust" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="flicker" aria-hidden="true"></div>
+
+<!-- ============ GATE ============ -->
+<div id="gate" role="dialog" aria-label="開場">
+  <div class="beam" aria-hidden="true"></div>
+  <div class="gate-in" id="gateIntro">
+    <p class="mono dim">DENTSU TAIWAN · DECISION INTELLIGENCE · 10TH ANNIVERSARY</p>
+    <h1 class="gate-title"><span>預言</span><span>成真</span><span>影展</span></h1>
+    <p class="gate-sub">科幻電影說的未來，2026 已經上映。</p>
+    <div class="gate-btns">
+      <button class="btn solid" id="enterSound">▶ 進場（有聲）</button>
+      <button class="btn" id="enterMute">靜音進場</button>
+    </div>
+    <p class="mono dim small">22 SCREENINGS · 4 HALLS · 1936 → 2026</p>
+  </div>
+  <div class="leader" id="leader" aria-hidden="true">
+    <svg viewBox="0 0 400 400"><circle cx="200" cy="200" r="170" class="lc"/><circle cx="200" cy="200" r="140" class="lc"/><line x1="200" y1="0" x2="200" y2="400" class="lc"/><line x1="0" y1="200" x2="400" y2="200" class="lc"/><path id="sweep" class="sweep" d=""/></svg>
+    <span id="lnum">3</span>
+  </div>
+  <button class="skip mono" id="skip">SKIP ›</button>
+  <div class="lb top"></div><div class="lb bot"></div>
+</div>
+
+<!-- ============ TOP BAR ============ -->
+<header class="top">
+  <a class="brand" href="#top">預言成真影展<small>DECISION INTELLIGENCE 2026</small></a>
+  <nav class="nav">
+    <a href="#timeline">預言時間軸</a><a href="#halls">放映廳</a>
+    <button id="soundBtn" class="icon" aria-pressed="false" aria-label="放映機音效">🔇</button>
+    <button class="wallet-btn" id="walletBtn" aria-label="打開票根夾">🎟 <b id="wCount">0/22</b></button>
+  </nav>
+</header>
+
+<main id="top">
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="tri">
+    <figure class="z-people"><img src="img/hall/people.webp" alt="刊物 People 篇章藝術：指紋"><span class="band"></span><b>PEOPLE</b></figure>
+    <figure class="z-model"><img src="img/hall/model.webp" alt="刊物 Model 篇章藝術：向日葵"><span class="band"></span><b>MODEL</b></figure>
+    <figure class="z-ai"><img src="img/hall/ai.webp" alt="刊物 A.I. 篇章藝術：像素側臉"><span class="band"></span><b>A.I.</b></figure>
+  </div>
+  <div class="hero-copy">
+    <p class="mono dim">決策智慧 十週年特映 · NOW SHOWING</p>
+    <h2 class="hero-title">科幻電影<br>不再講未來。</h2>
+    <p class="lede">《銀翼殺手》、《雲端情人》、《駭客任務》……它們當年的預言，一部部成了今天的新聞。<br>《2026 決策智慧》的 22 篇文章，就是這些電影的續集：<b>預言成真之後，品牌該怎麼辦？</b></p>
+    <div class="hero-btns"><a class="btn solid" href="#timeline">看預言時間軸 ↓</a><button class="btn" id="randomBtn">🎲 隨機入場</button></div>
+  </div>
+</section>
+
+<!-- ============ MANIFESTO ============ -->
+<section class="manifesto wrap">
+  <div class="mf-l"><p class="mono dim">CURATOR'S NOTE · 策展理念</p><h2>一本刊物，<br>其實是一份<br>影展節目單。</h2></div>
+  <div class="mf-r">
+    <p>沒有人會從第一頁讀到第 200 頁。但每個人都很會選電影：先看片長，再看類型，然後看今晚的心情。</p>
+    <p>這座影展照刊物原本的結構分成四個廳。每篇文章配一部「預言成真」的經典電影，<b>電影是入口，文章是續集</b>。文章內容一字未改，電影配對與對照文字則是本站的策展詮釋。</p>
+    <ol class="how">
+      <li><b>預告片</b><span>一句話，30 秒決定進不進場</span></li>
+      <li><b>影評</b><span>必看三要素，3 分鐘抓重點</span></li>
+      <li><b>正片</b><span>全文附頁碼，依片長安排</span></li>
+      <li><b>票根</b><span>集滿 22 張，解鎖閉幕片</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ TIMELINE ============ -->
+<section id="timeline" class="tl-sec">
+  <div class="wrap tl-head">
+    <p class="mono dim">PROPHECY TIMELINE · 1936 — 2026</p>
+    <h2>90 年的 22 則預言，<br><span class="hl">全部在 2026 年上映。</span></h2>
+    <p class="dim">每個點都是一部電影。滑過看它當年預言了什麼，<b>點下去直接進場</b>看 2026 年的續集。</p>
+  </div>
+  <div class="tl-scroll" id="tlScroll">
+    <div class="tl" id="tl">
+      <div class="tl-axis"><div class="tl-fill" id="tlFill"></div></div>
+      <div class="tl-now"><span>2026</span><small>ALL NOW SHOWING</small></div>
+    </div>
+  </div>
+  <div class="wrap"><div class="tl-card" id="tlCard" aria-live="polite"><p class="dim">← 選一部電影</p></div></div>
+</section>
+
+<!-- ============ PROGRAM / HALLS ============ -->
+<section id="halls">
+  <div class="wrap filter-bar" role="group" aria-label="今晚有多少時間">
+    <span class="mono dim">今晚有多少時間？</span>
+    <div id="fTime" class="chips"></div>
+    <span id="fHint" class="dim small"></span>
+  </div>
+  <div id="hallList"></div>
+</section>
+</main>
+
+<footer class="wrap foot">
+  <p>內容出處：電通行銷傳播集團《2026 決策智慧 Decision Intelligence》。文章、插圖與篇章藝術之版權屬原作者與電通集團所有；本站完整呈現原文，未經改寫。</p>
+  <p>電影僅引用片名與年份，未使用任何電影海報、劇照或影音素材；每場的海報為本站以程式生成的原創抽象圖像。電影配對與「預言／現實」對照文字為策展詮釋，非原作者觀點。</p>
+  <p>本站為純靜態網頁：無後端、無追蹤碼、無第三方資源。觀影紀錄只存在你自己的瀏覽器。</p>
+</footer>
+
+<!-- ============ READER ============ -->
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-label="放映廳" tabindex="-1"></div>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="票根夾"></aside>
+<div class="ticket-stage" id="tStage" aria-live="polite"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
