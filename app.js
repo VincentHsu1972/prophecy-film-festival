@@ -17,6 +17,7 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const pad=n=>String(n).padStart(2,'0');
 const byN=n=>DATA.find(a=>a.n===n);
 const hallOf=z=>HALLS.find(h=>h.z===z);
+const SCENES={"1": "2054 年，華盛頓特區。警方靠三名躺在水池裡的「先知」預見謀殺，在兇手動手前就將他逮捕——直到有一天，預言指向了警探自己。", "2": "不久的未來，洛杉磯。一位替別人代寫情書的寂寞男人，愛上了電腦裡那個會笑、會好奇、比誰都懂他的作業系統。", "3": "2019 年，酸雨不停的洛杉磯。銀翼殺手的工作，是用一套問答測驗，揪出混在人群裡、和真人一模一樣的複製人。", "4": "被困在山洞裡的軍火商，用一堆廢料打造出第一副盔甲。回到家後，他和 AI 管家 JARVIS 一起，把它變成真正的戰甲。", "5": "一支專門潛入他人夢境的團隊，接下最不可能的任務：不是偷走一個想法，而是植入一個。他們需要一位能設計多層夢境的「架構師」。", "6": "2029 年，人腦可以連上網路，記憶也能被駭客改寫。一位全身義體的女特工開始懷疑：自己的靈魂，還是真的嗎？", "7": "一個被設計成「會愛人」的機器男孩被家人遺棄。他踏上漫長的旅程尋找藍仙女，只為了變成真正的男孩，讓媽媽愛他。", "8": "2045 年，現實一片破敗。全世界的人戴上頭盔，湧進同一個虛擬宇宙「綠洲」，爭奪創辦人藏在裡面的彩蛋。", "9": "2003 年，哈佛宿舍。一個大學生寫出的網站，讓全校開始在網路上談論彼此。幾年後，它改變了全世界說話的方式。", "10": "馬蒂穿越到 2015 年：街上有飛天滑板、會自己綁鞋帶的球鞋，還有一隻從電影看板裡撲向路人的立體大白鯊。", "11": "分手後，她找了一家公司把他從記憶裡刪除。他決定也這麼做，卻在記憶被一段段抹去時，拚命想把她留下來。", "12": "一名駭客發現，他每天生活的世界只是一個模擬程式。身邊的人、街道，甚至早餐的味道，全都是被運算出來的。", "13": "地球被垃圾掩埋，只剩一台小機器人日復一日地清理。人類住在太空船上，躺在飄浮椅裡，生活的一切都由系統安排。", "14": "2035 年，機器人走進每個家庭。一位警探始終不信任它們：那場車禍裡，機器人算出他的生存機率較高，救了他，放棄了一個小女孩。", "15": "一個青年發現自己能回到過去，改變一個小小的決定。但每改一次，現在就變成完全不同的模樣，而且往往更糟。", "16": "楚門在海邊小鎮長大，過著再平凡不過的日子。直到某天他發現：天空、鄰居，甚至他的妻子，都是一齣全天候直播節目的佈景。", "17": "外星大軍入侵。一名從沒上過戰場的軍官每次陣亡，都會回到前一天早上醒來。他只能一次次重來，記住每個會出錯的地方。", "18": "沙漠星球上，兩台機器人帶著一份秘密訊息流浪。其中一台精通六百萬種溝通方式，負責替人類與機器翻譯。", "19": "一個男人失去了製造新記憶的能力，只能靠拍立得照片、隨手筆記和身上的刺青，一點一點拼湊殺妻兇手的線索。", "20": "工廠的生產線越轉越快。一個工人鎖螺絲鎖到停不下手，最後整個人被捲進了巨大的齒輪裡。", "21": "1930 年代的巴黎車站，一個孤兒守著父親留下的機械人偶。當人偶終於提筆，畫出的竟是一位被世人遺忘的電影先驅的作品。", "22": "前往木星的太空船上，所有系統都交給 AI「HAL 9000」管理。它從不出錯，直到它開始做出船員沒有授權的決定。"};
 const COLORS={people:'#d4e38a',model:'#efc7c7',ai:'#a8d8e2',intro:'#e8d4a2'};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -103,7 +104,7 @@ function buildTimeline(){
   $$('.tl-dot').forEach(d=>{ const a=byN(+d.dataset.n);
     const show=()=>{ $$('.tl-dot').forEach(x=>x.classList.toggle('sel',x===d)); const h=hallOf(a.zone);
       const c=$('#tlCard'); c.className='tl-card z-'+a.zone;
-      c.innerHTML=`<div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(a.film.prophecy)}</h3><span class="arrow">↓ 2026 · ${h.name} · SCREEN ${pad(a.n)}</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">看續集 ▶</button>`;
+      c.innerHTML=`<div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(SCENES[a.n])}</h3><span class="arrow">↓ 2026 · ${h.name} · SCREEN ${pad(a.n)}</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">看續集 ▶</button>`;
       c.querySelector('[data-go]').onclick=()=>go(a.n); tick(); };
     d.onmouseenter=show; d.onfocus=show; d.onclick=e=>{ e.preventDefault(); go(a.n); }; d.title=`點擊進場：${a.film.year}《${a.film.zh}》的續集`; });
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ $('#tlFill').style.width='100%';
@@ -177,7 +178,7 @@ function openReader(n){
     </div><span class="cue">SCROLL TO PLAY ↓</span>
   </section>
   <div class="vs">
-    <div><span class="mono">${a.film.year} · 電影的預言 PROPHECY</span><p>${esc(a.film.prophecy)}</p><span class="big">${a.film.year}</span></div>
+    <div><span class="mono">${a.film.year} · 電影場景 THE SCENE</span><p>${esc(SCENES[a.n])}</p><span class="big">${a.film.year}</span></div>
     <div><span class="mono">2026 · 已經上映 PREMIERE</span><p>${esc(a.film.reality)}</p><span class="big">2026</span></div>
   </div>
   <div class="sec" id="sTrailer"><div class="mono">01 · 預告片 TRAILER · 30 秒</div><p class="trailer rv">${esc(a.summary||a.hook)}</p></div>
@@ -209,7 +210,7 @@ function openReader(n){
   if(rio) rio.disconnect();
   rio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); rio.unobserve(e.target);} }),{root:r,threshold:.1});
   r.querySelectorAll('.rv').forEach(el=>rio.observe(el));
-  r.onscroll=()=>{ const p=Math.min(1,r.scrollTop/(r.scrollHeight-r.clientHeight)); $('#prog').style.width=(p*100)+'%'; $('#reelPct').textContent=p>.98?'散場':`${Math.round(p*100)}% · 剩 ${Math.max(1,Math.ceil(a.mins*(1-p)))} 分`; $('#reelG').setAttribute('transform',`rotate(${r.scrollTop/3} 20 20)`); };
+  r.onscroll=()=>{ if(!$('#prog')) return; const p=Math.min(1,r.scrollTop/(r.scrollHeight-r.clientHeight)); $('#prog').style.width=(p*100)+'%'; $('#reelPct').textContent=p>.98?'散場':`${Math.round(p*100)}% · 剩 ${Math.max(1,Math.ceil(a.mins*(1-p)))} 分`; $('#reelG').setAttribute('transform',`rotate(${r.scrollTop/3} 20 20)`); };
 }
 function closeReader(){ const r=$('#reader'); if(!r.classList.contains('open')) return; r.className='reader'; r.innerHTML=''; document.body.style.overflow=''; cur=null; }
 
@@ -335,9 +336,8 @@ function renderReel(){
     <div class="in"><div class="top"><b>SCREEN ${pad(a.n)}</b><span>${h.name}</span></div>
       <span class="yr">${a.film.year} → 2026</span>
       <span class="zh">${esc(a.film.zh)}</span><span class="en">${esc(a.film.en)}</span>
-      <p class="lg">${esc(a.film.prophecy)}</p>
-      <p class="sq"><em>2026 續集</em>${esc(a.film.reality)}</p>
-      <div class="cta"><span class="dim">片長 ${a.mins} 分鐘</span><span>進場 ▶</span></div></div></button>`;}).join('');
+      <p class="lg">${esc(SCENES[a.n])}</p>
+      <div class="cta"><span class="dim">2026 續集 · 片長 ${a.mins} 分鐘</span><span>進場 ▶</span></div></div></button>`;}).join('');
   r.scrollLeft=0;
   $$('.fc').forEach(c=>c.onclick=e=>{ if(r.dataset.moved==='1'){ e.preventDefault(); return; } go(+c.dataset.n); });
 }
