@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
-<title>預言成真影展｜1936 → 2026</title>
+<title>預言成真影展</title>
 <meta name="description" content="當年的科幻，今年的日常。22 部科幻電影的續集，在 2026 年上演。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%230b0b0c%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%279%27 fill=%27none%27 stroke=%27%23e8d4a2%27 stroke-width=%272.5%27/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=220841">
+<link rel="stylesheet" href="style.css?v=222518">
 </head>
 <body class="gated">
 <canvas id="dust" aria-hidden="true"></canvas>
@@ -19,26 +19,26 @@
 <div id="gate" role="dialog" aria-label="開場">
   <div class="beam" aria-hidden="true"></div>
   <div class="gate-in" id="gateIntro">
-    <p class="mono dim">PROPHECY FILM FESTIVAL · 1936 → 2026</p>
+    <p class="mono dim">1936 到 2026</p>
     <h1 class="gate-title"><span>預言</span><span>成真</span><span>影展</span></h1>
     <p class="gate-sub">當年的科幻，今年的日常。</p>
     <div class="gate-btns">
-      <button class="btn solid" id="enterSound">▶ 進場（有聲）</button>
+      <button class="btn solid" id="enterSound">進場（有聲）</button>
       <button class="btn" id="enterMute">靜音進場</button>
     </div>
-    <p class="mono dim small">22 SCREENINGS · 4 HALLS · 1936 → 2026</p>
+    <p class="mono dim small">二十二場　四個影廳　1936 到 2026</p>
   </div>
   <div class="leader" id="leader" aria-hidden="true">
     <svg viewBox="0 0 400 400"><circle cx="200" cy="200" r="170" class="lc"/><circle cx="200" cy="200" r="140" class="lc"/><line x1="200" y1="0" x2="200" y2="400" class="lc"/><line x1="0" y1="200" x2="400" y2="200" class="lc"/><path id="sweep" class="sweep" d=""/></svg>
     <span id="lnum">3</span>
   </div>
-  <button class="skip mono" id="skip">SKIP ›</button>
+  <button class="skip mono" id="skip">略過</button>
   <div class="lb lb-t"></div><div class="lb lb-b"></div>
 </div>
 
 <!-- ============ TOP BAR ============ -->
 <header class="top">
-  <a class="brand" href="#top">預言成真影展<small>PROPHECY FILM FESTIVAL</small></a>
+  <a class="brand" href="#top">預言成真影展</a>
   <nav class="nav">
     <button class="idx-btn" id="idxBtn"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg><span>22 場索引</span></button>
     <button id="soundBtn" class="icon" aria-pressed="false" aria-label="放映機音效"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg></button>
@@ -50,13 +50,20 @@
 <!-- ============ LOBBY ============ -->
 <section id="v-lobby" class="view lobby" data-view="lobby">
   <div class="lob-head wrap">
-    <p class="mono dim">22 FILMS · NOW SHOWING</p>
-    <h1 class="lobby-title"><span class="nb">電影早就演過了，</span><span class="nb">2026 只是<span class="hl">續集</span>。</span></h1>
+    <div class="lh-main">
+      <p class="mono dim">今晚上映，二十二部</p>
+      <h1 class="lobby-title"><span class="nb">電影早就演過了，</span><span class="nb">2026 只是續集。</span></h1>
+    </div>
+    <aside class="curator" aria-label="策展人手記">
+      <p>這本刊物快兩百頁，我知道沒有人會從頭讀到尾。</p>
+      <p>所以我替二十二篇文章，各配了一部電影。挑一部今晚想看的就好，剩下的，留給下一次。</p>
+      <p class="sig">策展人　Vincent</p>
+    </aside>
   </div>
   <div class="wrap lob-tabs" id="lobTabs" role="tablist" aria-label="選擇放映廳"></div>
   <div class="reel" id="reel" tabindex="0" aria-label="片單，可左右拖曳"></div>
   <div class="wrap reel-nav">
-    <span class="mono dim">← 拖曳片單 · DRAG →</span>
+    <span class="mono dim">左右拖曳，挑一部片</span>
     <span class="rn-btns"><button id="reelL" aria-label="往左">‹</button><button id="reelR" aria-label="往右">›</button></span>
   </div>
 </section>
@@ -64,14 +71,14 @@
 <!-- ============ TIMELINE ============ -->
 <section id="v-timeline" class="view tl-sec" data-view="timeline">
   <div class="wrap tl-head">
-    <p class="mono dim">PROPHECY TIMELINE · 1936 — 2026</p>
+    <p class="mono dim">預言時間軸</p>
     <h2>90 年的 22 則預言，<br><span class="hl">全部在 2026 年上映。</span></h2>
     <p class="dim">每個點都是一部電影。滑過看它當年預言了什麼，<b>點下去直接進場</b>看 2026 年的續集。</p>
   </div>
   <div class="tl-scroll" id="tlScroll">
     <div class="tl" id="tl">
       <div class="tl-axis"><div class="tl-fill" id="tlFill"></div></div>
-      <div class="tl-now"><span>2026</span><small>ALL NOW SHOWING</small></div>
+      <div class="tl-now"><span>2026</span><small>全部上映中</small></div>
     </div>
   </div>
   <div class="wrap"><div class="tl-card" id="tlCard" aria-live="polite"><p class="dim">← 選一部電影</p></div></div>
@@ -96,7 +103,7 @@
     <figure class="z-ai"><img src="img/hall/ai.webp" alt="A.I. 廳主視覺：像素側臉"><span class="band"></span><b>A.I.</b></figure>
   </div></div>
   <div class="manifesto wrap">
-  <div class="mf-l"><p class="mono dim">HOW TO WATCH · 觀影指南</p><h2>每一部電影，<br>都有一部<br>2026 年的續集。</h2></div>
+  <div class="mf-l"><p class="mono dim">觀影指南</p><h2>每一部電影，<br>都有一部<br>2026 年的續集。</h2></div>
   <div class="mf-r">
     <p>左邊，是電影當年寫下的劇本；右邊，是 2026 年真實上演的版本。續集由站在第一線的策略、創意、媒體、數據與體驗專家執筆，寫的是真實的品牌、真實的消費者，和他們正在面對的選擇。</p>
     <p>你不需要從頭看到尾。先看片長、選心情，挑一場就好。<b>電影是入口，續集才是正片。</b></p>
@@ -109,7 +116,7 @@
   </div>
 </div>
   <div class="epilogue wrap">
-  <p class="mono dim">EPILOGUE · 附錄｜關於這座影展</p>
+  <p class="mono dim">附錄　關於這座影展</p>
   <h2>十年前的「未來」，<br>已經成了今天的日常。</h2>
   <div class="ep-grid">
     <p>這座影展的 22 部續集，全部來自電通集團的年度刊物《決策智慧 Decision Intelligence》2026 年版。今年，《決策智慧》創刊十週年。</p>
@@ -144,6 +151,6 @@
 <script src="stories.js?v=210529"></script>
 <script src="scene.js?v=211917"></script>
 <script src="score.js?v=202740"></script>
-<script src="app.js?v=211917"></script>
+<script src="app.js?v=222404"></script>
 </body>
 </html>

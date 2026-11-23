@@ -3,7 +3,9 @@
 import re,base64,io
 from PIL import Image
 h=open('intro/index.html',encoding='utf-8').read()
-css=open('intro/deck.css',encoding='utf-8').read(); js=open('intro/deck.js',encoding='utf-8').read()
+css=open('intro/deck.css',encoding='utf-8').read();
+css=re.sub(r'url\("\.\./fonts/([^"]+)"\)',lambda m:'url("data:font/woff2;base64,'+base64.b64encode(open('fonts/'+m.group(1),'rb').read()).decode()+'")',css)
+js=open('intro/deck.js',encoding='utf-8').read()
 h=re.sub(r'<meta http-equiv="Content-Security-Policy"[^>]*>\n','',h)
 h=re.sub(r'<link rel="stylesheet" href="deck.css[^"]*">',lambda m:'<style>\n'+css+'\n</style>',h)
 import os

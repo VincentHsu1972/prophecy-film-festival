@@ -33,8 +33,8 @@ let ft=0;
 function opening(){ const f=FILM, box=$('liveOpen'); if(!box||!window.SKETCH) return;
   box.className='shot live-open fx-'+f.fx; box.style.setProperty('--fc',f.c);
   $('loSk').innerHTML=window.SKETCH(f.n); draw($('loSk'),1600);
-  $('loK').textContent=`MODEL · SCREEN 12 · 《${f.zh}》 ${f.en}`;
-  $('loM').textContent='♪ 原創配樂 · 素描描線 → 片名出場';
+  $('loK').textContent=`Model 廳　第 12 場　《${f.zh}》`;
+  $('loM').textContent='原創配樂　素描　片名出場';
   const ch=[...f.t]; $('loT').innerHTML='';
   setTimeout(()=>{ $('loT').innerHTML=ch.map((c,i)=>c===' '?'<span class="ch sp"> </span>':`<span class="ch" style="--i:${i}">${c}</span>`).join(''); },reduce?0:1500); }
 
