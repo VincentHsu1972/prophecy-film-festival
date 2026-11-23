@@ -26,7 +26,8 @@ const splitTitle=(t,fx)=>{ const ch=[...String(t)]; const n=ch.length; return ch
 function drawSketch(box){ if(!box) return; const els=[...box.querySelectorAll('.pn')]; const total=reduce?0:1900;
   els.forEach((el,i)=>{ let L=300; try{ L=Math.ceil(el.getTotalLength())||300; }catch(e){} el.style.strokeDasharray=L; el.style.strokeDashoffset=reduce?0:L;
     if(!reduce){ const d=Math.round(i/Math.max(1,els.length)*total*.7); el.style.transition=`stroke-dashoffset ${Math.max(500,total*.55)}ms cubic-bezier(.5,.1,.3,1) ${350+d}ms`; } });
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{ els.forEach(el=>el.style.strokeDashoffset=0); box.classList.add('drawn'); })); }
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ els.forEach(el=>el.style.strokeDashoffset=0); box.classList.add('drawn'); }));
+  setTimeout(()=>{ els.forEach(el=>{ el.style.strokeDasharray=''; el.style.strokeDashoffset=''; el.style.transition=''; }); box.classList.add('live'); }, reduce?0:2900); }
 
 /* ---------- storage ---------- */
 let seen=new Set();
