@@ -97,8 +97,8 @@ function runLeader(){
 $('#enterSound').onclick=()=>{ setSound(true); runLeader(); };
 $('#enterMute').onclick=()=>{ setSound(false); runLeader(); };
 $('#skip').onclick=()=>endGate();
-let skipGate=false; try{ skipGate=sessionStorage.getItem('dw-gate')==='1'; }catch(e){}
-if(skipGate || /^#(screen-\d+|finale)$/.test(location.hash)){ gate.classList.add('gone'); document.body.classList.remove('gated'); }
+/* 每次從首頁進來都放一次片頭倒數；只有直接連到某一場或閉幕片時才略過 */
+if(/^#(screen-\d+|finale)$/.test(location.hash)){ gate.classList.add('gone'); document.body.classList.remove('gated'); }
 
 /* ---------- timeline ---------- */
 let tlPlace=()=>{};
