@@ -503,3 +503,26 @@ body.gated .dock{display:none}
 .rbar .back{flex:none;background:var(--c);color:#111;border:0;border-radius:999px;padding:6px 16px;font-weight:700;font-size:14px}
 .rbar .t{flex:1}
 .reel{scroll-snap-type:none}
+
+/* ===== story mode ===== */
+.hide{display:none!important}
+.modebar{max-width:900px;margin:0 auto;padding:46px 24px 0}
+.mb-in{display:grid;grid-template-columns:auto 1fr 1fr;gap:12px;align-items:stretch}
+.mb-in .mono{align-self:center;color:var(--mute)}
+.modebar button{background:var(--bg2);border:1px solid #333;border-radius:10px;padding:14px 18px;text-align:left}
+.modebar button b{display:block;font-family:var(--serif);font-size:20px}
+.modebar button small{color:var(--mute);font-size:12px}
+.modebar button[aria-pressed=true]{border-color:var(--c);background:#17170f;box-shadow:0 0 0 1px var(--c)}
+.modebar button[aria-pressed=true] b{color:var(--c)}
+.story .st-title{font-family:var(--serif);font-size:clamp(26px,3vw,38px);line-height:1.35;margin:0 0 10px}
+.story .st-note{font-size:13px;color:var(--mute);border-left:2px solid var(--c);padding-left:12px;margin:0 0 30px}
+.st-body p{font-family:var(--serif);font-size:19px;line-height:2.05;margin:0 0 1.2em;color:#e8e2d5}
+.st-body h3.act{font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:var(--c);margin:3em 0 1.2em;display:flex;align-items:center;gap:12px;text-transform:uppercase}
+.st-body h3.act::after{content:"";flex:1;height:1px;background:var(--line)}
+.st-body p.card{font-family:var(--serif);text-align:center;font-size:22px;line-height:1.7;border:3px double #bbb;padding:24px 20px;margin:2em auto;max-width:520px;background:#000;color:#f0f0f0;letter-spacing:.06em}
+.st-body p.dir{font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--mute);text-transform:none}
+.basis{margin-top:48px;border-top:1px solid var(--line);padding-top:18px}
+.basis .mono{color:var(--mute)}
+.basis ul{margin:10px 0 0;padding-left:1.2em}
+.basis li{font-size:13px;color:var(--mute);line-height:1.7;margin-bottom:4px}
+@media (max-width:900px){.mb-in{grid-template-columns:1fr 1fr}.mb-in .mono{grid-column:1/-1}.st-body p{font-size:17px}}

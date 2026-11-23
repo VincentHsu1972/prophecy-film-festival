@@ -181,9 +181,13 @@ function openReader(n){
     <div><span class="mono">${a.film.year} · 電影場景 THE SCENE</span><p>${esc(SCENES[a.n])}</p><span class="big">${a.film.year}</span></div>
     <div><span class="mono">2026 · 已經上映 PREMIERE</span><p>${esc(a.film.reality)}</p><span class="big">2026</span></div>
   </div>
+  ${modeBar(a)}
+  ${storyPane(a)}
+  <div id="origPane" class="${hasStory(a)&&readMode==='story'?'hide':''}">
   <div class="sec" id="sTrailer"><div class="mono">01 · 預告片 TRAILER · 30 秒</div><p class="trailer rv">${esc(a.summary||a.hook)}</p></div>
   <div class="sec" id="sReview"><div class="mono">02 · 影評 REVIEW · 三個看點</div><div class="review rv">${fmtMust(a.must)}</div></div>
   <div class="sec" id="sFeature"><div class="mono">03 · 正片 FEATURE · 全文 ${a.mins} 分鐘</div>${still}<div class="body">${fmtBody(a.paras)}</div></div>
+  </div>
   <div class="credits"><span class="mono">— 片尾字幕 · END CREDITS —</span><dl>
     <div><dt>WRITTEN BY 作者</dt><dd>${esc(a.authorFull||a.author)}</dd></div>
     <div><dt>ORIGINAL 原文出處</dt><dd>《2026 決策智慧 Decision Intelligence》第 ${a.p[0]}–${a.p[1]} 頁</dd></div>
@@ -196,8 +200,9 @@ function openReader(n){
   r.scrollTop=0; document.body.style.overflow='hidden'; r.focus({preventScroll:true});
   $('#closeR').onclick=()=>{ location.hash=lastView; }; $('#backR').onclick=()=>{ location.hash=lastView; }; const bb=$('#backBottom'); if(bb) bb.onclick=()=>{ location.hash=lastView; };
   $('#tearBtn').onclick=()=>showTicket(a);
+  bindMode(r);
   r.querySelectorAll('.nextp [data-n], .related .pick').forEach(b=>b.onclick=()=>go(+b.dataset.n));
-  r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
+  r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
   const op=$('#opening'), odo=$('#odo'); flick(); tick();
@@ -220,6 +225,30 @@ function relatedHTML(a){
   return `<section class="related"><span class="mono">SAME THEME · 同主題連映</span><h3>「${g[0]}」系列，接著看</h3><p class="dim">${esc(g[1])}這幾場從不同角度回答同一個問題。</p>
   <div class="picks">${others.map(o=>`<button class="pick z-${o.zone}" data-n="${o.n}"><div class="pp">${poster(o,true)}</div><div class="pb"><span class="ord">SCREEN ${pad(o.n)} · 《${esc(o.film.zh)}》 ${seen.has(o.n)?'· 已看':''}</span><h4>${esc(o.title)}</h4><q>${esc(o.hook)}</q><span class="go">進場 · ${o.mins} 分鐘 ▶</span></div></button>`).join('')}</div></section>`;
 }
+
+/* ---------- story mode ---------- */
+let readMode='story';
+const hasStory=a=>!!(window.STORIES&&window.STORIES[a.n]);
+function modeBar(a){ if(!hasStory(a)) return ''; const s=window.STORIES[a.n];
+  return `<div class="modebar" id="modebar"><div class="mb-in"><span class="mono">選擇觀看版本</span>
+   <button data-m="story" aria-pressed="${readMode==='story'}"><b>劇情版</b><small>${esc(s.style||'電影改編')} · 約 ${Math.max(3,Math.round(s.text.replace(/\s/g,'').length/450))} 分鐘</small></button>
+   <button data-m="orig" aria-pressed="${readMode!=='story'}"><b>原文版</b><small>預告片・影評・正片 · ${a.mins} 分鐘</small></button></div></div>`; }
+function fmtStory(txt){
+  return txt.split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>{
+    if(l.startsWith('## ')) return `<h3 class="act rv">${esc(l.slice(3))}</h3>`;
+    if(l.startsWith('> ')) return `<p class="card rv">${esc(l.slice(2))}</p>`;
+    if(l.startsWith('[依據] ')) return `<li>${esc(l.slice(5))}</li>`;
+    if(l.startsWith('~ ')) return `<p class="dir rv">${esc(l.slice(2))}</p>`;
+    return `<p class="rv">${esc(l)}</p>`; }).join('').replace(/(<li>.*<\/li>)/s,'<div class="basis"><span class="mono">情節依據 · SOURCE NOTES</span><ul>$1</ul></div>');
+}
+function storyPane(a){ if(!hasStory(a)) return ''; const s=window.STORIES[a.n];
+  return `<div id="storyPane" class="story sty-${a.n} ${readMode==='story'?'':'hide'}"><div class="sec"><div class="mono">劇情版 STORY · 改編自本文 · 情節為虛構</div>
+   <h2 class="st-title">${esc(s.title||a.title)}</h2><p class="st-note">${esc(s.note||'本篇以電影的敘事風格改編原文，論點與案例皆取自原文；人物與情節為虛構。想讀作者原文，請切換到「原文版」。')}</p>
+   <div class="st-body">${fmtStory(s.text)}</div></div></div>`; }
+function bindMode(r){ r.querySelectorAll('#modebar [data-m]').forEach(b=>b.onclick=()=>{ readMode=b.dataset.m;
+  r.querySelectorAll('#modebar [data-m]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.m===readMode));
+  const sp=$('#storyPane'), op=$('#origPane'); if(sp) sp.classList.toggle('hide',readMode!=='story'); if(op) op.classList.toggle('hide',readMode==='story');
+  r.querySelectorAll('.rv').forEach(el=>el.classList.add('in')); const mb=$('#modebar'); r.scrollTo({top:mb.offsetTop-60,behavior:'smooth'}); tick(); flick(); }); }
 
 /* ---------- ticket ---------- */
 const today=()=>{ const d=new Date(); return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`; };
