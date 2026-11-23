@@ -33,7 +33,7 @@ function tick(){ if(!soundOn||!audio()) return; const b=ac.createBuffer(1,ac.sam
 function startHum(){ if(!audio()||hum) return; const len=ac.sampleRate*2, b=ac.createBuffer(1,len,ac.sampleRate), d=b.getChannelData(0); let last=0;
   for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.5 + ((i%(ac.sampleRate/24|0))<60?(Math.random()*2-1)*.5:0); }
   const s=ac.createBufferSource(); s.buffer=b; s.loop=true; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=900; const g=ac.createGain(); g.gain.value=0; s.connect(f).connect(g).connect(ac.destination); s.start(); hum={s,g}; }
-function setSound(on){ soundOn=on; const b=$('#soundBtn'); b.textContent=on?'🔊':'🔇'; b.setAttribute('aria-pressed',on);
+function setSound(on){ soundOn=on; const b=$('#soundBtn'); b.innerHTML=on?'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>':'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>'; b.setAttribute('aria-pressed',on);
   if(on){ audio(); if(ac&&ac.state==='suspended') ac.resume(); startHum(); if(hum) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.4); }
   else if(hum&&ac){ hum.g.gain.setTargetAtTime(0,ac.currentTime,.2); } }
 $('#soundBtn').onclick=()=>setSound(!soundOn);
@@ -188,7 +188,7 @@ function openReader(n){
     <div><dt>ORIGINAL 原文出處</dt><dd>《2026 決策智慧 Decision Intelligence》第 ${a.p[0]}–${a.p[1]} 頁</dd></div>
     <div><dt>INSPIRED BY 致敬電影</dt><dd>《${esc(a.film.zh)}》${esc(a.film.en)}（${a.film.year}）</dd></div>
     <div><dt>CURATION 策展</dt><dd>電影配對與預言／現實對照為本站策展詮釋</dd></div></dl></div>
-  <div class="endcta"><button class="tearbtn" id="tearBtn">${seen.has(a.n)?'🎟 再看一次我的票根':'🎟 散場了，領取票根'}</button></div>
+  <div class="endcta"><button class="tearbtn" id="tearBtn">${seen.has(a.n)?'再看一次我的票根':'散場了，領取票根 →'}</button></div>
   ${relatedHTML(a)}
   <div class="nextp">${prev?`<button data-n="${prev.n}"><small>← PREVIOUS · 上一場</small><span>《${esc(prev.film.zh)}》${esc(prev.short)}</span></button>`:'<span></span>'}
     ${next?`<button data-n="${next.n}"><small>NEXT · 下一場 →</small><span>《${esc(next.film.zh)}》${esc(next.short)}</span></button>`:`<button data-fin="1"><small>ALL DONE →</small><span>前往閉幕片</span></button>`}</div>`;
@@ -231,12 +231,12 @@ function showTicket(a){
       <div class="row"><div>HALL<b>${h.name}</b></div><div>SEAT<b>${h.row}-${pad(a.n)}</b></div><div>RUNTIME<b>${a.mins} MIN</b></div><div>DATE<b>${today()}</b></div></div><div class="take"><i>今天帶走的一句話 · TAKEAWAY</i>${esc(a.hook)}</div></div>
     <div class="b"><small>SCREEN</small><span class="no">${pad(a.n)}</span><small>${a.film.year} → 2026</small></div></div>
     <p class="tk-msg">${had?'這張票根已經在你的票根夾裡了。':'沿著虛線撕下票根，收進票根夾。'}</p>
-    <div class="tk-actions">${had?'':'<button class="btn solid" id="tkTear">✂ 撕下票根</button>'}<button class="btn" id="tkDl">⬇ 下載票券圖</button><button class="btn" id="tkClose">繼續觀賞</button></div></div>`;
+    <div class="tk-actions">${had?'':'<button class="btn solid" id="tkTear">沿虛線撕下票根</button>'}<button class="btn" id="tkDl">下載票券圖</button><button class="btn" id="tkClose">繼續觀賞</button></div></div>`;
   tick(); flick();
   const close=()=>{ st.className='ticket-stage'; st.innerHTML=''; };
   $('#tkClose').onclick=close; st.onclick=e=>{ if(e.target===st) close(); };
   $('#tkDl').onclick=()=>downloadTicket(a);
-  const t=$('#tkTear'); if(t) t.onclick=()=>{ $('#tk').classList.add('torn'); tick(); setTimeout(tick,120); stamp(a.n); t.remove(); $('.tk-msg').textContent=seen.size===DATA.length?'🎬 22 張全部集滿！閉幕片已為你解鎖。':`收進票根夾了 · ${seen.size}/22 · ${hallDoneMsg(a)}`; const tb=$('#tearBtn'); if(tb) tb.textContent='🎟 再看一次我的票根'; };
+  const t=$('#tkTear'); if(t) t.onclick=()=>{ $('#tk').classList.add('torn'); tick(); setTimeout(tick,120); stamp(a.n); t.remove(); $('.tk-msg').textContent=seen.size===DATA.length?'22 張全部集滿，閉幕片已為你解鎖。':`收進票根夾了 · ${seen.size}/22 · ${hallDoneMsg(a)}`; const tb=$('#tearBtn'); if(tb) tb.textContent='再看一次我的票根'; };
 }
 function hallDoneMsg(a){ const h=hallOf(a.zone); const t=DATA.filter(x=>x.zone===a.zone); const s=t.filter(x=>seen.has(x.n)).length; return s===t.length?`${h.name}全部看完！`:`${h.name}還剩 ${t.length-s} 場`; }
 function stamp(n){ if(seen.has(n)) return; seen.add(n); save(); markSeen(); const b=$('#walletBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); beep(880,.08,.1); setTimeout(()=>beep(1320,.12,.1),90); }
@@ -265,8 +265,8 @@ function renderWallet(){
   <div class="hallsum">${HALLS.map(h=>{const t=DATA.filter(a=>a.zone===h.z),s=t.filter(a=>seen.has(a.n)).length;return `<div class="z-${h.z}"><span>${h.name}</span><b>${s}/${t.length}</b></div>`}).join('')}</div>
   <div class="finale ${all?'unlocked':''}"><span class="mono dim">CLOSING FILM · 閉幕片</span><h3 style="font-family:var(--serif);margin:6px 0 0">22 則預言，6 個答案</h3>
   <p>${all?'你看完了全部 22 場，閉幕片為你開放。':'集滿 22 張票根解鎖。它會把 22 部續集收成一張地圖：預言成真之後，品牌該做的六件事。'}</p>
-  <button id="finBtn" ${all?'':'disabled'}>${all?'▶ 進場觀賞':'🔒 尚未解鎖'}</button></div>
-  <p style="margin-top:20px"><button class="btn" id="wIdx">☰ 全部場次索引</button></p><button class="reset" id="resetW">清除我的觀影紀錄</button>`;
+  <button id="finBtn" ${all?'':'disabled'}>${all?'進場觀賞 →':'尚未解鎖'}</button></div>
+  <p style="margin-top:20px"><button class="btn" id="wIdx">全部場次索引 →</button></p><button class="reset" id="resetW">清除我的觀影紀錄</button>`;
   $('#closeW').onclick=closeWallet; $('#wIdx').onclick=openIndex;
   d.querySelectorAll('.stubs button').forEach(b=>b.onclick=()=>{ closeWallet(); go(+b.dataset.n); });
   $('#resetW').onclick=()=>{ if(!seen.size) return; seen=new Set(); save(); markSeen(); renderWallet(); toast('觀影紀錄已清除'); };
@@ -282,7 +282,7 @@ function openFinale(){
   const r=$('#reader'); r.className='reader open z-intro'; document.body.style.overflow='hidden'; r.scrollTop=0;
   const bar=`<div class="rbar"><span class="t">CLOSING FILM · 閉幕片</span><button class="x" id="closeR">✕ 離場</button></div>`;
   if(seen.size<DATA.length){
-    r.innerHTML=bar+`<div class="sec" style="text-align:center;padding-top:16vh"><div class="mono" style="justify-content:center">🔒 LOCKED</div><p class="trailer">閉幕片要集滿 22 張票根才會開放。<br>你目前有 ${seen.size} 張，還差 ${DATA.length-seen.size} 場。</p><p style="margin-top:30px"><button class="btn solid" id="nextUnseen">看下一場還沒看的 ▶</button></p></div>`;
+    r.innerHTML=bar+`<div class="sec" style="text-align:center;padding-top:16vh"><div class="mono" style="justify-content:center">LOCKED · 尚未解鎖</div><p class="trailer">閉幕片要集滿 22 張票根才會開放。<br>你目前有 ${seen.size} 張，還差 ${DATA.length-seen.size} 場。</p><p style="margin-top:30px"><button class="btn solid" id="nextUnseen">看下一場還沒看的 ▶</button></p></div>`;
     const nu=DATA.find(a=>!seen.has(a.n)); $('#nextUnseen').onclick=()=>go(nu.n);
   } else {
     r.innerHTML=bar+`<section class="opening go titled"><div class="lbt"></div><div class="lbb"></div><div class="inner"><div class="fn">CLOSING FILM · 1936 → 2026</div><div class="odo done">2026</div><h1>預言都成真了，然後呢？</h1><div class="meta">策展人的話 · 非刊物原文</div></div></section>
@@ -350,7 +350,7 @@ function renderReel(){
   r.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') r.scrollBy({left:420,behavior:'smooth'}); if(e.key==='ArrowLeft') r.scrollBy({left:-420,behavior:'smooth'}); });
   $('#reelL').onclick=()=>{ r.scrollBy({left:-420,behavior:'smooth'}); tick(); };
   $('#reelR').onclick=()=>{ r.scrollBy({left:420,behavior:'smooth'}); tick(); };
-  $('#moodToggle').onclick=()=>{ const p=$('#moodPanel'), open=p.hidden; p.hidden=!open; $('#moodToggle').setAttribute('aria-expanded',open); if(open){ p.scrollIntoView({behavior:'smooth',block:'start'}); } tick(); };
+  if($('#moodToggle')) $('#moodToggle').onclick=()=>{ const p=$('#moodPanel'), open=p.hidden; p.hidden=!open; $('#moodToggle').setAttribute('aria-expanded',open); if(open){ p.scrollIntoView({behavior:'smooth',block:'start'}); } tick(); };
 })();
 
 /* ---------- index ---------- */
@@ -381,11 +381,8 @@ function route(){
 let lastView='#lobby';
 addEventListener('hashchange',route);
 document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if($('#tStage').classList.contains('on')){ $('#tStage').className='ticket-stage'; $('#tStage').innerHTML=''; } else if($('#drawer').classList.contains('open')) closeWallet(); else if($('#reader').classList.contains('open')) location.hash=lastView; });
-$('#randomBtn').onclick=()=>{ const pool=DATA.filter(a=>!seen.has(a.n)); const L=pool.length?pool:DATA; const pick=L[Math.floor(Math.random()*L.length)];
-  const s=$('#slot'); s.classList.add('spin'); let i=0, delay=50; const b=$('#randomBtn'); b.disabled=true;
-  (function spin(){ const a=DATA[(i++)%DATA.length]; s.textContent=`《${a.film.zh}》`; tick(); delay*=1.12;
-    if(delay<380) setTimeout(spin,delay); else { s.classList.remove('spin'); s.textContent=`《${pick.film.zh}》→ 第 ${pick.n} 場，入場！`; beep(1320,.15,.12); setTimeout(()=>{ b.disabled=false; s.textContent=''; go(pick.n); },900); } })(); };
 
-renderLobTabs(); renderReel(); renderMoods(); renderLineup(); buildTimeline(); renderFilters(); renderHalls(); renderTabs(); applyFilter();
+
+renderLobTabs(); renderReel(); buildTimeline(); renderFilters(); renderHalls(); renderTabs(); applyFilter();
 if(!document.body.classList.contains('gated')) route();
 })();

@@ -465,3 +465,13 @@ body.gated .dock{display:none}
 .mood-panel{padding-top:20px}
 .mood-panel .lobby-q{text-align:left;font-size:24px;margin-bottom:16px}
 @media (max-width:900px){.rn-more{margin-left:0}.rn-btns{display:none}.fc{min-height:420px}.lob-tabs button{padding:7px 12px;font-size:13px}}
+
+/* unified line icons */
+.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.icon{display:inline-grid;place-items:center}
+.wallet-btn{display:inline-flex;align-items:center;gap:8px}
+.idx-btn{display:inline-flex;align-items:center;gap:8px}
+.dock a .ic{width:17px;height:17px}
+.lobby .reel-nav{margin-top:4px}
+
+@media (max-width:900px){.idx-btn{display:none}.brand{white-space:nowrap;font-size:16px}}
