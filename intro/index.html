@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>三分鐘介紹｜預言成真影展</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%230b0b0c%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%279%27 fill=%27none%27 stroke=%27%23e8d4a2%27 stroke-width=%272.5%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="deck.css?v=3">
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<div id="start" class="start">
+  <p class="mono dim">PROPHECY FILM FESTIVAL · 3-MINUTE INTRO</p>
+  <h1>預言成真影展</h1>
+  <p class="sub">三分鐘作品介紹 · 自動播放</p>
+  <button id="go" class="btn">▶ 開始播放</button>
+  <p class="mono dim small" id="auto">3 秒後自動開始</p>
+</div>
+
+<main id="deck" aria-live="polite">
+
+<!-- 1 -->
+<section class="s s-title" data-t="11">
+  <div class="leader" aria-hidden="true"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="88"/><circle cx="100" cy="100" r="70"/><line x1="100" y1="0" x2="100" y2="200"/><line x1="0" y1="100" x2="200" y2="100"/></svg></div>
+  <div class="c">
+    <p class="mono dim">PROPHECY FILM FESTIVAL · 1936 → 2026</p>
+    <h1 class="big"><span>預言</span><span>成真</span><span>影展</span></h1>
+    <p class="lead">這些電影沒有預言錯，只是<b class="hl">太早上映</b>。</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="s" data-t="17">
+  <div class="c narrow">
+    <p class="mono k">01 · INSIGHT 洞察</p>
+    <h2>沒有人會把一本<br><span class="hl">近 200 頁</span>的刊物從頭讀到尾。</h2>
+    <h2 class="reveal d2">但每個人，<br>都很會<span class="hl2">選電影</span>。</h2>
+    <p class="note reveal d3">先看片名、再看片長、最後看今晚的心情。這就是我們讀東西的方式。</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="s" data-t="16">
+  <div class="c">
+    <p class="mono k">02 · CONCEPT 概念</p>
+    <h2>22 篇文章 × 22 部<span class="hl">預言成真</span>的電影</h2>
+    <div class="films" aria-hidden="true">
+      <span>關鍵報告 2002</span><span>雲端情人 2013</span><span>銀翼殺手 1982</span><span>鋼鐵人 2008</span><span>全面啟動 2010</span><span>攻殼機動隊 1995</span><span>A.I. 人工智慧 2001</span><span>一級玩家 2018</span><span>社群網戰 2010</span><span>回到未來 第二集 1989</span><span>王牌冤家 2004</span><span>駭客任務 1999</span><span>瓦力 2008</span><span>機械公敵 2004</span><span>蝴蝶效應 2004</span><span>楚門的世界 1998</span><span>明日邊界 2014</span><span>星際大戰 1977</span><span>記憶拼圖 2000</span><span>摩登時代 1936</span><span>雨果的冒險 2011</span><span>2001 太空漫遊 1968</span>
+    </div>
+    <p class="lead reveal d3">電影是入口，<b>文章是 2026 年的續集</b>。</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="s split" data-t="20">
+  <div class="txt">
+    <p class="mono k">03 · THE FILM WALL 片名牆</p>
+    <h2>用片名勾人，<br>不用文章標題。</h2>
+    <ul>
+      <li>進場後只有一件事：<b>左右拖曳</b>，挑一部片</li>
+      <li>四個放映廳，照刊物的 People／Model／A.I. 分廳</li>
+      <li>每張卡是一段<b>電影場景</b>，加一張<b>原創手繪插畫</b></li>
+      <li>不使用任何電影海報或劇照</li>
+    </ul>
+  </div>
+  <figure class="shot"><img src="img/lobby.jpg" alt="片名牆畫面"></figure>
+</section>
+
+<!-- 5 -->
+<section class="s split rev" data-t="20">
+  <div class="txt">
+    <p class="mono k">04 · PREMIERE 進場</p>
+    <h2>片頭年份從 <span class="num">1982</span><br>一路跳到 <span class="num hl2">2026</span>。</h2>
+    <ul>
+      <li>左邊是<b>電影場景</b>，右邊是 <b>2026 年真實上演的版本</b></li>
+      <li>現實留到進場後才揭曉，製造懸念</li>
+      <li>放映機倒數、黑邊開場、音效全部由程式生成</li>
+    </ul>
+  </div>
+  <div class="stack"><figure class="shot"><img src="img/open.jpg" alt="片頭畫面"></figure><figure class="shot s2"><img src="img/vs.jpg" alt="電影場景與 2026 現實對照"></figure></div>
+</section>
+
+<!-- 6 -->
+<section class="s split" data-t="20">
+  <div class="txt">
+    <p class="mono k">05 · READING 閱讀體驗</p>
+    <h2>三層閱讀，<br>給不同時間的人。</h2>
+    <div class="tiers">
+      <div><b>預告片</b><span>30 秒</span><em>一句話摘要</em></div>
+      <div><b>影評</b><span>3 分鐘</span><em>三個看點</em></div>
+      <div><b>正片</b><span>依片長</span><em>全文，一字未改</em></div>
+    </div>
+    <p class="note">可直接跳到任一層 · 顯示剩餘分鐘 · 片尾字幕標註作者與原文頁碼</p>
+  </div>
+  <figure class="shot"><img src="img/review.jpg" alt="閱讀頁畫面"></figure>
+</section>
+
+<!-- 7 -->
+<section class="s split rev" data-t="18">
+  <div class="txt">
+    <p class="mono k">06 · KEEP WATCHING 讓人想看完</p>
+    <h2>散場，<br>領一張電影票。</h2>
+    <ul>
+      <li>票上印著廳別、座位、日期，和<b>「今天帶走的一句話」</b></li>
+      <li>沿虛線撕下票根，收進票根夾</li>
+      <li>片尾推薦<b>同主題連映</b>，一場接一場</li>
+      <li>集滿 22 張，解鎖閉幕片</li>
+    </ul>
+  </div>
+  <figure class="shot"><img src="img/ticket.jpg" alt="電影票畫面"></figure>
+</section>
+
+<!-- 8 -->
+<section class="s" data-t="15">
+  <div class="c wide">
+    <p class="mono k">07 · TIMELINE 預言時間軸</p>
+    <h2>90 年的 22 則預言，全部在 2026 年上映。</h2>
+    <figure class="shot wideshot"><img src="img/timeline.jpg" alt="預言時間軸畫面"></figure>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="s" data-t="20">
+  <div class="c wide">
+    <p class="mono k">08 · VIBE CODING 製作歷程</p>
+    <h2>和 AI 一起改了六版，<br>每一版都有理由。</h2>
+    <ol class="vers">
+      <li><b>V1</b><span>定概念</span><em>從愛情、星座、聊齋中選定「預言成真」</em></li>
+      <li><b>V2</b><span>補沉浸感</span><em>第一版太陽春，加入倒數、時間軸、票根</em></li>
+      <li><b>V3</b><span>外部評審</span><em>採納索引、連映；不做無法核對的十週年回顧</em></li>
+      <li><b>V4</b><span>面向觀眾</span><em>資訊太多，改成一次一個畫面</em></li>
+      <li><b>V5</b><span>用片名勾人</span><em>首頁只留片名牆，文字改寫成電影場景</em></li>
+      <li><b>V6</b><span>手繪手冊</span><em>不重畫海報，改用 22 張原創素描</em></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="s" data-t="14">
+  <div class="c narrow">
+    <p class="mono k">09 · DEPLOY &amp; SECURITY 部署與資安</p>
+    <h2>純靜態，<br>零後端、零追蹤。</h2>
+    <div class="chips">
+      <span>GitHub Pages · HTTPS</span><span>無後端、無表單</span><span>無第三方資源</span><span>無金鑰、無個資</span><span>CSP：腳本僅限同源</span><span>文字全數跳脫防 XSS</span><span>進度只存在讀者瀏覽器</span><span>原創插畫，不用海報</span>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="s s-end" data-t="10">
+  <div class="c">
+    <p class="lead">科幻電影的預言已經成真。<br>這本刊物，是寫給<b class="hl">預言成真之後</b>的我們。</p>
+    <p class="url mono">vincenthsu1972.github.io/prophecy-film-festival</p>
+    <a class="btn" href="../">進場觀賞 →</a>
+    <p class="mono dim small">THANK YOU · 感謝觀賞</p>
+  </div>
+</section>
+
+</main>
+
+<div class="hud" id="hud">
+  <div class="bar"><i id="bar"></i></div>
+  <div class="ctl">
+    <button id="prev" aria-label="上一頁">‹</button>
+    <button id="play" aria-label="暫停">❚❚</button>
+    <button id="next" aria-label="下一頁">›</button>
+    <span class="mono" id="cnt">01 / 11</span>
+    <span class="mono dim" id="clock">0:00 / 3:01</span>
+  </div>
+</div>
+<script src="deck.js?v=2"></script>
+</body>
+</html>
