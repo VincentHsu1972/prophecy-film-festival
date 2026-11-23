@@ -36,16 +36,22 @@ const save=()=>{try{localStorage.setItem('dw-stubs',JSON.stringify([...seen]));}
 /* ---------- sound (WebAudio, generated, no files) ---------- */
 let ac=null, hum=null, soundOn=false;
 function audio(){ if(!ac){ try{ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return ac; }
+let sil=null;
+function unlockAudio(){ try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(e){}
+  audio(); if(ac&&ac.state!=='running') ac.resume().catch(()=>{});
+  try{ if(!sil){ sil=new Audio('silence.wav'); sil.loop=true; sil.preload='auto'; sil.setAttribute('playsinline',''); } const p=sil.play(); if(p) p.catch(()=>{}); }catch(e){} }
+['touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{ if(soundOn) unlockAudio(); },{capture:true,passive:true}));
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&soundOn) unlockAudio(); });
 function beep(f=1000,d=.09,v=.18){ if(!soundOn||!audio()) return; const o=ac.createOscillator(),g=ac.createGain(); o.frequency.value=f; o.type='sine'; g.gain.value=v; g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d); o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+d); }
 function tick(){ if(!soundOn||!audio()) return; const b=ac.createBuffer(1,ac.sampleRate*.02,ac.sampleRate),d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,4); const s=ac.createBufferSource(),g=ac.createGain(); g.gain.value=.25; s.buffer=b; s.connect(g).connect(ac.destination); s.start(); }
 function startHum(){ if(!audio()||hum) return; const len=ac.sampleRate*2, b=ac.createBuffer(1,len,ac.sampleRate), d=b.getChannelData(0); let last=0;
   for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.5 + ((i%(ac.sampleRate/24|0))<60?(Math.random()*2-1)*.5:0); }
   const s=ac.createBufferSource(); s.buffer=b; s.loop=true; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=900; const g=ac.createGain(); g.gain.value=0; s.connect(f).connect(g).connect(ac.destination); s.start(); hum={s,g}; }
-function setSound(on){ soundOn=on; const b=$('#soundBtn'); b.innerHTML=on?'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>':'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>'; b.setAttribute('aria-pressed',on);
-  if(on){ audio(); if(ac&&ac.state==='suspended') ac.resume(); startHum(); if(hum) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.4); if(cur) playScore(cur.n); }
+function setSound(on){ soundOn=on; if(!on&&sil) sil.pause(); const b=$('#soundBtn'); b.innerHTML=on?'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>':'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>'; b.setAttribute('aria-pressed',on);
+  if(on){ unlockAudio(); startHum(); if(hum) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.4); if(cur) playScore(cur.n); }
   else { if(hum&&ac){ hum.g.gain.setTargetAtTime(0,ac.currentTime,.2); } stopScore(); } }
 /* 每部片的原創配樂（score.js）：開聲音時進場自動播放，離場淡出 */
-function playScore(n){ if(!soundOn||!window.SCORE||!audio()) return; if(ac.state==='suspended') ac.resume(); window.SCORE.play(n,ac); if(hum) hum.g.gain.setTargetAtTime(.012,ac.currentTime,.6); }
+function playScore(n){ if(!soundOn||!window.SCORE||!audio()) return; if(ac.state!=='running') ac.resume().catch(()=>{}); window.SCORE.play(n,ac); if(hum) hum.g.gain.setTargetAtTime(.012,ac.currentTime,.6); }
 function stopScore(){ if(!window.SCORE||!window.SCORE.playing) return; window.SCORE.stop(); if(hum&&ac&&soundOn) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.8); }
 $('#soundBtn').onclick=()=>setSound(!soundOn);
 function flick(){ const f=$('.flicker'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
