@@ -46,8 +46,8 @@ function tiles(){ const T=[...document.querySelectorAll('#scenes .tile[data-n]')
   clearInterval(tt); hot(0); tt=setInterval(()=>hot((ti+1)%T.length),4400); }
 function demoScene(){ const t=$('demoScene'); if(!t) return; const a=t.querySelector('.art'); a.innerHTML=window.SCENE?window.SCENE(12):''; setTimeout(()=>draw(a,2000),600); }
 
-/* 配樂：DEMO 四頁都是駭客任務；結語換成雨果的圓舞曲；其餘是影展主題 */
-function score(i){ if(i===8) return; if(i>=4&&i<=7) music(12,.4); else music(i===11?END:THEME,.32); }
+/* 配樂：DEMO 四頁都是駭客任務；結語（第 11 頁）換成雨果的圓舞曲；其餘是影展主題 */
+function score(i){ if(i===8) return; if(i>=4&&i<=7) music(12,.4); else music(i===10?END:THEME,.32); }
 
 document.addEventListener('slide',e=>{ const i=e.detail; cur=i;
   clearInterval(ft); if(i!==8){ clearInterval(tt); }
