@@ -153,10 +153,11 @@ function renderHalls(){
     </div>
     <div class="strip-wrap"><div class="strip-nav"><span class="mono dim">左右拖曳，挑一部片</span><span><button data-dir="-1" aria-label="往左">‹</button> <button data-dir="1" aria-label="往右">›</button></span></div>
     <div class="strip" tabindex="0" aria-label="${h.name}場次">${items.map(a=>`
-      <button class="frame z-${a.zone}" data-n="${a.n}" aria-label="第 ${a.n} 場：${esc(a.title)}，片長 ${a.mins} 分鐘">
-        <div class="poster paper">${window.SKETCH(a.n)}
+      <button class="frame z-${a.zone}" data-n="${a.n}" aria-label="第 ${a.n} 場《${esc(a.film.zh)}》續集：${esc(a.title)}，片長 ${a.mins} 分鐘">
+        <div class="poster paper">
           <div class="ptop"><b>第 ${a.n} 場</b><span>${a.mins} 分鐘</span></div><span class="seen">已看</span>
-          <div class="pinfo"><span class="en">《${esc(a.film.zh)}》續集</span><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
+          <div class="fart">${window.SKETCH(a.n)}</div>
+          <div class="pinfo"><span class="fyr">${a.film.year}—2026</span><h3 class="fz ${(L=>L<=4?'l4':L<=5?'l5':L<=7?'l7':'l9')([...a.film.zh.replace(/\s/g,'')].length)}">${esc(a.film.zh)}</h3><span class="fen">${esc(a.film.en)}</span><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
         </div>
       </button>`).join('')}</div></div>
     </section>`; }).join('');
@@ -168,6 +169,14 @@ function renderHalls(){
     s.addEventListener('click',e=>{ if(moved){e.stopPropagation();e.preventDefault();moved=false;} },true); });
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }),{threshold:.08});
   $$('.hall').forEach(h=>io.observe(h));
+  /* 片單自己緩緩往右捲；有人拖曳、點按或捲動時先停 4 秒 */
+  if(!reduce && !window.__hallDrift){ window.__hallDrift=1; let hold=0, acc=0;
+    $$('.strip').forEach(st=>['pointerdown','wheel','touchstart','keydown','focusin'].forEach(ev=>st.addEventListener(ev,()=>{ hold=performance.now()+4000; },{passive:true})));
+    (function drift(){ const now=performance.now(), st=document.querySelector('.hall.on .strip');
+      if(st && now>hold && $('#v-halls').classList.contains('on') && !$('#reader').classList.contains('open') && !document.body.classList.contains('gated')){
+        acc+=0.6; if(acc>=1){ const d=Math.floor(acc); acc-=d; st.scrollLeft+=d; }
+        if(st.scrollLeft+st.clientWidth>=st.scrollWidth-2){ hold=now+2500; setTimeout(()=>st.scrollTo({left:0,behavior:'smooth'}),2000); } }
+      requestAnimationFrame(drift); })(); }
   markSeen();
 }
 function markSeen(){ if($('#hallTabs').children.length) renderTabs(); if($('#lobTabs').children.length){ renderLobTabs(); $$('.fc').forEach(f=>f.classList.toggle('isseen',seen.has(+f.dataset.n))); } $$('.frame').forEach(f=>f.classList.toggle('isseen',seen.has(+f.dataset.n)));
