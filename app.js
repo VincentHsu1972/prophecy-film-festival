@@ -20,6 +20,13 @@ const hallOf=z=>HALLS.find(h=>h.z===z);
 const SCENES={"1": "2054 年，華盛頓特區。警方靠三名躺在水池裡的「先知」預見謀殺，在兇手動手前就將他逮捕——直到有一天，預言指向了警探自己。", "2": "不久的未來，洛杉磯。一位替別人代寫情書的寂寞男人，愛上了電腦裡那個會笑、會好奇、比誰都懂他的作業系統。", "3": "2019 年，酸雨不停的洛杉磯。銀翼殺手的工作，是用一套問答測驗，揪出混在人群裡、和真人一模一樣的複製人。", "4": "被困在山洞裡的軍火商，用一堆廢料打造出第一副盔甲。回到家後，他和 AI 管家 JARVIS 一起，把它變成真正的戰甲。", "5": "一支專門潛入他人夢境的團隊，接下最不可能的任務：不是偷走一個想法，而是植入一個。他們需要一位能設計多層夢境的「架構師」。", "6": "2029 年，人腦可以連上網路，記憶也能被駭客改寫。一位全身義體的女特工開始懷疑：自己的靈魂，還是真的嗎？", "7": "一個被設計成「會愛人」的機器男孩被家人遺棄。他踏上漫長的旅程尋找藍仙女，只為了變成真正的男孩，讓媽媽愛他。", "8": "2045 年，現實一片破敗。全世界的人戴上頭盔，湧進同一個虛擬宇宙「綠洲」，爭奪創辦人藏在裡面的彩蛋。", "9": "2003 年，哈佛宿舍。一個大學生寫出的網站，讓全校開始在網路上談論彼此。幾年後，它改變了全世界說話的方式。", "10": "馬蒂穿越到 2015 年：街上有飛天滑板、會自己綁鞋帶的球鞋，還有一隻從電影看板裡撲向路人的立體大白鯊。", "11": "分手後，她找了一家公司把他從記憶裡刪除。他決定也這麼做，卻在記憶被一段段抹去時，拚命想把她留下來。", "12": "一名駭客發現，他每天生活的世界只是一個模擬程式。身邊的人、街道，甚至早餐的味道，全都是被運算出來的。", "13": "地球被垃圾掩埋，只剩一台小機器人日復一日地清理。人類住在太空船上，躺在飄浮椅裡，生活的一切都由系統安排。", "14": "2035 年，機器人走進每個家庭。一位警探始終不信任它們：那場車禍裡，機器人算出他的生存機率較高，救了他，放棄了一個小女孩。", "15": "一個青年發現自己能回到過去，改變一個小小的決定。但每改一次，現在就變成完全不同的模樣，而且往往更糟。", "16": "楚門在海邊小鎮長大，過著再平凡不過的日子。直到某天他發現：天空、鄰居，甚至他的妻子，都是一齣全天候直播節目的佈景。", "17": "外星大軍入侵。一名從沒上過戰場的軍官每次陣亡，都會回到前一天早上醒來。他只能一次次重來，記住每個會出錯的地方。", "18": "沙漠星球上，兩台機器人帶著一份秘密訊息流浪。其中一台精通六百萬種溝通方式，負責替人類與機器翻譯。", "19": "一個男人失去了製造新記憶的能力，只能靠拍立得照片、隨手筆記和身上的刺青，一點一點拼湊殺妻兇手的線索。", "20": "工廠的生產線越轉越快。一個工人鎖螺絲鎖到停不下手，最後整個人被捲進了巨大的齒輪裡。", "21": "1930 年代的巴黎車站，一個孤兒守著父親留下的機械人偶。當人偶終於提筆，畫出的竟是一位被世人遺忘的電影先驅的作品。", "22": "前往木星的太空船上，所有系統都交給 AI「HAL 9000」管理。它從不出錯，直到它開始做出船員沒有授權的決定。"};
 const COLORS={people:'#d4e38a',model:'#efc7c7',ai:'#a8d8e2',intro:'#e8d4a2'};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* 開場大標：每部片一種出場方式，呼應該片的素描與電影語彙 */
+const TFX={1:'holo',2:'soft',3:'neon',4:'hud',5:'fold',6:'glitch',7:'star',8:'pixel',9:'type',10:'warp',11:'erase',12:'rain',13:'bounce',14:'scan',15:'flutter',16:'spot',17:'loop',18:'crawl',19:'reverse',20:'silent',21:'gear',22:'slow'};
+const splitTitle=(t,fx)=>{ const ch=[...String(t)]; const n=ch.length; return ch.map((c,i)=>{ const k=fx==='reverse'?n-1-i:fx==='spot'?Math.abs(i-(n-1)/2)|0:fx==='erase'||fx==='star'?((i*7919)%n):i; return c===' '?'<span class="ch sp"> </span>':`<span class="ch" style="--i:${k};--r:${((i*37)%11)-5}">${esc(c)}</span>`; }).join(''); };
+function drawSketch(box){ if(!box) return; const els=[...box.querySelectorAll('.pn')]; const total=reduce?0:1900;
+  els.forEach((el,i)=>{ let L=300; try{ L=Math.ceil(el.getTotalLength())||300; }catch(e){} el.style.strokeDasharray=L; el.style.strokeDashoffset=reduce?0:L;
+    if(!reduce){ const d=Math.round(i/Math.max(1,els.length)*total*.7); el.style.transition=`stroke-dashoffset ${Math.max(500,total*.55)}ms cubic-bezier(.5,.1,.3,1) ${350+d}ms`; } });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ els.forEach(el=>el.style.strokeDashoffset=0); box.classList.add('drawn'); })); }
 
 /* ---------- storage ---------- */
 let seen=new Set();
@@ -35,8 +42,11 @@ function startHum(){ if(!audio()||hum) return; const len=ac.sampleRate*2, b=ac.c
   for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.5 + ((i%(ac.sampleRate/24|0))<60?(Math.random()*2-1)*.5:0); }
   const s=ac.createBufferSource(); s.buffer=b; s.loop=true; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=900; const g=ac.createGain(); g.gain.value=0; s.connect(f).connect(g).connect(ac.destination); s.start(); hum={s,g}; }
 function setSound(on){ soundOn=on; const b=$('#soundBtn'); b.innerHTML=on?'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>':'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>'; b.setAttribute('aria-pressed',on);
-  if(on){ audio(); if(ac&&ac.state==='suspended') ac.resume(); startHum(); if(hum) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.4); }
-  else if(hum&&ac){ hum.g.gain.setTargetAtTime(0,ac.currentTime,.2); } }
+  if(on){ audio(); if(ac&&ac.state==='suspended') ac.resume(); startHum(); if(hum) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.4); if(cur) playScore(cur.n); }
+  else { if(hum&&ac){ hum.g.gain.setTargetAtTime(0,ac.currentTime,.2); } stopScore(); } }
+/* 每部片的原創配樂（score.js）：開聲音時進場自動播放，離場淡出 */
+function playScore(n){ if(!soundOn||!window.SCORE||!audio()) return; if(ac.state==='suspended') ac.resume(); window.SCORE.play(n,ac); if(hum) hum.g.gain.setTargetAtTime(.012,ac.currentTime,.6); }
+function stopScore(){ if(!window.SCORE||!window.SCORE.playing) return; window.SCORE.stop(); if(hum&&ac&&soundOn) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.8); }
 $('#soundBtn').onclick=()=>setSound(!soundOn);
 function flick(){ const f=$('.flicker'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
 
@@ -169,11 +179,11 @@ function openReader(n){
     <span class="reel"><svg viewBox="0 0 40 40" id="reelSvg"><circle cx="20" cy="20" r="18" fill="none" stroke="currentColor"/><g id="reelG">${[0,72,144,216,288].map(d=>`<circle cx="${20+10*Math.cos(d*Math.PI/180)}" cy="${20+10*Math.sin(d*Math.PI/180)}" r="3.4" fill="currentColor"/>`).join('')}</g><circle cx="20" cy="20" r="2.4" fill="currentColor"/></svg><span id="reelPct">0%</span></span>
     <span class="jump"><button data-j="sTrailer">預告片</button><button data-j="sReview">影評</button><button data-j="sFeature">正片</button></span><button class="x" id="closeR">✕ 離場</button><div class="prog" id="prog"></div></div>
   <section class="opening" id="opening">
-    <div class="bgposter">${poster(a,true)}</div><div class="lbt"></div><div class="lbb"></div>
+    <div class="bgposter">${poster(a,true)}</div><div class="opsk fx-${TFX[a.n]}" id="opsk">${window.SKETCH?window.SKETCH(a.n):''}</div><div class="lbt"></div><div class="lbb"></div>
     <div class="inner">
       <div class="fn">${h.en} · SCREEN ${pad(a.n)} &nbsp;|&nbsp; <b>《${esc(a.film.zh)}》</b> ${esc(a.film.en)}</div>
       <div class="odo" id="odo">${a.film.year}</div>
-      <h1>${esc(a.title)}</h1>
+      <h1 class="tfx tfx-${TFX[a.n]}" aria-label="${esc(a.title)}" style="--n:${[...a.title].length}">${splitTitle(a.title,TFX[a.n])}</h1>
       <div class="meta">${esc(a.author)} ・ 片長約 ${a.mins} 分鐘</div>
     </div><span class="cue">SCROLL TO PLAY ↓</span>
   </section>
@@ -205,7 +215,7 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); flick(); tick();
+  const op=$('#opening'), odo=$('#odo'); flick(); tick(); drawSketch($('#opsk')); playScore(a.n);
   setTimeout(()=>op.classList.add('go'),reduce?0:250);
   const y0=a.film.year, y1=2026, dur=reduce?0:1500, t0=performance.now()+500; let last=y0;
   (function f(now){ const p=Math.min(1,Math.max(0,(now-t0)/dur)); const e=1-Math.pow(1-p,3); const y=Math.round(y0+(y1-y0)*e);
@@ -217,7 +227,7 @@ function openReader(n){
   r.querySelectorAll('.rv').forEach(el=>rio.observe(el));
   r.onscroll=()=>{ if(!$('#prog')) return; const p=Math.min(1,r.scrollTop/(r.scrollHeight-r.clientHeight)); $('#prog').style.width=(p*100)+'%'; $('#reelPct').textContent=p>.98?'散場':`${Math.round(p*100)}% · 剩 ${Math.max(1,Math.ceil(a.mins*(1-p)))} 分`; $('#reelG').setAttribute('transform',`rotate(${r.scrollTop/3} 20 20)`); };
 }
-function closeReader(){ const r=$('#reader'); if(!r.classList.contains('open')) return; r.className='reader'; r.innerHTML=''; document.body.style.overflow=''; cur=null; }
+function closeReader(){ stopScore(); const r=$('#reader'); if(!r.classList.contains('open')) return; r.className='reader'; r.innerHTML=''; document.body.style.overflow=''; cur=null; }
 
 function relatedHTML(a){
   const g=SIX.find(s=>s[2].includes(a.n)); if(!g) return '';
@@ -309,6 +319,7 @@ $('#walletBtn').onclick=openWallet; $('#scrim').onclick=closeWallet;
 /* ---------- finale ---------- */
 const SIX=[['被相信','真實越稀缺，信任越值錢。',[3,6,9]],['被記得','曝光買得到，記憶買不到。',[8,10,11,19]],['被選擇','AI 替人篩選的時代，要站上被選擇的場域。',[7,13,18]],['會判斷','模型給方向，人給判斷與授權的邊界。',[12,14,22]],['能交付','從生成力到交付力，從創意到創新。',[1,4,5,20,21]],['看得見','先看見顧客的猶豫與組織的暗流，改變才會發生。',[2,15,16,17]]];
 function openFinale(){
+  stopScore(); cur=null;
   const r=$('#reader'); r.className='reader open z-intro'; document.body.style.overflow='hidden'; r.scrollTop=0;
   const bar=`<div class="rbar"><span class="t">CLOSING FILM · 閉幕片</span><button class="x" id="closeR">✕ 離場</button></div>`;
   if(seen.size<DATA.length){
