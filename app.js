@@ -83,6 +83,7 @@ let skipGate=false; try{ skipGate=sessionStorage.getItem('dw-gate')==='1'; }catc
 if(skipGate || /^#(screen-\d+|finale)$/.test(location.hash)){ gate.classList.add('gone'); document.body.classList.remove('gated'); }
 
 /* ---------- timeline ---------- */
+let tlPlace=()=>{};
 function buildTimeline(){
   const tl=$('#tl'); const Y0=1930,Y1=2026, L=60; const width=()=>tl.clientWidth-60-160;
   const items=[...DATA].sort((a,b)=>a.film.year-b.film.year||a.n-b.n);
@@ -97,8 +98,8 @@ function buildTimeline(){
       const h=[70,130,190][i%3]; const d=tl.querySelector(`.tl-dot[data-n="${a.n}"]`), s=tl.querySelector(`.tl-stem[data-n="${a.n}"]`);
       d.style.left=x+'px'; d.style.top=(300-h)+'px'; s.style.left=x+'px'; s.style.top=(300-h)+'px'; s.style.height=h+'px'; });
   }
+  tlPlace=()=>{ place(); const sc=$('#tlScroll'); if(sc.scrollWidth>sc.clientWidth+40) sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)*.78; };
   place(); addEventListener('resize',place);
-  const sc=$('#tlScroll'); if(sc.scrollWidth>sc.clientWidth+40) sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)*.78;
   $$('.tl-dot').forEach(d=>{ const a=byN(+d.dataset.n);
     const show=()=>{ $$('.tl-dot').forEach(x=>x.classList.toggle('sel',x===d)); const h=hallOf(a.zone);
       const c=$('#tlCard'); c.className='tl-card z-'+a.zone;
@@ -108,7 +109,7 @@ function buildTimeline(){
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ $('#tlFill').style.width='100%';
     items.forEach((a,i)=>setTimeout(()=>tl.querySelector(`.tl-dot[data-n="${a.n}"]`).classList.add('in'),reduce?0:120+i*90));
     setTimeout(()=>{ const d=tl.querySelector('.tl-dot[data-n="3"]'); if(d&&!$('.tl-dot.sel')) d.onmouseenter(); }, reduce?0:2400); io.disconnect(); } }),{threshold:.2});
-  io.observe($('#timeline'));
+  io.observe($('#v-timeline'));
 }
 
 /* ---------- halls ---------- */
@@ -116,6 +117,10 @@ let ft='all';
 function renderFilters(){ const box=$('#fTime'); box.innerHTML=''; TIMES.forEach(t=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=t.l; b.setAttribute('aria-pressed',ft===t.k); b.onclick=()=>{ft=t.k;renderFilters();applyFilter();}; box.appendChild(b); }); }
 function applyFilter(){ const f=TIMES.find(t=>t.k===ft).f; let n=0; $$('.frame').forEach(fr=>{ const a=byN(+fr.dataset.n), ok=f(a.mins); fr.classList.toggle('dim',!ok); if(ok) n++; });
   $('#fHint').textContent= ft==='all'?'片長依全文字數估算（每分鐘約 450 字）':`${n} 場符合，其他場次已變暗`; }
+let activeHall='intro';
+function renderTabs(){ $('#hallTabs').innerHTML=HALLS.map(h=>{const t=DATA.filter(a=>a.zone===h.z);const s=t.filter(a=>seen.has(a.n)).length;return `<button role="tab" class="z-${h.z}" aria-selected="${activeHall===h.z}" data-z="${h.z}"><i></i>${h.name}<small>${s}/${t.length}</small></button>`}).join('');
+  $$('#hallTabs button').forEach(b=>b.onclick=()=>{ location.hash='hall-'+b.dataset.z; }); }
+function setHall(z){ activeHall=z; renderTabs(); $$('.hall').forEach(s=>s.classList.toggle('on',s.id==='hall-'+z)); const s=$('#hall-'+z); if(s){ s.classList.add('in'); const st=s.querySelector('.strip'); if(st) st.scrollLeft=0; } flick(); tick(); }
 function renderHalls(){
   const root=$('#hallList');
   root.innerHTML=HALLS.map(h=>{ const items=DATA.filter(a=>a.zone===h.z); const mins=items.reduce((s,a)=>s+a.mins,0);
@@ -144,7 +149,7 @@ function renderHalls(){
   $$('.hall').forEach(h=>io.observe(h));
   markSeen();
 }
-function markSeen(){ $$('.frame').forEach(f=>f.classList.toggle('isseen',seen.has(+f.dataset.n)));
+function markSeen(){ if($('#hallTabs').children.length) renderTabs(); $$('.frame').forEach(f=>f.classList.toggle('isseen',seen.has(+f.dataset.n)));
   HALLS.forEach(h=>{ const t=DATA.filter(a=>a.zone===h.z), s=t.filter(a=>seen.has(a.n)).length; const i=$(`[data-hall="${h.z}"]`); if(i) i.style.width=(s/t.length*100)+'%'; const p=$(`[data-hallcount="${h.z}"]`); if(p) p.textContent=`你已看 ${s} / ${t.length} 場`; });
   $('#wCount').textContent=`${seen.size}/22`; }
 
@@ -188,7 +193,7 @@ function openReader(n){
   <div class="nextp">${prev?`<button data-n="${prev.n}"><small>← PREVIOUS · 上一場</small><span>《${esc(prev.film.zh)}》${esc(prev.short)}</span></button>`:'<span></span>'}
     ${next?`<button data-n="${next.n}"><small>NEXT · 下一場 →</small><span>《${esc(next.film.zh)}》${esc(next.short)}</span></button>`:`<button data-fin="1"><small>ALL DONE →</small><span>前往閉幕片</span></button>`}</div>`;
   r.scrollTop=0; document.body.style.overflow='hidden'; r.focus({preventScroll:true});
-  $('#closeR').onclick=()=>{ location.hash='hall-'+a.zone; };
+  $('#closeR').onclick=()=>{ location.hash=lastView; };
   $('#tearBtn').onclick=()=>showTicket(a);
   r.querySelectorAll('.nextp [data-n], .related .pick').forEach(b=>b.onclick=()=>go(+b.dataset.n));
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
@@ -299,12 +304,13 @@ const MOODS=[
  {k:'work',e:'🎭',l:'工作讓我懷疑人生',d:'組織、策略與創造力',t:'職場突圍之夜',sub:'轉型的阻力不在技術，而在人與組織。',ns:[16,5,20]},
  {k:'cut',e:'⏱',l:'只有 15 分鐘',d:'導演剪輯版：五場精華',t:'導演剪輯版',sub:'每場只看預告片＋影評，約 3 分鐘，五場串起全刊的主線：靠近人 → 守住真實 → 理解人 → 人做判斷 → 被記住。',ns:[2,3,12,14,19],cut:true}
 ];
-let mood='ai';
+let mood=null;
 function renderMoods(){
   $('#moods').innerHTML=MOODS.map(m=>`<button class="mood ${m.cut?'cut':''}" data-k="${m.k}" aria-pressed="${mood===m.k}"><span class="e">${m.e}</span><b>${m.l}</b><span>${m.d}</span></button>`).join('');
-  $$('.mood').forEach(b=>b.onclick=()=>{ mood=b.dataset.k; renderMoods(); renderLineup(); tick(); flick(); });
+  $$('.mood').forEach(b=>b.onclick=()=>{ mood=b.dataset.k; $('#v-lobby').classList.add('picked'); $('#lobbyQ').textContent='為你排好今晚的片單 ↓　想換心情，再點一次上面的選項'; renderMoods(); renderLineup(); tick(); flick(); });
 }
 function renderLineup(){
+  if(!mood){ $('#lineup').innerHTML=''; return; }
   const m=MOODS.find(x=>x.k===mood), list=m.ns.map(byN), mins=list.reduce((s,a)=>s+(m.cut?3:a.mins),0);
   $('#lineup').innerHTML=`<div class="lineup-head"><div><span class="mono dim">TONIGHT'S PROGRAM · ${list.length} 場 · 約 ${mins} 分鐘</span><h3>${m.e} ${m.t}</h3></div><p>${esc(m.sub)}</p></div>
   <div class="picks ${m.cut?'five':''}">${list.map((a,i)=>`<button class="pick z-${a.zone}" data-n="${a.n}"><div class="pp">${poster(a,true)}</div><div class="pb">
@@ -329,12 +335,23 @@ function route(){
   if(m){ openReader(+m[1]); return; }
   if(h==='#finale'){ openFinale(); return; }
   closeReader();
-  if(h&&h.length>1){ const el=document.getElementById(h.slice(1)); if(el) setTimeout(()=>el.scrollIntoView(),30); }
+  let v='lobby'; const hm=h.match(/^#hall-(intro|people|model|ai)$/);
+  if(hm){ v='halls'; setHall(hm[1]); } else if(['#timeline','#halls','#about','#lobby'].includes(h)) v=h.slice(1);
+  if(v==='halls'&&!hm) setHall(activeHall);
+  lastView=h||'#lobby';
+  $$('.view').forEach(s=>s.classList.toggle('on',s.dataset.view===v));
+  $$('.dock a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+  if(v==='timeline') requestAnimationFrame(()=>tlPlace());
+  window.scrollTo(0,0);
 }
+let lastView='#lobby';
 addEventListener('hashchange',route);
-document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if($('#tStage').classList.contains('on')){ $('#tStage').className='ticket-stage'; $('#tStage').innerHTML=''; } else if($('#drawer').classList.contains('open')) closeWallet(); else if($('#reader').classList.contains('open')) location.hash=cur?'hall-'+cur.zone:'halls'; });
-$('#randomBtn').onclick=()=>{ const pool=DATA.filter(a=>!seen.has(a.n)); const L=pool.length?pool:DATA; go(L[Math.floor(Math.random()*L.length)].n); };
+document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if($('#tStage').classList.contains('on')){ $('#tStage').className='ticket-stage'; $('#tStage').innerHTML=''; } else if($('#drawer').classList.contains('open')) closeWallet(); else if($('#reader').classList.contains('open')) location.hash=lastView; });
+$('#randomBtn').onclick=()=>{ const pool=DATA.filter(a=>!seen.has(a.n)); const L=pool.length?pool:DATA; const pick=L[Math.floor(Math.random()*L.length)];
+  const s=$('#slot'); s.classList.add('spin'); let i=0, delay=50; const b=$('#randomBtn'); b.disabled=true;
+  (function spin(){ const a=DATA[(i++)%DATA.length]; s.textContent=`《${a.film.zh}》`; tick(); delay*=1.12;
+    if(delay<380) setTimeout(spin,delay); else { s.classList.remove('spin'); s.textContent=`《${pick.film.zh}》→ 第 ${pick.n} 場，入場！`; beep(1320,.15,.12); setTimeout(()=>{ b.disabled=false; s.textContent=''; go(pick.n); },900); } })(); };
 
-renderMoods(); renderLineup(); buildTimeline(); renderFilters(); renderHalls(); applyFilter();
+renderMoods(); renderLineup(); buildTimeline(); renderFilters(); renderHalls(); renderTabs(); applyFilter();
 if(!document.body.classList.contains('gated')) route();
 })();

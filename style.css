@@ -363,3 +363,64 @@ img{max-width:100%;display:block}
 .ep-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:40px}
 .ep-grid p{font-size:17px;color:#d8d2c4;margin:0}
 @media (max-width:900px){.ep-grid{grid-template-columns:1fr;gap:16px}}
+
+/* ===== single-view layout ===== */
+.view{display:none;position:relative;z-index:2;min-height:calc(100vh - 60px);padding-bottom:120px}
+.view.on{display:block;animation:viewIn .6s cubic-bezier(.2,.7,.2,1)}
+@keyframes viewIn{from{opacity:0;transform:translateY(14px)}}
+.lobby{display:none}
+.lobby.on{display:grid;place-items:center}
+.lobby-in{width:100%;max-width:1180px;padding:6vh 28px 0;text-align:center}
+.lobby-title{font-family:var(--serif);font-size:clamp(38px,6vw,82px);line-height:1.2;margin:14px 0 26px;transition:all .5s}
+.lobby-q{font-family:var(--serif);font-size:clamp(20px,2.4vw,30px);margin:0 0 26px;color:#e6e0d2}
+.lobby.picked .lobby-title{font-size:clamp(26px,3vw,40px);margin:8px 0 14px}
+.lobby.picked .lobby-q{font-size:16px;color:var(--mute);margin-bottom:14px}
+.lobby .moods{margin:0 auto 26px;text-align:left}
+.lobby .mood{min-height:150px}
+.lobby.picked .moods{grid-template-columns:repeat(5,1fr);gap:8px}
+.lobby.picked .mood{min-height:0;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.lobby.picked .mood .e{font-size:20px}.lobby.picked .mood b{font-size:15px;margin:0}.lobby.picked .mood span:not(.e){display:none}
+.lineup{text-align:left}
+.lineup:empty{display:none}
+.lobby .pick .pp{height:150px}
+.fate{margin-top:30px;display:flex;align-items:center;justify-content:center;gap:16px;min-height:50px}
+.slot{font-family:var(--serif);font-size:24px;color:var(--in);min-width:10em;text-align:left}
+.slot.spin{animation:slotb .08s steps(2) infinite}
+@keyframes slotb{50%{opacity:.5}}
+.dock{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:50;display:flex;gap:4px;padding:6px;background:rgba(20,20,22,.9);backdrop-filter:blur(12px);border:1px solid #333;border-radius:999px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+body.gated .dock{display:none}
+.dock a{white-space:nowrap;display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;text-decoration:none;font-size:14px;color:var(--mute);transition:all .2s}
+.dock a i{font-style:normal}
+.dock a:hover{color:var(--ink)}
+.dock a.on{background:var(--ink);color:var(--bg);font-weight:700}
+.tl-sec{border-top:0;padding-top:60px}
+.hall-tabs{display:flex;gap:8px;flex-wrap:wrap;padding-top:30px}
+.hall-tabs button{border:1px solid #3a3a3e;background:none;border-radius:999px;padding:10px 20px;font-size:15px;display:flex;align-items:center;gap:8px}
+.hall-tabs button i{width:10px;height:10px;border-radius:50%;background:var(--c);display:inline-block}
+.hall-tabs button small{font-family:var(--mono);color:var(--mute);font-size:11px}
+.hall-tabs button[aria-selected=true]{background:var(--c);color:#111;border-color:var(--c)}
+.hall-tabs button[aria-selected=true] small{color:#333}
+.hall-tabs button[aria-selected=true] i{background:#111}
+#v-halls .filter-bar{position:static;border-bottom:0;padding-top:14px;padding-bottom:18px}
+.hall{display:none;padding-bottom:20px}
+.hall.on{display:block;animation:viewIn .5s}
+.hall-gate{min-height:0;height:44vh;grid-template-columns:1fr 1.2fr}
+.hall-art{min-height:0;height:44vh}
+.hall-num{font-size:64px}
+.hall-num::before{width:48px;height:38px}
+.hall-txt{padding:30px 48px}
+.hall-txt h3{font-size:clamp(30px,3.6vw,48px);margin:6px 0 8px}
+.about .about-hero{padding-top:40px}
+.about .tri{height:46vh}
+.about .tri figure:nth-child(2){transform:none}
+.foot{padding-bottom:20px}
+@media (max-width:900px){
+  .lobby .moods{grid-template-columns:1fr 1fr}
+  .lobby.picked .moods{grid-template-columns:repeat(3,1fr)}
+  .lobby.picked .mood b{font-size:12px}
+  .lobby .mood{min-height:0}
+  .dock a{padding:9px 12px;font-size:13px}.dock a span{display:none}.dock a.on span{display:inline}
+  .hall-gate{height:auto;grid-template-columns:1fr}.hall-art{height:30vh}
+  .hall-txt{padding:20px 24px}
+  .fate{flex-direction:column;gap:8px}.slot{text-align:center}
+}
