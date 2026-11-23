@@ -165,7 +165,7 @@ function openReader(n){
   const r=$('#reader'); r.className='reader open z-'+a.zone;
   const still=a.still?`<figure class="still rv"><img src="img/still/${pad(a.n)}.webp" alt="第 ${a.n} 場續集插圖" loading="lazy" width="${a.still[0]}" height="${a.still[1]}"><figcaption>原文插圖 · p.${a.p[0]}–${a.p[1]}</figcaption></figure>`:'';
   r.innerHTML=`
-  <div class="rbar"><span class="t">SCREEN ${pad(a.n)} · ${h.name} · 《${esc(a.film.zh)}》續集</span>
+  <div class="rbar"><button class="back" id="backR">← 回片單</button><span class="t">SCREEN ${pad(a.n)} · ${h.name} · 《${esc(a.film.zh)}》續集</span>
     <span class="reel"><svg viewBox="0 0 40 40" id="reelSvg"><circle cx="20" cy="20" r="18" fill="none" stroke="currentColor"/><g id="reelG">${[0,72,144,216,288].map(d=>`<circle cx="${20+10*Math.cos(d*Math.PI/180)}" cy="${20+10*Math.sin(d*Math.PI/180)}" r="3.4" fill="currentColor"/>`).join('')}</g><circle cx="20" cy="20" r="2.4" fill="currentColor"/></svg><span id="reelPct">0%</span></span>
     <span class="jump"><button data-j="sTrailer">預告片</button><button data-j="sReview">影評</button><button data-j="sFeature">正片</button></span><button class="x" id="closeR">✕ 離場</button><div class="prog" id="prog"></div></div>
   <section class="opening" id="opening">
@@ -189,12 +189,12 @@ function openReader(n){
     <div><dt>ORIGINAL 原文出處</dt><dd>《2026 決策智慧 Decision Intelligence》第 ${a.p[0]}–${a.p[1]} 頁</dd></div>
     <div><dt>INSPIRED BY 致敬電影</dt><dd>《${esc(a.film.zh)}》${esc(a.film.en)}（${a.film.year}）</dd></div>
     <div><dt>CURATION 策展</dt><dd>電影配對與預言／現實對照為本站策展詮釋</dd></div></dl></div>
-  <div class="endcta"><button class="tearbtn" id="tearBtn">${seen.has(a.n)?'再看一次我的票根':'散場了，領取票根 →'}</button></div>
+  <div class="endcta"><button class="btn" id="backBottom" style="margin-right:10px">← 回片單</button><button class="tearbtn" id="tearBtn">${seen.has(a.n)?'再看一次我的票根':'散場了，領取票根 →'}</button></div>
   ${relatedHTML(a)}
   <div class="nextp">${prev?`<button data-n="${prev.n}"><small>← PREVIOUS · 上一場</small><span>《${esc(prev.film.zh)}》${esc(prev.short)}</span></button>`:'<span></span>'}
     ${next?`<button data-n="${next.n}"><small>NEXT · 下一場 →</small><span>《${esc(next.film.zh)}》${esc(next.short)}</span></button>`:`<button data-fin="1"><small>ALL DONE →</small><span>前往閉幕片</span></button>`}</div>`;
   r.scrollTop=0; document.body.style.overflow='hidden'; r.focus({preventScroll:true});
-  $('#closeR').onclick=()=>{ location.hash=lastView; };
+  $('#closeR').onclick=()=>{ location.hash=lastView; }; $('#backR').onclick=()=>{ location.hash=lastView; }; const bb=$('#backBottom'); if(bb) bb.onclick=()=>{ location.hash=lastView; };
   $('#tearBtn').onclick=()=>showTicket(a);
   r.querySelectorAll('.nextp [data-n], .related .pick').forEach(b=>b.onclick=()=>go(+b.dataset.n));
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
@@ -343,7 +343,17 @@ function renderReel(){
   $$('.fc').forEach(c=>c.onclick=e=>{ if(r.dataset.moved==='1'){ e.preventDefault(); return; } go(+c.dataset.n); });
 }
 (function reelDrag(){
-  const r=$('#reel'); let down=false,sx=0,sl=0;
+  const r=$('#reel'); let down=false,sx=0,sl=0, hold=0;
+  const pauseAuto=()=>{ hold=performance.now()+4000; };
+  ['pointerdown','wheel','touchstart','keydown','mouseenter'].forEach(ev=>r.addEventListener(ev,pauseAuto,{passive:true}));
+  r.addEventListener('mousemove',pauseAuto,{passive:true});
+  let acc=0;
+  (function auto(){ const now=performance.now();
+    if(!reduce && now>hold && !down && $('#v-lobby').classList.contains('on') && !$('#reader').classList.contains('open') && !document.body.classList.contains('gated')){
+      acc+=0.6; if(acc>=1){ const s=Math.floor(acc); acc-=s; r.scrollLeft+=s; }
+      if(r.scrollLeft+r.clientWidth>=r.scrollWidth-2){ hold=now+2500; setTimeout(()=>r.scrollTo({left:0,behavior:'smooth'}),2000); }
+    }
+    requestAnimationFrame(auto); })();
   r.addEventListener('pointerdown',e=>{ if(e.pointerType!=='mouse') return; down=true; r.dataset.moved='0'; sx=e.clientX; sl=r.scrollLeft; });
   addEventListener('pointerup',()=>{ if(down){ down=false; r.classList.remove('drag'); setTimeout(()=>{ r.dataset.moved='0'; },30); } });
   r.addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-sx; if(Math.abs(dx)>6){ r.dataset.moved='1'; r.classList.add('drag'); r.scrollLeft=sl-dx; } });

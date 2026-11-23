@@ -499,3 +499,7 @@ body.gated .dock{display:none}
 @media (max-width:900px){.fc{width:80vw}.fc .zh.l4{font-size:46px}.fc .zh.l5{font-size:40px}.fc .zh.l7{font-size:32px}.fc .zh.l9{font-size:27px}}
 
 .fc .art svg{overflow:visible}
+
+.rbar .back{flex:none;background:var(--c);color:#111;border:0;border-radius:999px;padding:6px 16px;font-weight:700;font-size:14px}
+.rbar .t{flex:1}
+.reel{scroll-snap-type:none}
