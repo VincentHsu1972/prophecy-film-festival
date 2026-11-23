@@ -118,12 +118,15 @@ function buildTimeline(){
   }
   tlPlace=()=>{ place(); const sc=$('#tlScroll'); if(sc.scrollWidth>sc.clientWidth+40) sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)*.78; };
   place(); addEventListener('resize',place);
+  let tlPicked=0;
   $$('.tl-dot').forEach(d=>{ const a=byN(+d.dataset.n);
     const show=()=>{ $$('.tl-dot').forEach(x=>x.classList.toggle('sel',x===d)); const h=hallOf(a.zone);
       const c=$('#tlCard'); c.className='tl-card z-'+a.zone;
-      c.innerHTML=`<div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(SCENES[a.n])}</h3><span class="arrow">${h.name}　第 ${a.n} 場</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">看續集</button>`;
+      c.innerHTML=`<div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(SCENES[a.n])}</h3><span class="arrow">${h.name}　第 ${a.n} 場</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">取票進場</button>`;
       c.querySelector('[data-go]').onclick=()=>go(a.n); tick(); };
-    d.onmouseenter=show; d.onfocus=show; d.onclick=e=>{ e.preventDefault(); go(a.n); }; d.title=`點擊進場：${a.film.year}《${a.film.zh}》的續集`; });
+    d.onmouseenter=show; d.onfocus=show;
+    d.onclick=e=>{ e.preventDefault(); if(tlPicked===a.n){ go(a.n); return; } tlPicked=a.n; show(); const c=$('#tlCard'); if(c.getBoundingClientRect().bottom>innerHeight-90) c.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'}); };
+    d.title=`${a.film.year}《${a.film.zh}》：點一下看介紹，再點一次取票進場`; });
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ $('#tlFill').style.width='100%';
     items.forEach((a,i)=>setTimeout(()=>tl.querySelector(`.tl-dot[data-n="${a.n}"]`).classList.add('in'),reduce?0:120+i*90));
     setTimeout(()=>{ const d=tl.querySelector('.tl-dot[data-n="3"]'); if(d&&!$('.tl-dot.sel')) d.onmouseenter(); }, reduce?0:2400); io.disconnect(); } }),{threshold:.2});
