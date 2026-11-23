@@ -603,3 +603,15 @@ body.gated .dock{display:none}
  .opening .fn-en{font-size:12px}
 }
 .lobby-title .nb{display:inline-block}
+/* ===== 劇情版內文：數據卡、中場素描、劇本場次 ===== */
+.st-body figure.num{margin:2.6em 0;padding:22px 0 20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
+.st-body figure.num b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(54px,13vw,92px);line-height:1;color:var(--c);letter-spacing:-.01em;text-shadow:0 0 28px color-mix(in srgb,var(--c) 35%,transparent)}
+.st-body figure.num figcaption{margin:14px auto 0;max-width:30em;font-size:14px;line-height:1.7;color:var(--mute)}
+.st-body figure.num.rv b{transition:opacity 1s,transform 1.2s cubic-bezier(.2,.7,.2,1);opacity:0;transform:translateY(14px) scale(.96)}
+.st-body figure.num.rv.in b{opacity:1;transform:none}
+.st-body .midsk{width:min(360px,72%);margin:3.4em auto 1em;opacity:.75}
+.st-body .midsk svg{width:100%;height:auto;overflow:visible}
+.st-body .midsk .pn{stroke:var(--c);stroke-width:1.3}
+.st-body p.dir{position:relative;padding:6px 0 6px 16px;border-left:3px dotted color-mix(in srgb,var(--c) 55%,transparent);line-height:1.8}
+.st-body p.dir .sc{display:block;font-size:10.5px;letter-spacing:.24em;color:var(--c);opacity:.85;margin-bottom:2px}
+@media (prefers-reduced-motion:reduce){.st-body figure.num.rv b{opacity:1;transform:none;transition:none}}

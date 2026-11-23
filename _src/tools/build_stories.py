@@ -15,5 +15,5 @@ src=open('data.js',encoding='utf-8').read(); d=json.loads(src[src.index('['):src
 for n,s in S.items():
     a=next(x for x in d if x['n']==n)
     orig=sum(len(p) for p in a['paras'] if not re.match(r'^(註解|圖 ?\d|資料來源)',p) and '｜' not in p)
-    st=len(re.sub(r'\s','',s['text']))
+    st=len(re.sub(r'\s','',re.sub(r'(?m)^NUM:.*$','',s['text'])))
     print(f"{n:02d} 原文 {orig} 字｜劇情 {st} 字｜{st/orig:.0%}")

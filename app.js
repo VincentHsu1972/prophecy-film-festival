@@ -229,7 +229,7 @@ function openReader(n){
     if(p<1) requestAnimationFrame(f); else { odo.textContent=y1; odo.classList.add('done'); op.classList.add('titled'); beep(1320,.12,.12); } })(performance.now());
   // reveal + progress
   if(rio) rio.disconnect();
-  rio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); rio.unobserve(e.target);} }),{root:r,threshold:.1});
+  rio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); if(e.target.classList.contains('midsk')) drawSketch(e.target); rio.unobserve(e.target);} }),{root:r,threshold:.1});
   r.querySelectorAll('.rv').forEach(el=>rio.observe(el));
   r.onscroll=()=>{ if(!$('#prog')) return; const p=Math.min(1,r.scrollTop/(r.scrollHeight-r.clientHeight)); $('#prog').style.width=(p*100)+'%'; $('#reelPct').textContent=p>.98?'散場':`${Math.round(p*100)}% · 剩 ${Math.max(1,Math.ceil(a.mins*(1-p)))} 分`; $('#reelG').setAttribute('transform',`rotate(${r.scrollTop/3} 20 20)`); };
 }
@@ -249,18 +249,21 @@ function modeBar(a){ if(!hasStory(a)) return ''; const s=window.STORIES[a.n];
   return `<div class="modebar" id="modebar"><div class="mb-in"><span class="mono">選擇觀看版本</span>
    <button data-m="story" aria-pressed="${readMode==='story'}"><b>劇情版</b><small>${esc(s.style||'電影改編')} · 約 ${Math.max(3,Math.round(s.text.replace(/\s/g,'').length/450))} 分鐘</small></button>
    <button data-m="orig" aria-pressed="${readMode!=='story'}"><b>原文版</b><small>預告片・影評・正片 · ${a.mins} 分鐘</small></button></div></div>`; }
-function fmtStory(txt){
-  return txt.split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>{
-    if(l.startsWith('## ')) return `<h3 class="act rv">${esc(l.slice(3))}</h3>`;
+function fmtStory(txt,n){
+  const lines=txt.split(/\n+/).map(l=>l.trim()).filter(Boolean);
+  const acts=lines.filter(l=>l.startsWith('## ')).length, mid=Math.max(2,Math.floor(acts/2)); let ai=0, sc=0;
+  return lines.map(l=>{
+    if(l.startsWith('## ')){ ai++; const sk=(ai===mid&&acts>=4&&window.SKETCH)?`<div class="midsk rv" aria-hidden="true">${window.SKETCH(n)}</div>`:''; return `${sk}<h3 class="act rv">${esc(l.slice(3))}</h3>`; }
+    if(l.startsWith('NUM: ')){ const [big,cap]=l.slice(5).split('｜'); return `<figure class="num rv"><b>${esc(big)}</b><figcaption>${esc(cap||'')}</figcaption></figure>`; }
     if(l.startsWith('> ')) return `<p class="card rv">${esc(l.slice(2))}</p>`;
     if(l.startsWith('[依據] ')) return `<li>${esc(l.slice(5))}</li>`;
-    if(l.startsWith('~ ')) return `<p class="dir rv">${esc(l.slice(2))}</p>`;
+    if(l.startsWith('~ ')){ sc++; return `<p class="dir rv"><span class="sc">SC. ${pad(sc)}</span>${esc(l.slice(2))}</p>`; }
     return `<p class="rv">${esc(l)}</p>`; }).join('').replace(/(<li>.*<\/li>)/s,'<div class="basis"><span class="mono">情節依據 · SOURCE NOTES</span><ul>$1</ul></div>');
 }
 function storyPane(a){ if(!hasStory(a)) return ''; const s=window.STORIES[a.n];
   return `<div id="storyPane" class="story sty-${a.n} ${readMode==='story'?'':'hide'}"><div class="sec"><div class="mono">劇情版 STORY · 改編自本文 · 情節為虛構</div>
    <h2 class="st-title">${esc(s.title||a.title)}</h2><p class="st-note">${esc(s.note||'本篇以電影的敘事風格改編原文，論點與案例皆取自原文；人物與情節為虛構。想讀作者原文，請切換到「原文版」。')}</p>
-   <div class="st-body">${fmtStory(s.text)}</div></div></div>`; }
+   <div class="st-body">${fmtStory(s.text,a.n)}</div></div></div>`; }
 function bindMode(r){ r.querySelectorAll('#modebar [data-m]').forEach(b=>b.onclick=()=>{ readMode=b.dataset.m;
   r.querySelectorAll('#modebar [data-m]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.m===readMode));
   const sp=$('#storyPane'), op=$('#origPane'); if(sp) sp.classList.toggle('hide',readMode!=='story'); if(op) op.classList.toggle('hide',readMode==='story');
