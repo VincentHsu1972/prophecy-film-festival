@@ -253,7 +253,7 @@ function fmtStory(txt,n){
   const lines=txt.split(/\n+/).map(l=>l.trim()).filter(Boolean);
   const acts=lines.filter(l=>l.startsWith('## ')).length, mid=Math.max(2,Math.floor(acts/2)); let ai=0, sc=0;
   return lines.map(l=>{
-    if(l.startsWith('## ')){ ai++; const sk=(ai===mid&&acts>=4&&window.SKETCH)?`<div class="midsk rv" aria-hidden="true">${window.SKETCH(n)}</div>`:''; return `${sk}<h3 class="act rv">${esc(l.slice(3))}</h3>`; }
+    if(l.startsWith('## ')){ ai++; const sk=(ai===mid&&acts>=4&&window.SCENE)?`<figure class="midsk rv" aria-hidden="true">${window.SCENE(n)}<figcaption>INTERMISSION</figcaption></figure>`:''; return `${sk}<h3 class="act rv">${esc(l.slice(3))}</h3>`; }
     if(l.startsWith('NUM: ')){ const [big,cap]=l.slice(5).split('｜'); return `<figure class="num rv"><b>${esc(big)}</b><figcaption>${esc(cap||'')}</figcaption></figure>`; }
     if(l.startsWith('> ')) return `<p class="card rv">${esc(l.slice(2))}</p>`;
     if(l.startsWith('[依據] ')) return `<li>${esc(l.slice(5))}</li>`;
