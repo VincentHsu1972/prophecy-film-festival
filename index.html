@@ -48,13 +48,22 @@
 <main id="top">
 <!-- ============ LOBBY ============ -->
 <section id="v-lobby" class="view lobby" data-view="lobby">
-  <div class="lobby-in">
-    <p class="mono dim">PROPHECY FILM FESTIVAL · NOW SHOWING</p>
-    <h1 class="lobby-title">這些電影沒有預言錯，<br>只是<span class="hl">太早上映</span>。</h1>
+  <div class="lob-head wrap">
+    <p class="mono dim">PROPHECY FILM FESTIVAL · 22 FILMS · NOW SHOWING</p>
+    <h1 class="lobby-title">這些電影沒有預言錯，只是<span class="hl">太早上映</span>。</h1>
+  </div>
+  <div class="wrap lob-tabs" id="lobTabs" role="tablist" aria-label="選擇放映廳"></div>
+  <div class="reel" id="reel" tabindex="0" aria-label="片單，可左右拖曳"></div>
+  <div class="wrap reel-nav">
+    <span class="mono dim">← 拖曳片單 · DRAG →</span>
+    <span class="rn-btns"><button id="reelL" aria-label="往左">‹</button><button id="reelR" aria-label="往右">›</button></span>
+    <span class="rn-more"><button class="btn" id="randomBtn">🎰 交給命運</button><button class="btn" id="moodToggle" aria-expanded="false">🔮 依心情選片</button></span>
+  </div>
+  <div class="wrap"><span class="slot" id="slot" aria-live="polite"></span></div>
+  <div class="wrap mood-panel" id="moodPanel" hidden>
     <p class="lobby-q" id="lobbyQ">今晚，你想逃離哪種現實？</p>
     <div class="moods" id="moods" role="group" aria-label="選擇心情"></div>
     <div class="lineup" id="lineup" aria-live="polite"></div>
-    <div class="fate"><button class="btn" id="randomBtn">🎰 交給命運</button><span class="slot" id="slot" aria-live="polite"></span></div>
   </div>
 </section>
 
@@ -123,7 +132,7 @@
 </main>
 
 <nav class="dock" aria-label="主選單">
-  <a href="#lobby" data-v="lobby"><i>🔮</i><span>選片</span></a>
+  <a href="#lobby" data-v="lobby"><i>🎞</i><span>片單</span></a>
   <a href="#timeline" data-v="timeline"><i>⏳</i><span>時間軸</span></a>
   <a href="#halls" data-v="halls"><i>🎬</i><span>放映廳</span></a>
   <a href="#about" data-v="about"><i>📜</i><span>關於</span></a>

@@ -149,7 +149,7 @@ function renderHalls(){
   $$('.hall').forEach(h=>io.observe(h));
   markSeen();
 }
-function markSeen(){ if($('#hallTabs').children.length) renderTabs(); $$('.frame').forEach(f=>f.classList.toggle('isseen',seen.has(+f.dataset.n)));
+function markSeen(){ if($('#hallTabs').children.length) renderTabs(); if($('#lobTabs').children.length){ renderLobTabs(); $$('.fc').forEach(f=>f.classList.toggle('isseen',seen.has(+f.dataset.n))); } $$('.frame').forEach(f=>f.classList.toggle('isseen',seen.has(+f.dataset.n)));
   HALLS.forEach(h=>{ const t=DATA.filter(a=>a.zone===h.z), s=t.filter(a=>seen.has(a.n)).length; const i=$(`[data-hall="${h.z}"]`); if(i) i.style.width=(s/t.length*100)+'%'; const p=$(`[data-hallcount="${h.z}"]`); if(p) p.textContent=`你已看 ${s} / ${t.length} 場`; });
   $('#wCount').textContent=`${seen.size}/22`; }
 
@@ -181,7 +181,7 @@ function openReader(n){
     <div><span class="mono">2026 · 已經上映 PREMIERE</span><p>${esc(a.film.reality)}</p><span class="big">2026</span></div>
   </div>
   <div class="sec" id="sTrailer"><div class="mono">01 · 預告片 TRAILER · 30 秒</div><p class="trailer rv">${esc(a.summary||a.hook)}</p></div>
-  <div class="sec" id="sReview"><div class="mono">02 · 影評 REVIEW · 必看三要素</div><div class="review rv">${fmtMust(a.must)}</div></div>
+  <div class="sec" id="sReview"><div class="mono">02 · 影評 REVIEW · 三個看點</div><div class="review rv">${fmtMust(a.must)}</div></div>
   <div class="sec" id="sFeature"><div class="mono">03 · 正片 FEATURE · 全文 ${a.mins} 分鐘</div>${still}<div class="body">${fmtBody(a.paras)}</div></div>
   <div class="credits"><span class="mono">— 片尾字幕 · END CREDITS —</span><dl>
     <div><dt>WRITTEN BY 作者</dt><dd>${esc(a.authorFull||a.author)}</dd></div>
@@ -307,7 +307,7 @@ const MOODS=[
 let mood=null;
 function renderMoods(){
   $('#moods').innerHTML=MOODS.map(m=>`<button class="mood ${m.cut?'cut':''}" data-k="${m.k}" aria-pressed="${mood===m.k}"><span class="e">${m.e}</span><b>${m.l}</b><span>${m.d}</span></button>`).join('');
-  $$('.mood').forEach(b=>b.onclick=()=>{ mood=b.dataset.k; $('#v-lobby').classList.add('picked'); $('#lobbyQ').textContent='為你排好今晚的片單 ↓　想換心情，再點一次上面的選項'; renderMoods(); renderLineup(); tick(); flick(); });
+  $$('.mood').forEach(b=>b.onclick=()=>{ mood=b.dataset.k; $('#lobbyQ').textContent='為你排好今晚的片單 ↓'; renderMoods(); renderLineup(); tick(); flick(); });
 }
 function renderLineup(){
   if(!mood){ $('#lineup').innerHTML=''; return; }
@@ -318,6 +318,40 @@ function renderLineup(){
    <q>${esc(a.hook)}</q><span class="go">${m.cut?'看預告片＋影評 ▶':`進場 · ${a.mins} 分鐘 ▶`}</span></div></button>`).join('')}</div>`;
   $$('.pick').forEach(b=>b.onclick=()=>go(+b.dataset.n));
 }
+
+/* ---------- lobby film wall ---------- */
+let lobHall='all';
+function renderLobTabs(){
+  const opts=[{z:'all',name:'全部 22 部'}].concat(HALLS);
+  $('#lobTabs').innerHTML=opts.map(h=>{const t=h.z==='all'?DATA:DATA.filter(a=>a.zone===h.z);const s=t.filter(a=>seen.has(a.n)).length;
+    return `<button role="tab" class="z-${h.z==='all'?'intro':h.z}" aria-selected="${lobHall===h.z}" data-z="${h.z}">${h.z==='all'?'':'<i></i>'}${h.name}<small>${s}/${t.length}</small></button>`}).join('');
+  $$('#lobTabs button').forEach(b=>b.onclick=()=>{ lobHall=b.dataset.z; renderLobTabs(); renderReel(); flick(); tick(); });
+}
+function renderReel(){
+  const list=lobHall==='all'?DATA:DATA.filter(a=>a.zone===lobHall);
+  const r=$('#reel');
+  r.innerHTML=list.map((a,i)=>{const h=hallOf(a.zone);return `<button class="fc z-${a.zone} ${seen.has(a.n)?'isseen':''}" data-n="${a.n}" style="animation-delay:${Math.min(i,6)*60}ms" aria-label="《${esc(a.film.zh)}》${a.film.year}，第 ${a.n} 場">
+    <div class="bg">${poster(a,true)}</div><div class="shade"></div>
+    <div class="in"><div class="top"><b>SCREEN ${pad(a.n)}</b><span>${h.name}</span></div>
+      <span class="yr">${a.film.year} → 2026</span>
+      <span class="zh">${esc(a.film.zh)}</span><span class="en">${esc(a.film.en)}</span>
+      <p class="lg">${esc(a.film.prophecy)}</p>
+      <p class="sq"><em>2026 續集</em>${esc(a.film.reality)}</p>
+      <div class="cta"><span class="dim">片長 ${a.mins} 分鐘</span><span>進場 ▶</span></div></div></button>`;}).join('');
+  r.scrollLeft=0;
+  $$('.fc').forEach(c=>c.onclick=e=>{ if(r.dataset.moved==='1'){ e.preventDefault(); return; } go(+c.dataset.n); });
+}
+(function reelDrag(){
+  const r=$('#reel'); let down=false,sx=0,sl=0;
+  r.addEventListener('pointerdown',e=>{ if(e.pointerType!=='mouse') return; down=true; r.dataset.moved='0'; sx=e.clientX; sl=r.scrollLeft; });
+  addEventListener('pointerup',()=>{ if(down){ down=false; r.classList.remove('drag'); setTimeout(()=>{ r.dataset.moved='0'; },30); } });
+  r.addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-sx; if(Math.abs(dx)>6){ r.dataset.moved='1'; r.classList.add('drag'); r.scrollLeft=sl-dx; } });
+  r.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ r.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+  r.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') r.scrollBy({left:420,behavior:'smooth'}); if(e.key==='ArrowLeft') r.scrollBy({left:-420,behavior:'smooth'}); });
+  $('#reelL').onclick=()=>{ r.scrollBy({left:-420,behavior:'smooth'}); tick(); };
+  $('#reelR').onclick=()=>{ r.scrollBy({left:420,behavior:'smooth'}); tick(); };
+  $('#moodToggle').onclick=()=>{ const p=$('#moodPanel'), open=p.hidden; p.hidden=!open; $('#moodToggle').setAttribute('aria-expanded',open); if(open){ p.scrollIntoView({behavior:'smooth',block:'start'}); } tick(); };
+})();
 
 /* ---------- index ---------- */
 function openIndex(){
@@ -352,6 +386,6 @@ $('#randomBtn').onclick=()=>{ const pool=DATA.filter(a=>!seen.has(a.n)); const L
   (function spin(){ const a=DATA[(i++)%DATA.length]; s.textContent=`《${a.film.zh}》`; tick(); delay*=1.12;
     if(delay<380) setTimeout(spin,delay); else { s.classList.remove('spin'); s.textContent=`《${pick.film.zh}》→ 第 ${pick.n} 場，入場！`; beep(1320,.15,.12); setTimeout(()=>{ b.disabled=false; s.textContent=''; go(pick.n); },900); } })(); };
 
-renderMoods(); renderLineup(); buildTimeline(); renderFilters(); renderHalls(); renderTabs(); applyFilter();
+renderLobTabs(); renderReel(); renderMoods(); renderLineup(); buildTimeline(); renderFilters(); renderHalls(); renderTabs(); applyFilter();
 if(!document.body.classList.contains('gated')) route();
 })();
