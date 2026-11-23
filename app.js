@@ -33,6 +33,15 @@ function drawSketch(box){ if(!box) return; const els=[...box.querySelectorAll('.
 let seen=new Set();
 try{seen=new Set(JSON.parse(localStorage.getItem('dw-stubs')||'[]'));}catch(e){}
 const save=()=>{try{localStorage.setItem('dw-stubs',JSON.stringify([...seen]));}catch(e){}};
+/* 從「帶到另一台裝置」的連結帶入票根：合併，不覆蓋 */
+let carried=0;
+(function(){ const m=location.hash.match(/^#stubs=([\d.]+)$/); if(!m) return;
+  m[1].split('.').map(Number).filter(n=>n>=1&&n<=22).forEach(n=>{ if(!seen.has(n)){ seen.add(n); carried++; } });
+  save(); try{ history.replaceState(null,'',location.pathname+'#lobby'); }catch(e){} })();
+const SITE=location.origin+location.pathname;
+async function share(title,text,url){
+  try{ if(navigator.share){ await navigator.share({title,text,url}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
+  try{ await navigator.clipboard.writeText(url); toast('連結已複製，貼給對方就能打開'); }catch(e){ toast('請複製網址：'+url); } }
 
 /* ---------- sound (WebAudio, generated, no files) ---------- */
 let ac=null, hum=null, soundOn=false;
@@ -83,7 +92,7 @@ function poster(a,bare){
 
 /* ---------- gate ---------- */
 const gate=$('#gate');
-function endGate(){ gate.classList.add('letterbox'); setTimeout(()=>{ gate.classList.add('gone'); document.body.classList.remove('gated'); route(); },850); try{sessionStorage.setItem('dw-gate','1');}catch(e){} }
+function endGate(){ gate.classList.add('letterbox'); setTimeout(()=>{ gate.classList.add('gone'); document.body.classList.remove('gated'); route(); if(carried){ toast(`已帶入 ${carried} 張票根`); carried=0; } },850); try{sessionStorage.setItem('dw-gate','1');}catch(e){} }
 function runLeader(){
   $('#gateIntro').classList.add('hide'); const L=$('#leader'); L.classList.add('on');
   const sw=$('#sweep'), num=$('#lnum'); let n=3, t0=performance.now(); const per=reduce?300:900;
@@ -293,10 +302,10 @@ function showTicket(a){
       <div class="row"><div>影廳<b>${h.name}</b></div><div>座位<b>${h.row}-${pad(a.n)}</b></div><div>片長<b>${a.mins} 分</b></div><div>日期<b>${today()}</b></div></div><div class="take"><i>今天帶走的一句話</i>${esc(a.hook)}</div></div>
     <div class="b"><small>場次</small><span class="no">${pad(a.n)}</span><small>${a.film.year}—2026</small></div></div>
     <p class="tk-msg">${had?'這張票根已經在你的票根夾裡了。':'沿著虛線撕下票根，收進票根夾。'}</p>
-    <div class="tk-actions">${had?'':'<button class="btn solid" id="tkTear">沿虛線撕下票根</button>'}<button class="btn" id="tkDl">下載票券圖</button><button class="btn" id="tkClose">繼續觀賞</button></div></div>`;
+    <div class="tk-actions">${had?'':'<button class="btn solid" id="tkTear">沿虛線撕下票根</button>'}<button class="btn" id="tkShare">推薦給朋友</button><button class="btn" id="tkDl">下載票券圖</button><button class="btn" id="tkClose">繼續觀賞</button></div></div>`;
   tick(); flick();
   const close=()=>{ st.className='ticket-stage'; st.innerHTML=''; };
-  $('#tkClose').onclick=close; st.onclick=e=>{ if(e.target===st) close(); };
+  $('#tkClose').onclick=close; $('#tkShare').onclick=()=>share('預言成真影展',`我剛在「預言成真影展」看了《${a.film.zh}》的續集：${a.hook}`,SITE+'#screen-'+a.n); st.onclick=e=>{ if(e.target===st) close(); };
   $('#tkDl').onclick=()=>downloadTicket(a);
   const t=$('#tkTear'); if(t) t.onclick=()=>{ $('#tk').classList.add('torn'); tick(); setTimeout(tick,120); stamp(a.n); t.remove(); $('.tk-msg').textContent=seen.size===DATA.length?'22 張全部集滿，閉幕片已為你解鎖。':`收進票根夾了　${seen.size}/22　${hallDoneMsg(a)}`; const tb=$('#tearBtn'); if(tb) tb.textContent='再看一次我的票根'; };
 }
@@ -328,8 +337,11 @@ function renderWallet(){
   <div class="finale ${all?'unlocked':''}"><span class="mono dim">閉幕片</span><h3 style="font-family:var(--serif);margin:6px 0 0">22 則預言，6 個答案</h3>
   <p>${all?'你看完了全部 22 場，閉幕片為你開放。':'集滿 22 張票根解鎖。它會把 22 部續集收成一張地圖：預言成真之後，品牌該做的六件事。'}</p>
   <button id="finBtn" ${all?'':'disabled'}>${all?'進場觀賞':'尚未解鎖'}</button></div>
+  <div class="w-share"><button class="btn" id="wInvite">邀朋友一起看</button><button class="btn" id="wCarry" ${seen.size?'':'disabled'}>帶到另一台裝置</button></div><p class="dim w-note">「帶到另一台裝置」會產生一個連結，在手機或電腦打開它，看過的場次就會自動合併過去。</p>
   <p style="margin-top:20px"><button class="btn" id="wIdx">全部場次索引</button></p><button class="reset" id="resetW">清除我的觀影紀錄</button>`;
   $('#closeW').onclick=closeWallet; $('#wIdx').onclick=openIndex;
+  $('#wInvite').onclick=()=>share('預言成真影展','22 部科幻電影，2026 年的續集。一起來挑一部？',SITE);
+  $('#wCarry').onclick=()=>{ if(seen.size) share('我的票根夾',`預言成真影展：我已看 ${seen.size} 場，打開連結接著看`,SITE+'#stubs='+[...seen].sort((x,y)=>x-y).join('.')); };
   d.querySelectorAll('.stubs button').forEach(b=>b.onclick=()=>{ closeWallet(); go(+b.dataset.n); });
   $('#resetW').onclick=()=>{ if(!seen.size) return; seen=new Set(); save(); markSeen(); renderWallet(); toast('觀影紀錄已清除'); };
   if(all) $('#finBtn').onclick=()=>{ closeWallet(); location.hash='finale'; };
