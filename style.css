@@ -834,3 +834,8 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
 .w-share .btn[disabled]{opacity:.4;cursor:not-allowed}
 .w-note{font-size:13px;margin:8px 0 0;line-height:1.6}
 .tk-actions{flex-wrap:wrap}
+/* Logo */
+.brand{display:inline-flex;align-items:center;gap:10px}
+.brand-eye{height:20px;width:auto}
+.gate-logo{width:min(300px,62vw);height:auto;margin:0 auto 4px;opacity:0;animation:rise 1.2s .1s cubic-bezier(.2,.7,.2,1) forwards}
+@media (prefers-reduced-motion:reduce){.gate-logo{opacity:1}}

@@ -17,5 +17,7 @@ def emb(m):
     im=Image.open('intro/'+m.group(1)).convert('RGB'); im.thumbnail((1440,1440)); b=io.BytesIO(); im.save(b,'JPEG',quality=72)
     return 'src="data:image/jpeg;base64,'+base64.b64encode(b.getvalue()).decode()+'"'
 h=re.sub(r'src="(img/[^"]+)"',emb,h)
+h=re.sub(r'src="\.\./(img/[^"]+\.svg)"',lambda m:'src="data:image/svg+xml;base64,'+base64.b64encode(open(m.group(1),'rb').read()).decode()+'"',h)
+h=re.sub(r'href="\.\./(img/[^"]+\.svg)"',lambda m:'href="data:image/svg+xml;base64,'+base64.b64encode(open(m.group(1),'rb').read()).decode()+'"',h)
 h=h.replace('<a class="btn" href="../">','<a class="btn" href="https://vincenthsu1972.github.io/prophecy-film-festival/">')
 open('預言成真影展_三分鐘介紹.html','w',encoding='utf-8').write(h); print('OK',len(h)//1024,'KB')

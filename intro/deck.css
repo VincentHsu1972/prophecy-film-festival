@@ -239,3 +239,7 @@ h1,h2,h3,.lead,.big{font-weight:500}
 :root{--bg:#101214;--ink:#ece8df;--mute:#9b9890;--serif:"Noto Serif TC","Source Han Serif TC","Songti TC","PMingLiU",serif;--sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
 h1,h2,h3,.lead,.big{font-weight:700}
 .start{background:radial-gradient(circle at 50% 40%,#1b1e22,#08090a 70%)}
+.start-logo{width:min(260px,56vw);margin:0 auto}
+.cover-logo{width:min(240px,50vw);display:block;margin:0 auto 6px}
+.s.on .cover-logo{animation:up .9s cubic-bezier(.2,.7,.2,1) both}
+.start{justify-items:center}
