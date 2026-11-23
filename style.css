@@ -357,3 +357,9 @@ img{max-width:100%;display:block}
   .jump{display:none}
   .idx-btn{display:none}
 }
+
+.epilogue{padding-top:100px;padding-bottom:80px;border-top:1px solid var(--line);position:relative;z-index:2}
+.epilogue h2{font-family:var(--serif);font-size:clamp(28px,3.6vw,46px);line-height:1.3;margin:12px 0 26px}
+.ep-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:40px}
+.ep-grid p{font-size:17px;color:#d8d2c4;margin:0}
+@media (max-width:900px){.ep-grid{grid-template-columns:1fr;gap:16px}}

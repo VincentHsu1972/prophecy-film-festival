@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
-<title>預言成真影展｜決策智慧 2026</title>
-<meta name="description" content="科幻電影說的未來，2026 已經上映。《2026 決策智慧》22 篇文章，22 場預言成真的放映。">
+<title>預言成真影展｜1936 → 2026</title>
+<meta name="description" content="22 部科幻電影的預言，今天全部上映。看當年的劇本，如何在 2026 年真實上演。">
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="gated">
@@ -18,7 +18,7 @@
 <div id="gate" role="dialog" aria-label="開場">
   <div class="beam" aria-hidden="true"></div>
   <div class="gate-in" id="gateIntro">
-    <p class="mono dim">DENTSU TAIWAN · DECISION INTELLIGENCE · 10TH ANNIVERSARY</p>
+    <p class="mono dim">PROPHECY FILM FESTIVAL · 1936 → 2026</p>
     <h1 class="gate-title"><span>預言</span><span>成真</span><span>影展</span></h1>
     <p class="gate-sub">科幻電影說的未來，2026 已經上映。</p>
     <div class="gate-btns">
@@ -37,9 +37,9 @@
 
 <!-- ============ TOP BAR ============ -->
 <header class="top">
-  <a class="brand" href="#top">預言成真影展<small>DECISION INTELLIGENCE 2026</small></a>
+  <a class="brand" href="#top">預言成真影展<small>PROPHECY FILM FESTIVAL</small></a>
   <nav class="nav">
-    <a href="#destiny">命運選片</a><a href="#timeline">預言時間軸</a><a href="#halls">放映廳</a><button class="idx-btn" id="idxBtn">☰ 22 場索引</button>
+    <a href="#destiny">命運選片</a><a href="#timeline">預言時間軸</a><a href="#halls">放映廳</a><a href="#about">關於</a><button class="idx-btn" id="idxBtn">☰ 22 場索引</button>
     <button id="soundBtn" class="icon" aria-pressed="false" aria-label="放映機音效">🔇</button>
     <button class="wallet-btn" id="walletBtn" aria-label="打開票根夾">🎟 <b id="wCount">0/22</b></button>
   </nav>
@@ -49,14 +49,14 @@
 <!-- ============ HERO ============ -->
 <section class="hero">
   <div class="tri">
-    <figure class="z-people"><img src="img/hall/people.webp" alt="刊物 People 篇章藝術：指紋"><span class="band"></span><b>PEOPLE</b></figure>
-    <figure class="z-model"><img src="img/hall/model.webp" alt="刊物 Model 篇章藝術：向日葵"><span class="band"></span><b>MODEL</b></figure>
-    <figure class="z-ai"><img src="img/hall/ai.webp" alt="刊物 A.I. 篇章藝術：像素側臉"><span class="band"></span><b>A.I.</b></figure>
+    <figure class="z-people"><img src="img/hall/people.webp" alt="People 廳主視覺：指紋"><span class="band"></span><b>PEOPLE</b></figure>
+    <figure class="z-model"><img src="img/hall/model.webp" alt="Model 廳主視覺：向日葵"><span class="band"></span><b>MODEL</b></figure>
+    <figure class="z-ai"><img src="img/hall/ai.webp" alt="A.I. 廳主視覺：像素側臉"><span class="band"></span><b>A.I.</b></figure>
   </div>
   <div class="hero-copy">
-    <p class="mono dim">決策智慧 十週年特映 · NOW SHOWING</p>
+    <p class="mono dim">NOW SHOWING · 22 部預言，今天全部上映</p>
     <h2 class="hero-title">科幻電影<br>不再講未來。</h2>
-    <p class="lede">《銀翼殺手》、《雲端情人》、《駭客任務》……它們當年的預言，一部部成了今天的新聞。<br>《2026 決策智慧》的 22 篇文章，就是這些電影的續集：<b>預言成真之後，品牌該怎麼辦？</b></p>
+    <p class="lede">1982 年，《銀翼殺手》擔心我們分不出真人與複製人；如今，品牌得特別聲明「這支影片不是 AI 做的」。2013 年，《雲端情人》想像一個比你更懂你的 AI；現在，AI 代理正替消費者比較、選擇、下單。<br><b>這些電影沒有預言錯，只是太早上映。來看看當年的劇本，今天在哪裡上演。</b></p>
     <div class="hero-btns"><a class="btn solid" href="#destiny">🔮 幫我選片</a><a class="btn" href="#timeline">預言時間軸 ↓</a><button class="btn" id="randomBtn">🎲 隨機入場</button></div>
   </div>
 </section>
@@ -72,14 +72,14 @@
 
 <!-- ============ MANIFESTO ============ -->
 <section class="manifesto wrap">
-  <div class="mf-l"><p class="mono dim">CURATOR'S NOTE · 策展理念</p><h2>一本刊物，<br>其實是一份<br>影展節目單。</h2></div>
+  <div class="mf-l"><p class="mono dim">HOW TO WATCH · 觀影指南</p><h2>每一部電影，<br>都有一部<br>2026 年的續集。</h2></div>
   <div class="mf-r">
-    <p>沒有人會從第一頁讀到第 200 頁。但每個人都很會選電影：先看片長，再看類型，然後看今晚的心情。</p>
-    <p>這座影展照刊物原本的結構分成四個廳。每篇文章配一部「預言成真」的經典電影，<b>電影是入口，文章是續集</b>。文章內容一字未改，電影配對與對照文字則是本站的策展詮釋。</p>
+    <p>左邊，是電影當年寫下的劇本；右邊，是 2026 年真實上演的版本。續集由站在第一線的策略、創意、媒體、數據與體驗專家執筆，寫的是真實的品牌、真實的消費者，和他們正在面對的選擇。</p>
+    <p>你不需要從頭看到尾。先看片長、選心情，挑一場就好。<b>電影是入口，續集才是正片。</b></p>
     <ol class="how">
       <li><b>預告片</b><span>一句話，30 秒決定進不進場</span></li>
-      <li><b>影評</b><span>必看三要素，3 分鐘抓重點</span></li>
-      <li><b>正片</b><span>全文附頁碼，依片長安排</span></li>
+      <li><b>影評</b><span>三個看點，3 分鐘抓重點</span></li>
+      <li><b>正片</b><span>完整續集，依片長安排</span></li>
       <li><b>票根</b><span>集滿 22 張，解鎖閉幕片</span></li>
     </ol>
   </div>
@@ -111,6 +111,16 @@
   <div id="hallList"></div>
 </section>
 </main>
+
+<section class="epilogue wrap" id="about">
+  <p class="mono dim">EPILOGUE · 附錄｜關於這座影展</p>
+  <h2>十年前的「未來」，<br>已經成了今天的日常。</h2>
+  <div class="ep-grid">
+    <p>這座影展的 22 部續集，全部來自電通集團的年度刊物《決策智慧 Decision Intelligence》2026 年版。今年，《決策智慧》創刊十週年。</p>
+    <p>十年來，我們在這本刊物裡談過的許多「未來」，如今都成了每天的新聞，就像那些科幻電影一樣。所以這一次，我們不把它當成一本近 200 頁的刊物，而是把它辦成一場影展：讓每一篇文章都從一部電影開始，讓你挑一場有感的，然後忍不住看下一場。</p>
+  </div>
+  <p class="dim small">續集原文依刊物分為 People、Model、A.I. 三個篇章，本影展以此分廳，另設序幕廳。</p>
+</section>
 
 <footer class="wrap foot">
   <p>內容出處：電通行銷傳播集團《2026 決策智慧 Decision Intelligence》。文章、插圖與篇章藝術之版權屬原作者與電通集團所有；本站完整呈現原文，未經改寫。</p>

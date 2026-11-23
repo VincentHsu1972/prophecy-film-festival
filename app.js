@@ -3,7 +3,7 @@
 const DATA = window.DATA || [];
 const HALLS = [
   {z:'intro', no:'00', name:'序幕廳', en:'PROLOGUE', art:'intro', row:'S',
-   desc:'兩位領導者為整本刊物定調：AI 時代，什麼變了、什麼沒變。先看這兩場，後面 20 場會更有感。'},
+   desc:'開幕兩場：AI 時代，什麼變了、什麼沒變。先看這兩場，後面 20 場會更有感。'},
   {z:'people', no:'01', name:'People 廳', en:'PEOPLE', art:'people', row:'P',
    desc:'人仍然是一切的起點。真實、信任、情緒與共同記憶，是 AI 最難複製的東西。'},
   {z:'model', no:'02', name:'Model 廳', en:'MODEL', art:'model', row:'M',
@@ -121,7 +121,7 @@ function renderHalls(){
   root.innerHTML=HALLS.map(h=>{ const items=DATA.filter(a=>a.zone===h.z); const mins=items.reduce((s,a)=>s+a.mins,0);
     return `<section class="hall z-${h.z}" id="hall-${h.z}">
     <div class="hall-gate">
-      <div class="hall-art"><img src="img/hall/${h.art}.webp" alt="${h.name}篇章藝術（取自刊物）" loading="lazy"><span class="band"></span><span class="hall-num">${h.no}</span></div>
+      <div class="hall-art"><img src="img/hall/${h.art}.webp" alt="${h.name}主視覺" loading="lazy"><span class="band"></span><span class="hall-num">${h.no}</span></div>
       <div class="hall-txt"><span class="vt">${h.en}</span><span class="meta">HALL ${h.no} · ${items.length} SCREENINGS · ${mins} MIN</span><h3>${h.name}</h3><p>${h.desc}</p>
       <div class="hall-prog"><i data-hall="${h.z}"></i></div><p class="dim small" data-hallcount="${h.z}"></p></div>
     </div>
@@ -157,7 +157,7 @@ function go(n){ location.hash='screen-'+n; }
 function openReader(n){
   const a=byN(n); if(!a) return; cur=a; const h=hallOf(a.zone), i=DATA.indexOf(a), prev=DATA[i-1], next=DATA[i+1];
   const r=$('#reader'); r.className='reader open z-'+a.zone;
-  const still=a.still?`<figure class="still rv"><img src="img/still/${pad(a.n)}.webp" alt="《2026 決策智慧》第 ${a.n} 篇文章插圖" loading="lazy" width="${a.still[0]}" height="${a.still[1]}"><figcaption>刊物插圖 · 《2026 決策智慧》p.${a.p[0]}–${a.p[1]}</figcaption></figure>`:'';
+  const still=a.still?`<figure class="still rv"><img src="img/still/${pad(a.n)}.webp" alt="第 ${a.n} 場續集插圖" loading="lazy" width="${a.still[0]}" height="${a.still[1]}"><figcaption>原文插圖 · p.${a.p[0]}–${a.p[1]}</figcaption></figure>`:'';
   r.innerHTML=`
   <div class="rbar"><span class="t">SCREEN ${pad(a.n)} · ${h.name} · 《${esc(a.film.zh)}》續集</span>
     <span class="reel"><svg viewBox="0 0 40 40" id="reelSvg"><circle cx="20" cy="20" r="18" fill="none" stroke="currentColor"/><g id="reelG">${[0,72,144,216,288].map(d=>`<circle cx="${20+10*Math.cos(d*Math.PI/180)}" cy="${20+10*Math.sin(d*Math.PI/180)}" r="3.4" fill="currentColor"/>`).join('')}</g><circle cx="20" cy="20" r="2.4" fill="currentColor"/></svg><span id="reelPct">0%</span></span>
@@ -168,7 +168,7 @@ function openReader(n){
       <div class="fn">${h.en} · SCREEN ${pad(a.n)} &nbsp;|&nbsp; <b>《${esc(a.film.zh)}》</b> ${esc(a.film.en)}</div>
       <div class="odo" id="odo">${a.film.year}</div>
       <h1>${esc(a.title)}</h1>
-      <div class="meta">${esc(a.author)} ・ 片長約 ${a.mins} 分鐘 ・ 刊物 p.${a.p[0]}–${a.p[1]}</div>
+      <div class="meta">${esc(a.author)} ・ 片長約 ${a.mins} 分鐘</div>
     </div><span class="cue">SCROLL TO PLAY ↓</span>
   </section>
   <div class="vs">
@@ -245,7 +245,7 @@ function downloadTicket(a){
     x.font='28px serif'; const t=a.title.length>30?a.title.slice(0,30)+'…':a.title; x.fillText(t,90,220);
     x.fillStyle='#6f6857'; x.font='16px monospace'; [['HALL',h.name],['SEAT',`${h.row}-${pad(a.n)}`],['RUNTIME',a.mins+' MIN'],['DATE',today()]].forEach((p,i)=>{ x.fillStyle='#6f6857'; x.font='16px monospace'; x.fillText(p[0],90+i*190,300); x.fillStyle='#141414'; x.font='bold 26px sans-serif'; x.fillText(p[1],90+i*190,336); });
     x.fillStyle='#141414'; x.font='16px monospace'; x.textAlign='center'; x.fillText('SCREEN',W-170,150); x.font='bold 110px serif'; x.fillText(pad(a.n),W-170,260); x.font='18px monospace'; x.fillText(`${a.film.year} → 2026`,W-170,310);
-    x.textAlign='left'; x.fillStyle='#6f6857'; x.font='14px monospace'; x.fillText('《2026 決策智慧 Decision Intelligence》10th Anniversary',90,H-70);
+    x.textAlign='left'; x.fillStyle='#6f6857'; x.font='14px monospace'; x.fillText('PROPHECY FILM FESTIVAL · 1936 → 2026',90,H-70);
     c.toBlob(b=>{ try{ const u=URL.createObjectURL(b), l=document.createElement('a'); l.href=u; l.download=`prophecy-ticket-${pad(a.n)}.png`; document.body.appendChild(l); l.click(); l.remove(); setTimeout(()=>URL.revokeObjectURL(u),2000); toast('票券圖已下載'); }catch(e){ toast('此環境不支援下載，請改用截圖'); } });
   }catch(e){ toast('此環境不支援下載，請改用截圖'); }
 }
@@ -259,7 +259,7 @@ function renderWallet(){
   <div class="stubs">${DATA.map(a=>`<button class="z-${a.zone} ${seen.has(a.n)?'on':''}" data-n="${a.n}" title="《${esc(a.film.zh)}》${esc(a.short)}">${pad(a.n)}</button>`).join('')}</div>
   <div class="hallsum">${HALLS.map(h=>{const t=DATA.filter(a=>a.zone===h.z),s=t.filter(a=>seen.has(a.n)).length;return `<div class="z-${h.z}"><span>${h.name}</span><b>${s}/${t.length}</b></div>`}).join('')}</div>
   <div class="finale ${all?'unlocked':''}"><span class="mono dim">CLOSING FILM · 閉幕片</span><h3 style="font-family:var(--serif);margin:6px 0 0">22 則預言，6 個答案</h3>
-  <p>${all?'你看完了整本刊物，閉幕片為你開放。':'集滿 22 張票根解鎖。它會把整本刊物收成一張地圖：預言成真之後，品牌該做的六件事。'}</p>
+  <p>${all?'你看完了全部 22 場，閉幕片為你開放。':'集滿 22 張票根解鎖。它會把 22 部續集收成一張地圖：預言成真之後，品牌該做的六件事。'}</p>
   <button id="finBtn" ${all?'':'disabled'}>${all?'▶ 進場觀賞':'🔒 尚未解鎖'}</button></div>
   <p style="margin-top:20px"><button class="btn" id="wIdx">☰ 全部場次索引</button></p><button class="reset" id="resetW">清除我的觀影紀錄</button>`;
   $('#closeW').onclick=closeWallet; $('#wIdx').onclick=openIndex;
@@ -282,7 +282,7 @@ function openFinale(){
   } else {
     r.innerHTML=bar+`<section class="opening go titled"><div class="lbt"></div><div class="lbb"></div><div class="inner"><div class="fn">CLOSING FILM · 1936 → 2026</div><div class="odo done">2026</div><h1>預言都成真了，然後呢？</h1><div class="meta">策展人的話 · 非刊物原文</div></div></section>
     <div class="sec fin"><p>從《摩登時代》的生產線，到《雲端情人》裡懂你的 AI，九十年來科幻電影都在問同一個問題：<b>當機器什麼都能做，人還剩下什麼？</b></p>
-    <p>看完 22 場，這本刊物的答案出奇一致：AI 改變的是速度、分工與做法；不變的是，品牌必須被人相信、被人記得、被人選擇。</p>
+    <p>看完 22 場，續集們的答案出奇一致：AI 改變的是速度、分工與做法；不變的是，品牌必須被人相信、被人記得、被人選擇。</p>
     <div class="six">${SIX.map(s=>`<div><b>${s[0]}</b><span>${s[1]}</span><small>SCREEN ${s[2].map(pad).join(' · ')}</small></div>`).join('')}</div>
     <p>電影裡的未來總有個反派。2026 年的現實沒有反派，只有兩種公司：一種把 AI 用來變得更快，一種把 AI 用來更懂人。</p>
     <p class="dim" style="font-size:15px">— 感謝觀賞。片尾彩蛋：從頭再看一次，你會發現 22 篇其實在講同一件事。</p></div><div style="height:90px"></div>`;
