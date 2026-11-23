@@ -171,10 +171,10 @@ const S={
 function sched(){ if(!cfg) return; const B=60/cfg.bpm, len=B*cfg.beats;
   while(nextBar<ac.currentTime+1.2){ try{ cfg.bar(barIdx,nextBar,B); }catch(e){} nextBar+=len; barIdx++; } }
 
-function play(n,ctx){
+function play(n,ctx,vol){
   if(!ctx||!S[n]) return; if(playingN===n&&cfg) return; stop(true);
   setup(ctx); cfg=S[n]; playingN=n; barIdx=0; nextBar=ac.currentTime+.15;
-  master.gain.cancelScheduledValues(ac.currentTime); master.gain.setValueAtTime(master.gain.value,ac.currentTime); master.gain.linearRampToValueAtTime(.55,ac.currentTime+2.5);
+  master.gain.cancelScheduledValues(ac.currentTime); master.gain.setValueAtTime(master.gain.value,ac.currentTime); master.gain.linearRampToValueAtTime(vol||.55,ac.currentTime+2.5);
   sched(); timer=setInterval(sched,250);
 }
 function stop(quick){

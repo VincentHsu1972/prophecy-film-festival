@@ -3,7 +3,7 @@ const S=[...document.querySelectorAll('.s')], T=S.map(s=>+s.dataset.t*1000), TOT
 let i=0, t0=0, el=0, playing=false, raf=0;
 const $=id=>document.getElementById(id);
 const fmt=ms=>{const s=Math.round(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-function show(n){ i=Math.max(0,Math.min(S.length-1,n)); S.forEach((s,k)=>{ s.classList.remove('on'); void s.offsetWidth; if(k===i) s.classList.add('on'); }); el=0; t0=performance.now(); $('cnt').textContent=String(i+1).padStart(2,'0')+' / '+S.length; }
+function show(n){ i=Math.max(0,Math.min(S.length-1,n)); S.forEach((s,k)=>{ s.classList.remove('on'); void s.offsetWidth; if(k===i) s.classList.add('on'); }); el=0; t0=performance.now(); $('cnt').textContent=String(i+1).padStart(2,'0')+' / '+S.length; document.dispatchEvent(new CustomEvent('slide',{detail:i})); }
 function loop(now){ if(playing){ el=now-t0; if(el>=T[i]){ if(i<S.length-1){ show(i+1); } else { playing=false; $('play').textContent='▶'; } } }
   const before=T.slice(0,i).reduce((a,b)=>a+b,0), cur=before+Math.min(el,T[i]);
   $('bar').style.width=(cur/TOTAL*100)+'%'; $('clock').textContent=fmt(cur)+' / '+fmt(TOTAL); raf=requestAnimationFrame(loop); }

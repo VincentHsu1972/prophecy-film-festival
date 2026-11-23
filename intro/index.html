@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>三分鐘介紹｜預言成真影展</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%230b0b0c%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%279%27 fill=%27none%27 stroke=%27%23e8d4a2%27 stroke-width=%272.5%27/%3E%3C/svg%3E">
-<link rel="stylesheet" href="deck.css?v=202611232139">
+<link rel="stylesheet" href="deck.css?v=202611232150">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -17,6 +17,7 @@
   <p class="sub">三分鐘作品介紹 · 自動播放</p>
   <button id="go" class="btn">▶ 開始播放</button>
   <p class="mono dim small" id="auto">3 秒後自動開始</p>
+  <p class="mono dim small">點「開始播放」會有襯底配樂</p>
 </div>
 
 <main id="deck" aria-live="polite">
@@ -35,7 +36,7 @@
 <!-- 2 -->
 <section class="s" data-t="15">
   <div class="c narrow">
-    <p class="mono k">01 · INSIGHT 洞察</p>
+    <p class="mono k">INSIGHT 洞察</p>
     <h2>沒有人會把一本<br><span class="hl">近 200 頁</span>的刊物從頭讀到尾。</h2>
     <h2 class="reveal d2">但每個人，<br>都很會<span class="hl2">選電影</span>。</h2>
     <p class="note reveal d3">先看片名、再看片長、最後看今晚的心情。這就是我們讀東西的方式。</p>
@@ -45,7 +46,7 @@
 <!-- 3 -->
 <section class="s" data-t="13">
   <div class="c">
-    <p class="mono k">02 · CONCEPT 概念</p>
+    <p class="mono k">CONCEPT 概念</p>
     <h2>22 篇文章 × 22 部<span class="hl">預言成真</span>的電影</h2>
     <div class="films" aria-hidden="true">
       <span>關鍵報告 2002</span><span>雲端情人 2013</span><span>銀翼殺手 1982</span><span>鋼鐵人 2008</span><span>全面啟動 2010</span><span>攻殼機動隊 1995</span><span>A.I. 人工智慧 2001</span><span>一級玩家 2018</span><span>社群網戰 2010</span><span>回到未來 第二集 1989</span><span>王牌冤家 2004</span><span>駭客任務 1999</span><span>瓦力 2008</span><span>機械公敵 2004</span><span>蝴蝶效應 2004</span><span>楚門的世界 1998</span><span>明日邊界 2014</span><span>星際大戰 1977</span><span>記憶拼圖 2000</span><span>摩登時代 1936</span><span>雨果的冒險 2011</span><span>2001 太空漫遊 1968</span>
@@ -55,118 +56,113 @@
 </section>
 
 <!-- 4 -->
-<section class="s split" data-t="17">
+<section class="s split" data-t="15">
   <div class="txt">
-    <p class="mono k">03 · THE FILM WALL 片名牆</p>
+    <p class="mono k">THE FILM WALL 片名牆</p>
     <h2>用片名勾人，<br>不用文章標題。</h2>
     <ul>
-      <li>進場後只有一件事：<b>左右拖曳</b>，挑一部片；不動時片單會自己緩緩往右捲</li>
-      <li>四個放映廳，照刊物的 People／Model／A.I. 分廳</li>
-      <li>每張卡是一段<b>電影場景</b>，加一張<b>原創手繪插畫</b></li>
+      <li>左右拖曳挑一部片；不動時，片單自己緩緩往右捲</li>
+      <li>四個放映廳，每張卡是一段<b>電影場景</b>加一張<b>原創手繪</b></li>
       <li>不使用任何電影海報或劇照</li>
+      <li>今晚，我們挑<b class="hl2">《駭客任務》</b>，從頭看一遍。</li>
     </ul>
   </div>
   <figure class="shot"><img src="img/lobby.jpg" alt="片名牆畫面"></figure>
 </section>
 
 <!-- 5 -->
-<section class="s split rev" data-t="18">
+<section class="s split rev" data-t="20">
   <div class="txt">
-    <p class="mono k">04 · PREMIERE 進場</p>
-    <h2>片頭年份從 <span class="num">1982</span><br>一路跳到 <span class="num hl2">2026</span>。</h2>
+    <p class="mono k">DEMO 1／4 · 進場《駭客任務》</p>
+    <h2>先畫素描，<br>再下一場<span class="hl2">數字雨</span>。</h2>
     <ul>
-      <li>左邊是<b>電影場景</b>，右邊是 <b>2026 年真實上演的版本</b></li>
-      <li>開場先畫出該片的素描，片名再用<b>22 種方式</b>出場：霓虹閃爍、數字雨、默片字卡……</li>
-      <li>每部片一段<b>原創配樂</b>，有類似原片的感覺，但旋律全新；瀏覽器即時合成，不用音檔</li>
+      <li>每部片一張素描、一種片名出場方式，22 部各不相同</li>
+      <li>配樂同時淡入：冷冽的電子節拍，<b>原創旋律</b>，瀏覽器即時合成</li>
+      <li>放映機倒數、黑邊開場，像真的進了影廳</li>
     </ul>
   </div>
-  <div class="stack"><figure class="shot"><img src="img/open.jpg" alt="片頭：素描描線與片名出場"></figure><figure class="shot s2"><img src="img/vs.jpg" alt="電影場景與 2026 現實對照"></figure></div>
+  <figure class="shot live-open" id="liveOpen" aria-label="片頭動畫：駭客任務的素描描線與片名出場"><div class="lo-sk" id="loSk"></div><p class="lo-k mono" id="loK"></p><h3 class="lo-t" id="loT"></h3><p class="lo-m mono" id="loM"></p></figure>
 </section>
 
 <!-- 6 -->
-<section class="s split" data-t="20">
+<section class="s split" data-t="22">
   <div class="txt">
-    <p class="mono k">05 · SEQUEL 劇情版</p>
-    <h2>每篇文章，<br>都是一部<span class="hl">續集</span>。</h2>
+    <p class="mono k">DEMO 2／4 · 劇情版</p>
+    <h2>文章，<br>變成一部<span class="hl">續集</span>。</h2>
     <ul>
-      <li>沿用原片主角與台灣通行譯法的金句，接在電影結局之後</li>
-      <li>每部片有自己的<b>敘事調性與底色</b>：霓虹雨夜、默片字卡、2001 的純白太空艙</li>
-      <li>中場一張<b>原創場景插圖</b>，畫完會持續動；關鍵數據放成大字，場景說明標上劇本場次</li>
-      <li>忠於原文：不捏造數據，每篇附頁碼依據</li>
+      <li>接在電影結局之後：莫斐斯遞出紅色膠囊，帶企劃林瑜去見一群「以真實調查為底的模擬消費者」</li>
+      <li>整篇換上這部片的調性：黑底、綠字、等寬標題</li>
+      <li>中場一張<b>原創插圖</b>，畫完會持續動；關鍵數據放成大字 <b class="hl2">0.89</b></li>
+      <li>論點與數據全部來自原文，附頁碼依據</li>
     </ul>
   </div>
-  <div class="stack"><figure class="shot"><img src="img/story0.jpg" alt="劇情版：雲端情人續集的開場與前情提要"></figure><figure class="shot s2"><img src="img/story2.jpg" alt="劇情版：駭客任務的綠色調與數據大字卡"></figure></div>
+  <div class="stack demo2"><figure class="shot"><img src="img/story0.jpg" alt="駭客任務續集的開場與前情提要"></figure><figure class="tile s2 live-tile" style="--bg:#020803;--fg:#3dff7a" data-n="12" id="demoScene"><div class="art"></div><figcaption>INTERMISSION · Lisa 與 Cindy</figcaption></figure></div>
 </section>
 
 <!-- 7 -->
-<section class="s split rev" data-t="16">
+<section class="s split rev" data-t="17">
   <div class="txt">
-    <p class="mono k">06 · READING 閱讀體驗</p>
-    <h2>兩種看法，<br>一鍵切換。</h2>
-    <div class="tiers t4">
-      <div><b>劇情版</b><span>續集</span><em>電影文筆說故事</em></div>
+    <p class="mono k">DEMO 3／4 · 原文版</p>
+    <h2>一鍵切回原文：<br><span class="nb"><span class="num">1999</span> 的預言，</span><span class="nb"><span class="num hl2">2026</span> 的現實。</span></h2>
+    <div class="tiers">
       <div><b>預告片</b><span>30 秒</span><em>一句話摘要</em></div>
       <div><b>影評</b><span>3 分鐘</span><em>三個看點</em></div>
       <div><b>正片</b><span>依片長</span><em>全文，一字未改</em></div>
     </div>
-    <p class="note">劇情版與原文版一鍵切換 · 顯示剩餘分鐘 · 片尾字幕標註作者與原文頁碼</p>
+    <p class="note">顯示剩餘分鐘 · 片尾字幕標註作者與原文頁碼</p>
   </div>
-  <figure class="shot"><img src="img/mode.jpg" alt="劇情版與原文版切換"></figure>
+  <div class="stack"><figure class="shot"><img src="img/vs.jpg" alt="1999 電影場景與 2026 現實對照，下方是劇情版／原文版切換"></figure><figure class="shot s2"><img src="img/review.jpg" alt="影評：三個看點"></figure></div>
 </section>
 
 <!-- 8 -->
 <section class="s split" data-t="15">
   <div class="txt">
-    <p class="mono k">07 · KEEP WATCHING 讓人想看完</p>
+    <p class="mono k">DEMO 4／4 · 散場</p>
     <h2>散場，<br>領一張電影票。</h2>
     <ul>
       <li>票上印著廳別、座位、日期，和<b>「今天帶走的一句話」</b></li>
-      <li>沿虛線撕下票根，收進票根夾</li>
+      <li>撕下票根收進票根夾；集滿 22 張，解鎖閉幕片</li>
       <li>片尾推薦<b>同主題連映</b>，一場接一場</li>
-      <li>集滿 22 張，解鎖閉幕片</li>
     </ul>
   </div>
-  <figure class="shot"><img src="img/ticket.jpg" alt="電影票畫面"></figure>
+  <figure class="shot"><img src="img/ticket.jpg" alt="駭客任務的電影票"></figure>
 </section>
 
 <!-- 9 -->
+<section class="s split rev" data-t="18">
+  <div class="txt">
+    <p class="mono k">22 FILMS · 每一部都不一樣</p>
+    <h2>換一部片，<br>整個影廳都換了。</h2>
+    <ul>
+      <li><b>22</b> 種片名出場、<b>22</b> 段原創配樂</li>
+      <li><b>22</b> 張會動的中場插圖、<b>22</b> 種閱讀底色</li>
+      <li>雲端情人是暖桃色的信紙，摩登時代是默片字卡，星際大戰是星空</li>
+    </ul>
+  </div>
+  <div class="scenes" id="scenes" aria-label="各片調性與會動的中場插圖">
+    <figure class="tile" style="--bg:#f5e4d9;--fg:#3d2a25" data-n="2"><div class="art"></div><figcaption>雲端情人 · 等待</figcaption></figure>
+    <figure class="tile" style="--bg:#d8d5ce;--fg:#1a1a1a" data-n="20"><div class="art"></div><figcaption>摩登時代 · 捲進齒輪</figcaption></figure>
+    <figure class="tile" style="--bg:#0d0a13;--fg:#ff4f9a" data-n="3"><div class="art"></div><figcaption>銀翼殺手 · 沒有靈魂的聖誕節</figcaption></figure>
+    <figure class="tile" style="--bg:#05060c;--fg:#ffd84d" data-n="18"><div class="art"></div><figcaption>星際大戰 · 被壓縮的航程</figcaption></figure>
+  </div>
+</section>
+
+<!-- 10 -->
 <section class="s" data-t="12">
   <div class="c wide">
-    <p class="mono k">08 · TIMELINE 預言時間軸</p>
+    <p class="mono k">TIMELINE 預言時間軸</p>
     <h2>90 年的 22 則預言，全部在 2026 年上映。</h2>
     <figure class="shot wideshot"><img src="img/timeline.jpg" alt="預言時間軸畫面"></figure>
   </div>
 </section>
 
-<!-- 10 -->
-<section class="s" data-t="22">
-  <div class="c wide vibe">
-    <p class="mono k">09 · VIBE CODING 製作歷程</p>
-    <h2>和 AI 一起改了十二版，<br>每一版都有理由。</h2>
-    <ol class="vers">
-      <li><b>V1</b><span>定概念</span><em>從愛情、星座、聊齋中選定「預言成真」</em></li>
-      <li><b>V2</b><span>補沉浸感</span><em>第一版太陽春，加入倒數、時間軸、票根</em></li>
-      <li><b>V3</b><span>外部評審</span><em>採納索引、連映；不做無法核對的十週年回顧</em></li>
-      <li><b>V4</b><span>面向觀眾</span><em>資訊太多，改成一次一個畫面</em></li>
-      <li><b>V5</b><span>用片名勾人</span><em>首頁只留片名牆，文字改寫成電影場景</em></li>
-      <li><b>V6</b><span>手繪手冊</span><em>不重畫海報，改用 22 張原創素描</em></li>
-      <li><b>V7</b><span>劇情版</span><em>22 篇用電影的文筆改寫，可與原文切換</em></li>
-      <li><b>V8</b><span>續集版</span><em>沿用原片角色與台灣通行譯法的金句</em></li>
-      <li><b>V9</b><span>片頭與配樂</span><em>素描描線、22 種片名出場、22 段原創配樂</em></li>
-      <li><b>V10</b><span>手機與場景</span><em>iOS 靜音也有聲、片名分行；場景搬回原片世界</em></li>
-      <li><b>V11</b><span>新標語</span><em>「電影早就演過了，2026 只是續集」</em></li>
-      <li><b>V12</b><span>一片一調性</span><em>各片底色、會動的中場插圖、數據大字卡</em></li>
-    </ol>
-  </div>
-</section>
-
 <!-- 11 -->
-<section class="s" data-t="12">
+<section class="s" data-t="11">
   <div class="c narrow">
-    <p class="mono k">10 · DEPLOY &amp; SECURITY 部署與資安</p>
+    <p class="mono k">DEPLOY &amp; SECURITY 部署與資安</p>
     <h2>純靜態，<br>零後端、零追蹤。</h2>
     <div class="chips">
-      <span>GitHub Pages · HTTPS</span><span>無後端、無表單</span><span>無第三方資源</span><span>無金鑰、無個資</span><span>CSP：腳本僅限同源</span><span>文字全數跳脫防 XSS</span><span>進度只存在讀者瀏覽器</span><span>原創插畫，不用海報</span><span>配樂即時合成，不用音檔</span>
+      <span>GitHub Pages · HTTPS</span><span>無後端、無表單</span><span>無第三方資源</span><span>無金鑰、無個資</span><span>CSP：腳本僅限同源</span><span>文字全數跳脫防 XSS</span><span>原創插畫，不用海報</span><span>配樂即時合成，不用音檔</span>
     </div>
   </div>
 </section>
@@ -190,10 +186,15 @@
     <button id="prev" aria-label="上一頁">‹</button>
     <button id="play" aria-label="暫停">❚❚</button>
     <button id="next" aria-label="下一頁">›</button>
+    <button id="snd" class="snd" aria-label="開啟配樂" aria-pressed="false">♪ 配樂 關</button>
     <span class="mono" id="cnt">01 / 12</span>
     <span class="mono dim" id="clock">0:00 / 3:00</span>
   </div>
 </div>
-<script src="deck.js?v=202611232139"></script>
+<script src="../sketch.js"></script>
+<script src="../scene.js"></script>
+<script src="../score.js"></script>
+<script src="live.js?v=202611232150"></script>
+<script src="deck.js?v=202611232150"></script>
 </body>
 </html>

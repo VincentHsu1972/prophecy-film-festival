@@ -16,13 +16,14 @@ async def main():
         # 片頭：素描描線＋片名出場（銀翼殺手）
         await go("location.hash='screen-3'"); await pg.wait_for_timeout(5600); await pg.screenshot(path=T+'open.png')
         # 劇情版：雲端情人（暖色調＋中場插圖）、駭客任務（綠色調＋數據大字卡）
-        await go("location.hash='screen-2'"); await pg.wait_for_timeout(3000)
+        await go("location.hash='screen-12'"); await pg.wait_for_timeout(3000)
         await go("const r=document.querySelector('#reader'),e=document.querySelector('#storyPane .st-title');r.scrollTop=e.getBoundingClientRect().top+r.scrollTop-120"); await pg.wait_for_timeout(1500); await pg.screenshot(path=T+'story0.png')
+        await go("location.hash='screen-2'"); await pg.wait_for_timeout(3000)
         await pg.locator('#storyPane .midsk').scroll_into_view_if_needed(); await go("document.querySelector('#reader').scrollBy(0,-240)"); await pg.wait_for_timeout(4500); await pg.screenshot(path=T+'story.png')
         await go("location.hash='screen-12'"); await pg.wait_for_timeout(3000)
         await pg.locator('#storyPane figure.num').first.scroll_into_view_if_needed(); await go("document.querySelector('#reader').scrollBy(0,-300)"); await pg.wait_for_timeout(2500); await pg.screenshot(path=T+'story2.png')
         # 原文版：電影場景 vs 2026、影評、片尾推薦
-        await go("location.hash='screen-3'"); await pg.wait_for_timeout(3000)
+        await go("location.hash='screen-12'"); await pg.wait_for_timeout(3000)
         await go("const r=document.querySelector('#reader');r.scrollTop=document.getElementById('modebar').offsetTop-60"); await pg.wait_for_timeout(900); await pg.screenshot(path=T+'mode.png')
         await pg.click('#modebar [data-m="orig"]'); await pg.wait_for_timeout(900)
         await go("document.querySelector('#reader').scrollTop=innerHeight-56"); await pg.wait_for_timeout(1200); await pg.screenshot(path=T+'vs.png')
