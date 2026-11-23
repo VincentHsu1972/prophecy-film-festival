@@ -134,7 +134,7 @@ function renderHalls(){
     <div class="strip-wrap"><div class="strip-nav"><span class="mono dim">← 滑動膠卷 · DRAG THE REEL →</span><span><button data-dir="-1" aria-label="往左">‹</button> <button data-dir="1" aria-label="往右">›</button></span></div>
     <div class="strip" tabindex="0" aria-label="${h.name}場次">${items.map(a=>`
       <button class="frame z-${a.zone}" data-n="${a.n}" aria-label="第 ${a.n} 場：${esc(a.title)}，片長 ${a.mins} 分鐘">
-        <div class="poster">${poster(a)}
+        <div class="poster paper">${window.SKETCH(a.n)}
           <div class="ptop"><b>SCREEN ${pad(a.n)}</b><span>${a.mins} MIN</span></div><span class="seen">ADMITTED</span>
           <div class="pinfo"><span class="en">《${esc(a.film.zh)}》續集</span><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
         </div>
@@ -331,13 +331,14 @@ function renderLobTabs(){
 function renderReel(){
   const list=lobHall==='all'?DATA:DATA.filter(a=>a.zone===lobHall);
   const r=$('#reel');
-  r.innerHTML=list.map((a,i)=>{const h=hallOf(a.zone);return `<button class="fc z-${a.zone} ${seen.has(a.n)?'isseen':''}" data-n="${a.n}" style="animation-delay:${Math.min(i,6)*60}ms" aria-label="《${esc(a.film.zh)}》${a.film.year}，第 ${a.n} 場">
-    <div class="bg">${poster(a,true)}</div><div class="shade"></div>
-    <div class="in"><div class="top"><b>SCREEN ${pad(a.n)}</b><span>${h.name}</span></div>
-      <span class="yr">${a.film.year} → 2026</span>
-      <span class="zh">${esc(a.film.zh)}</span><span class="en">${esc(a.film.en)}</span>
-      <p class="lg">${esc(SCENES[a.n])}</p>
-      <div class="cta"><span class="dim">2026 續集 · 片長 ${a.mins} 分鐘</span><span>進場 ▶</span></div></div></button>`;}).join('');
+  r.innerHTML=list.map((a,i)=>{const h=hallOf(a.zone); const L=[...a.film.zh.replace(/\s/g,'')].length; const lc=L<=4?'l4':L<=5?'l5':L<=7?'l7':'l9'; return `<button class="fc z-${a.zone} ${seen.has(a.n)?'isseen':''}" data-n="${a.n}" style="animation-delay:${Math.min(i,6)*60}ms" aria-label="《${esc(a.film.zh)}》${a.film.year}，第 ${a.n} 場">
+    <div class="ftop"><b>SCREEN ${pad(a.n)}</b><span>${h.name}</span></div>
+    <div class="art">${window.SKETCH(a.n)}</div>
+    <span class="yr">${a.film.year} → 2026</span>
+    <span class="zh ${lc}">${esc(a.film.zh)}</span>
+    <span class="en">${esc(a.film.en)}</span>
+    <p class="lg">${esc(SCENES[a.n])}</p>
+    <div class="cta"><span>2026 續集 · ${a.mins} 分鐘</span><span class="go">進場 →</span></div></button>`;}).join('');
   r.scrollLeft=0;
   $$('.fc').forEach(c=>c.onclick=e=>{ if(r.dataset.moved==='1'){ e.preventDefault(); return; } go(+c.dataset.n); });
 }

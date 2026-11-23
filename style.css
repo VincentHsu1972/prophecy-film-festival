@@ -475,3 +475,27 @@ body.gated .dock{display:none}
 .lobby .reel-nav{margin-top:4px}
 
 @media (max-width:900px){.idx-btn{display:none}.brand{white-space:nowrap;font-size:16px}}
+
+/* ===== paper sketch cards ===== */
+.sk .pn{fill:none;stroke:#2a2722;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.sk .pt{font-family:var(--mono);font-size:15px;fill:#2a2722;text-anchor:middle}
+.fc{background:#efe8d8;color:#1d1b17;display:flex;flex-direction:column;padding:18px 22px 20px;height:auto;min-height:0;
+  background-image:radial-gradient(rgba(0,0,0,.05) 1px,transparent 1px);background-size:5px 5px;box-shadow:inset 0 0 40px rgba(120,100,60,.18)}
+.fc:hover,.fc:focus-visible{box-shadow:inset 0 0 40px rgba(120,100,60,.18),0 0 0 3px var(--c),0 30px 60px rgba(0,0,0,.6)}
+.fc .ftop{display:flex;justify-content:space-between;align-items:center;height:22px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:#5f594c}
+.fc .ftop b{background:var(--c);color:#111;padding:2px 8px}
+.fc .art{height:170px;margin:12px -6px 10px;border-top:1px solid rgba(0,0,0,.15);border-bottom:1px solid rgba(0,0,0,.15);display:grid;place-items:center}
+.fc .art svg{height:160px;width:100%}
+.fc .yr{display:block;height:18px;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--cd);margin:0}
+.fc .zh{display:flex;align-items:flex-end;height:64px;font-family:var(--serif);font-weight:700;line-height:1;white-space:nowrap;letter-spacing:.02em;margin:4px 0 0;color:#141210}
+.fc .zh.l4{font-size:54px}.fc .zh.l5{font-size:46px}.fc .zh.l7{font-size:38px}.fc .zh.l9{font-size:32px}
+.fc .en{display:block;height:18px;margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:#6a6355;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fc .lg{font-family:var(--serif);font-size:15px;line-height:1.75;color:#2c2924;margin:12px 0 0;height:calc(15px*1.75*4);overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.fc .cta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed rgba(0,0,0,.25);font-size:13px;color:#5f594c}
+.fc .cta span.go{color:#141210;font-weight:700}
+.fc.isseen .ftop span::after{content:" · 已看";color:var(--cd)}
+.frame .poster.paper{background:#efe8d8;display:grid;place-items:start center}
+.frame .poster.paper svg{width:100%;height:58%;margin-top:30px}
+@media (max-width:900px){.fc{width:80vw}.fc .zh.l4{font-size:46px}.fc .zh.l5{font-size:40px}.fc .zh.l7{font-size:32px}.fc .zh.l9{font-size:27px}}
+
+.fc .art svg{overflow:visible}
