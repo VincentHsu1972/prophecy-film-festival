@@ -374,12 +374,11 @@ function renderReel(){
 (function reelDrag(){
   const r=$('#reel'); let down=false,sx=0,sl=0, hold=0;
   const pauseAuto=()=>{ hold=performance.now()+4000; };
-  ['pointerdown','wheel','touchstart','keydown','mouseenter'].forEach(ev=>r.addEventListener(ev,pauseAuto,{passive:true}));
-  r.addEventListener('mousemove',pauseAuto,{passive:true});
+  ['pointerdown','wheel','touchstart','keydown'].forEach(ev=>r.addEventListener(ev,pauseAuto,{passive:true}));
   let acc=0;
   (function auto(){ const now=performance.now();
-    if(!reduce && now>hold && !down && $('#v-lobby').classList.contains('on') && !$('#reader').classList.contains('open') && !document.body.classList.contains('gated')){
-      acc+=0.6; if(acc>=1){ const s=Math.floor(acc); acc-=s; r.scrollLeft+=s; }
+    if(now>hold && !down && $('#v-lobby').classList.contains('on') && !$('#reader').classList.contains('open') && !document.body.classList.contains('gated')){
+      acc+=0.8; if(acc>=1){ const s=Math.floor(acc); acc-=s; r.scrollLeft+=s; }
       if(r.scrollLeft+r.clientWidth>=r.scrollWidth-2){ hold=now+2500; setTimeout(()=>r.scrollTo({left:0,behavior:'smooth'}),2000); }
     }
     requestAnimationFrame(auto); })();
