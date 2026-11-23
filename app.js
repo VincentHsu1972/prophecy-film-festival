@@ -47,7 +47,7 @@ function tick(){ if(!soundOn||!audio()) return; const b=ac.createBuffer(1,ac.sam
 function startHum(){ if(!audio()||hum) return; const len=ac.sampleRate*2, b=ac.createBuffer(1,len,ac.sampleRate), d=b.getChannelData(0); let last=0;
   for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.5 + ((i%(ac.sampleRate/24|0))<60?(Math.random()*2-1)*.5:0); }
   const s=ac.createBufferSource(); s.buffer=b; s.loop=true; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=900; const g=ac.createGain(); g.gain.value=0; s.connect(f).connect(g).connect(ac.destination); s.start(); hum={s,g}; }
-function setSound(on){ soundOn=on; if(!on&&sil) sil.pause(); const b=$('#soundBtn'); b.innerHTML=on?'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>':'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>'; b.setAttribute('aria-pressed',on);
+function setSound(on){ soundOn=on; try{localStorage.setItem('dw-sound',on?'1':'0');}catch(e){} if(!on&&sil) sil.pause(); const b=$('#soundBtn'); b.innerHTML=on?'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>':'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>'; b.setAttribute('aria-pressed',on);
   if(on){ unlockAudio(); startHum(); if(hum) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.4); if(cur) playScore(cur.n); }
   else { if(hum&&ac){ hum.g.gain.setTargetAtTime(0,ac.currentTime,.2); } stopScore(); } }
 /* 每部片的原創配樂（score.js）：開聲音時進場自動播放，離場淡出 */
@@ -94,7 +94,7 @@ function runLeader(){
   beep(1000); flick();
 }
 $('#enterSound').onclick=()=>{ setSound(true); runLeader(); };
-$('#enterMute').onclick=()=>runLeader();
+$('#enterMute').onclick=()=>{ setSound(false); runLeader(); };
 $('#skip').onclick=()=>endGate();
 let skipGate=false; try{ skipGate=sessionStorage.getItem('dw-gate')==='1'; }catch(e){}
 if(skipGate || /^#(screen-\d+|finale)$/.test(location.hash)){ gate.classList.add('gone'); document.body.classList.remove('gated'); }
@@ -441,4 +441,6 @@ document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if($('#tSt
 
 renderLobTabs(); renderReel(); buildTimeline(); renderFilters(); renderHalls(); renderTabs(); applyFilter();
 if(!document.body.classList.contains('gated')) route();
+/* 跳過片頭（重新整理或直接連到某部片）時，沿用上次選的「有聲」；瀏覽器要求先有一次點擊，所以第一次點螢幕就會出聲 */
+(function(){ let w=false; try{ w=localStorage.getItem('dw-sound')==='1'; }catch(e){} if(w && !document.body.classList.contains('gated')) setSound(true); })();
 })();
