@@ -54,7 +54,7 @@ img{max-width:100%;display:block}
 .leader #lnum{font-family:var(--serif);font-size:min(46vmin,360px);line-height:1;position:relative;color:#eee}
 .skip{position:absolute;right:24px;bottom:24px;z-index:5;background:none;border:1px solid #444;border-radius:999px;padding:6px 14px;color:#aaa}
 .lb{position:absolute;left:0;right:0;height:0;background:#000;z-index:4;transition:height .8s cubic-bezier(.7,0,.3,1)}
-.lb.top{top:0}.lb.bot{bottom:0}
+.lb.lb-t{top:0}.lb.lb-b{bottom:0}
 #gate.letterbox .lb{height:50.5vh}
 
 /* ============ TOP ============ */
