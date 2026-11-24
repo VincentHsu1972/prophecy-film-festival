@@ -12,7 +12,7 @@ async def main():
         pg=await b.new_page(viewport={'width':1440,'height':900})
         go=lambda js:pg.evaluate(js)
         await pg.goto(U); await pg.wait_for_timeout(2000); await pg.screenshot(path=T+'gate.png')
-        await pg.click('#enterMute'); await pg.wait_for_timeout(4800); await pg.screenshot(path=T+'lobby.png')
+        await pg.click('#enterMute'); await pg.wait_for_timeout(6500); await pg.screenshot(path=T+'lobby.png')
         # 片頭：素描描線＋片名出場（銀翼殺手）
         await go("location.hash='screen-3'"); await pg.wait_for_timeout(5600); await pg.screenshot(path=T+'open.png')
         # 劇情版：雲端情人（暖色調＋中場插圖）、駭客任務（綠色調＋數據大字卡）
@@ -29,11 +29,11 @@ async def main():
         await go("document.querySelector('#reader').scrollTop=innerHeight-56"); await pg.wait_for_timeout(1200); await pg.screenshot(path=T+'vs.png')
         await go("const r=document.querySelector('#reader');r.scrollTop=document.getElementById('sReview').offsetTop-70"); await pg.wait_for_timeout(1200); await pg.screenshot(path=T+'review.png')
         await go("const r=document.querySelector('#reader');r.scrollTop=document.querySelector('.related').offsetTop-80"); await pg.wait_for_timeout(800); await pg.screenshot(path=T+'related.png')
-        await pg.click('#tearBtn'); await pg.wait_for_timeout(1300)
+        await pg.evaluate("document.getElementById('tearBtn').click()"); await pg.wait_for_timeout(1300)
         t=pg.locator('#tkTear')
-        if await t.count(): await t.click(); await pg.wait_for_timeout(1000)
+        if await t.count(): await pg.evaluate("document.getElementById('tkTear').click()"); await pg.wait_for_timeout(1000)
         await pg.screenshot(path=T+'ticket.png')
-        await pg.click('#tkClose'); await go("location.hash='timeline'"); await pg.wait_for_timeout(4200); await pg.screenshot(path=T+'timeline.png')
+        await pg.evaluate("document.getElementById('tkClose').click()"); await go("location.hash='timeline'"); await pg.wait_for_timeout(4200); await pg.screenshot(path=T+'timeline.png')
         await b.close()
     for n in ['gate','lobby','open','vs','review','related','ticket','story0','story','story2','mode']:
         Image.open(T+n+'.png').convert('RGB').save(f'intro/img/{n}.jpg',quality=78)

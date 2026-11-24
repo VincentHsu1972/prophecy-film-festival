@@ -143,7 +143,7 @@ function buildTimeline(){
   $$('.tl-dot').forEach(d=>{ const a=byN(+d.dataset.n);
     const show=()=>{ $$('.tl-dot').forEach(x=>x.classList.toggle('sel',x===d)); const h=hallOf(a.zone);
       const c=$('#tlCard'); c.className='tl-card z-'+a.zone;
-      c.innerHTML=`<div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(SCENES[a.n])}</h3><span class="arrow">${h.name}　第 ${a.n} 場</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">取票進場</button>`;
+      c.innerHTML=`<img class="tl-pp" src="img/poster/${pad(a.n)}.webp" alt=""><div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(SCENES[a.n])}</h3><span class="arrow">${h.name}　第 ${a.n} 場</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">取票進場</button>`;
       c.querySelector('[data-go]').onclick=()=>go(a.n); tick(); };
     d.onmouseenter=show; d.onfocus=show;
     d.onclick=e=>{ e.preventDefault(); if(tlPicked===a.n){ go(a.n); return; } tlPicked=a.n; show(); const c=$('#tlCard'); if(c.getBoundingClientRect().bottom>innerHeight-90) c.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'}); };
@@ -280,7 +280,7 @@ function relatedHTML(a){
   const g=SIX.find(s=>s[2].includes(a.n)); if(!g) return '';
   const others=g[2].filter(n=>n!==a.n).map(byN).slice(0,3);
   return `<section class="related"><span class="mono">同主題連映</span><h3>「${g[0]}」系列，接著看</h3><p class="dim">${esc(g[1])}這幾場從不同角度回答同一個問題。</p>
-  <div class="picks">${others.map(o=>`<button class="pick z-${o.zone}" data-n="${o.n}"><div class="pp">${poster(o,true)}</div><div class="pb"><span class="ord">第 ${o.n} 場　《${esc(o.film.zh)}》 ${seen.has(o.n)?'· 已看':''}</span><h4>${esc(o.title)}</h4><q>${esc(o.hook)}</q><span class="go">進場，${o.mins} 分鐘</span></div></button>`).join('')}</div></section>`;
+  <div class="picks">${others.map(o=>`<button class="pick z-${o.zone}" data-n="${o.n}"><div class="pp"><img src="img/poster/${pad(o.n)}.webp" alt="" loading="lazy" draggable="false"></div><div class="pb"><span class="ord">第 ${o.n} 場　《${esc(o.film.zh)}》 ${seen.has(o.n)?'· 已看':''}</span><h4>${esc(o.title)}</h4><q>${esc(o.hook)}</q><span class="go">進場，${o.mins} 分鐘</span></div></button>`).join('')}</div></section>`;
 }
 
 /* ---------- story mode ---------- */
@@ -316,7 +316,7 @@ function showTicket(a){
   const h=hallOf(a.zone), st=$('#tStage'), had=seen.has(a.n);
   st.className='ticket-stage on z-'+a.zone;
   st.innerHTML=`<div class="tk-wrap"><div class="tk" id="tk">
-    <div class="a"><span class="k">預言成真影展　入場券　限一人</span>
+    <div class="a"><img class="tk-pp" src="img/poster/${pad(a.n)}.webp" alt=""><span class="k">預言成真影展　入場券　限一人</span>
       <h3>《${esc(a.film.zh)}》續集</h3><div class="ar">${esc(a.title)}</div>
       <div class="row"><div>影廳<b>${h.name}</b></div><div>座位<b>${h.row}-${pad(a.n)}</b></div><div>片長<b>${a.mins} 分</b></div><div>日期<b>${today()}</b></div></div><div class="take"><i>今天帶走的一句話</i>${esc(a.hook)}</div></div>
     <div class="b"><small>場次</small><span class="no">${pad(a.n)}</span><small>${a.film.year}—2026</small></div></div>
@@ -407,7 +407,7 @@ function renderLineup(){
   if(!mood){ $('#lineup').innerHTML=''; return; }
   const m=MOODS.find(x=>x.k===mood), list=m.ns.map(byN), mins=list.reduce((s,a)=>s+(m.cut?3:a.mins),0);
   $('#lineup').innerHTML=`<div class="lineup-head"><div><span class="mono dim">今晚的節目　${list.length} 場，約 ${mins} 分鐘</span><h3>${m.e} ${m.t}</h3></div><p>${esc(m.sub)}</p></div>
-  <div class="picks ${m.cut?'five':''}">${list.map((a,i)=>`<button class="pick z-${a.zone}" data-n="${a.n}"><div class="pp">${poster(a,true)}</div><div class="pb">
+  <div class="picks ${m.cut?'five':''}">${list.map((a,i)=>`<button class="pick z-${a.zone}" data-n="${a.n}"><div class="pp"><img src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy" draggable="false"></div><div class="pb">
    <span class="ord">第 ${i+1} 場　《${esc(a.film.zh)}》</span><h4>${esc(a.title)}</h4>
    <q>${esc(a.hook)}</q><span class="go">${m.cut?'看預告片＋影評':`進場，${a.mins} 分鐘`}</span></div></button>`).join('')}</div>`;
   $$('.pick').forEach(b=>b.onclick=()=>go(+b.dataset.n));
@@ -461,7 +461,7 @@ function renderReel(){
 function openIndex(){
   const d=$('#drawer'); d.innerHTML=`<button class="x" id="closeW" style="float:right">關閉</button><div class="idx"><h2>全部場次索引</h2>
   ${HALLS.map(h=>{const items=DATA.filter(a=>a.zone===h.z);return `<section class="z-${h.z}"><div class="hn"><span>${h.name}</span><span>${items.length} 場</span></div>
-   ${items.map(a=>`<button class="row" data-n="${a.n}"><span class="rn ${seen.has(a.n)?'ok':''}">${seen.has(a.n)?'✓':pad(a.n)}</span><span class="rt">${esc(a.title)}<small>${esc(a.author)} ・《${esc(a.film.zh)}》${a.film.year}</small></span><span class="rm">${a.mins}′</span></button>`).join('')}</section>`;}).join('')}</div>`;
+   ${items.map(a=>`<button class="row" data-n="${a.n}"><span class="rn ${seen.has(a.n)?'ok':''}">${seen.has(a.n)?'✓':pad(a.n)}</span><img class="ri" src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy"><span class="rt">${esc(a.title)}<small>${esc(a.author)} ・《${esc(a.film.zh)}》${a.film.year}</small></span><span class="rm">${a.mins}′</span></button>`).join('')}</section>`;}).join('')}</div>`;
   $('#closeW').onclick=closeWallet; d.querySelectorAll('.row').forEach(b=>b.onclick=()=>{ closeWallet(); go(+b.dataset.n); });
   d.classList.add('open'); $('#scrim').classList.add('open'); d.scrollTop=0; tick();
 }
