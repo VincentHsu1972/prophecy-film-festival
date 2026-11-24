@@ -30,7 +30,7 @@ $('go').addEventListener('click',()=>setSnd(true));
 $('snd').addEventListener('click',()=>setSnd(!on));
 
 /* ---------- DEMO 1：駭客任務片頭 ---------- */
-const FILM={n:12,zh:'駭客任務',en:'The Matrix',t:'莫斐斯的新訓練程式',fx:'rain',c:'#3dff7a'};
+const FILM={n:12,zh:'駭客任務',en:'The Matrix',t:'第二顆紅色膠囊',fx:'rain',c:'#3dff7a'};
 let ft=0, yt=0;
 function opening(){ const f=FILM, box=$('liveOpen'); if(!box||!window.SKETCH) return;
   box.className='shot live-open lo2 fx-'+f.fx; box.style.setProperty('--fc',f.c); cancelAnimationFrame(yt);
