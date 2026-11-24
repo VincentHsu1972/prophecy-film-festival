@@ -23,12 +23,23 @@ AUDIO_TAP = r"""
 """
 
 CARD_JS = r"""
-(t)=>{ let c=document.getElementById('__card');
+([t,bg])=>{ let c=document.getElementById('__card');
   if(!c){ c=document.createElement('div'); c.id='__card';
-    c.style.cssText='position:fixed;inset:0;z-index:2147483647;background:#07080a;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .6s;pointer-events:none';
-    c.innerHTML='<p style="margin:0;max-width:78%;text-align:center;color:#ece8df;font:700 40px/1.6 \'Noto Serif TC\',\'Songti TC\',serif;letter-spacing:.08em"></p>';
+    c.style.cssText='position:fixed;inset:0;z-index:2147483647;background:radial-gradient(ellipse at 50% 50%,#15181b,#07080a 75%);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .6s;pointer-events:none;overflow:hidden';
+    c.innerHTML='<div id="__bg" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"></div><div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(7,8,10,.55),rgba(7,8,10,.15) 70%)"></div><p style="position:relative;margin:0;max-width:78%;text-align:center;color:#ece8df;font:700 40px/1.6 \'Noto Serif TC\',\'Songti TC\',serif;letter-spacing:.08em;text-shadow:0 2px 18px rgba(0,0,0,.9)"></p>';
     document.body.appendChild(c); }
   if(t===null){ c.style.opacity=0; return; }
+  const box=c.querySelector('#__bg'); const sk=n=>window.SKETCH?window.SKETCH(n):'';
+  let html='', op=.34;
+  if(bg&&bg.n) html=`<div style="width:58%">${sk(bg.n)}</div>`;
+  if(bg&&bg.many) html=`<div style="display:grid;grid-template-columns:repeat(${bg.cols},1fr);gap:${bg.gap||28}px;width:${bg.w||86}%">${bg.many.map(n=>`<div>${sk(n)}</div>`).join('')}</div>`, op=bg.op||.26;
+  if(bg&&bg.logo) html='<img src="img/logo/mark-dark.svg" alt="" style="width:62%">', op=.22;
+  if(bg!==undefined){ box.innerHTML=html; box.style.opacity=op; box.style.transition='none'; box.style.transform='scale(1)';
+    box.querySelectorAll('svg').forEach(s=>{ s.style.cssText='width:100%;height:auto;overflow:visible'; });
+    const els=[...box.querySelectorAll('.pn')];
+    els.forEach((el,i)=>{ let L=300; try{L=Math.ceil(el.getTotalLength())||300}catch(e){} el.style.stroke='#ece8df'; el.style.strokeWidth='1.4'; el.style.fill='none';
+      el.style.strokeDasharray=L; el.style.strokeDashoffset=L; el.style.transition=`stroke-dashoffset 1.6s cubic-bezier(.5,.1,.3,1) ${Math.round(i/Math.max(1,els.length)*1400)}ms`; });
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ els.forEach(el=>el.style.strokeDashoffset=0); box.style.transition='transform 6s linear'; box.style.transform='scale(1.07)'; })); }
   c.querySelector('p').innerHTML=t; c.style.opacity=1; }
 """
 
@@ -49,15 +60,15 @@ async def main():
         await ctx.add_init_script(AUDIO_TAP)
         await ctx.add_init_script("try{localStorage.removeItem('dw-stubs');localStorage.removeItem('dw-sound')}catch(e){}")
         pg = await ctx.new_page(); t_page = time.time() * 1000
-        card = lambda t: pg.evaluate(CARD_JS, t)
+        card = lambda t, bg=None: pg.evaluate(CARD_JS, [t, bg])
         wait = pg.wait_for_timeout
         go = lambda js: pg.evaluate(js)
 
         await pg.goto(U); await wait(400)
         # 字卡：從電影講起
-        await card('1968 年，一台電腦用很有禮貌的語氣，<br>拒絕替太空人打開艙門。'); await wait(3600)
-        await card('2013 年，一個人<br>愛上了一個只有聲音的作業系統。'); await wait(3400)
-        await card('那時候，我們都說這是科幻。'); await wait(2600)
+        await card('1968 年，一台電腦用很有禮貌的語氣，<br>拒絕替太空人打開艙門。',{'n':22}); await wait(3600)
+        await card('2013 年，一個人<br>愛上了一個只有聲音的作業系統。',{'n':2}); await wait(3400)
+        await card('那時候，我們都說這是科幻。',{'many':[1,3,10,12,18,20],'cols':3,'gap':40,'w':80}); await wait(2600)
         await card(None); await wait(900)
         # 開場：眼睛四處看，光圈打開進場
         for x, y in [(300, 180), (1000, 160), (980, 560), (640, 330)]:
@@ -65,13 +76,13 @@ async def main():
         await pg.click('#enterSound'); await wait(5600)
         # 片單自己往右捲
         await wait(3800)
-        await card('2026 年，它們都成真了。'); await wait(2600); await card(None)
+        await card('2026 年，它們都成真了。',{'logo':1}); await wait(2600); await card(None)
         # 示範：駭客任務
         await go("location.hash='screen-12'"); await wait(6800)
         await go("(()=>{const r=document.querySelector('#reader'),e=document.querySelector('#storyPane .st-title');r.scrollTo({top:e.getBoundingClientRect().top+r.scrollTop-90,behavior:'smooth'})})()"); await wait(3600)
         await go("(()=>{const r=document.querySelector('#reader'),e=document.querySelector('#storyPane .midsk');r.scrollTo({top:e.getBoundingClientRect().top+r.scrollTop-160,behavior:'smooth'})})()"); await wait(4600)
         await go("(()=>{const r=document.querySelector('#reader'),e=document.querySelector('#storyPane figure.num');r.scrollTo({top:e.getBoundingClientRect().top+r.scrollTop-260,behavior:'smooth'})})()"); await wait(3200)
-        await card('二十二部電影，<br>二十二部續集。'); await wait(2600)
+        await card('二十二部電影，<br>二十二部續集。',{'many':list(range(1,23)),'cols':6,'gap':14,'w':92,'op':.3}); await wait(2600)
         # 快剪：其他幾部的片頭
         for n, t in [(3, 3800), (20, 3800), (18, 3800)]:
             await go(f"location.hash='screen-{n}'"); await wait(300); await card(None); await wait(t)
@@ -79,7 +90,7 @@ async def main():
         await go("location.hash='screen-2'"); await wait(2600)
         await go("(()=>{const r=document.querySelector('#reader'),e=document.querySelector('#storyPane .midsk');r.scrollTop=e.getBoundingClientRect().top+r.scrollTop-200})()")
         await card(None); await wait(3600)
-        await card('散場時，帶走一張票根。'); await wait(2200)
+        await card('散場時，帶走一張票根。',{'n':12}); await wait(2200)
         await go("location.hash='screen-12'"); await wait(1500)
         await pg.click('#tearBtn'); await wait(700); await card(None); await wait(1400)
         t = pg.locator('#tkTear')
