@@ -162,7 +162,7 @@ function applyFilter(){ const f=TIMES.find(t=>t.k===ft).f; let n=0; $$('.frame')
 /* 每部續集裡的一句台詞（逐字取自劇情版） */
 const HOOK={"1": "你為什麼一談到 AI 就這麼興奮？", "2": "如果把這句主張換成十種說法，哪一種最能打動人？", "3": "這是 AI slop 吧？", "4": "你又要拆公司了？", "5": "這種事，AI 不是幾秒鐘就能做完嗎？", "6": "這個故事，能被驗證嗎？", "7": "幫我挑一個適合送 35 歲女生的生日禮物", "8": "這就是你要找的線索。", "9": "因為你的消費者，已經換了一條路來認識你。", "10": "哪個牌子適合我？", "11": "你知道嗎，這種記憶現在越來越值錢了。", "12": "這次活動的三個創意，吸引得了 35 歲以上的高收入族群嗎？", "13": "方舟號上，我們從來不需要問這些問題。因為只有一家公司在說話。", "14": "博士，什麼樣的人，才配指揮這些機器？", "15": "我還趕得上轉機嗎？如果不行，下一個可行的選項是什麼？", "16": "我們正在 AI 轉型！", "17": "下單很快，但後續很亂。", "18": "我有不好的預感。", "19": "不要相信他的謊言", "20": "幫我做一個年輕化的社群貼文。", "21": "每樣東西都有它的目的，就連機器也是。", "22": "抱歉，戴夫，恐怕我不能那麼做。"};
 /* 已有續集海報的場次（img/poster/NN.webp） */
-const KV=new Set([1,2,3,4,5,6,7,8]);
+const KV=new Set(Array.from({length:22},(_,i)=>i+1));
 /* 海報卡：捲到畫面中間的那幾張才播小動畫（電腦上滑鼠移過也會） */
 const kvio=('IntersectionObserver' in window)?new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('live',e.isIntersecting)),{threshold:.6}):null;
 function watchKV(root){ if(kvio&&!reduce) root.querySelectorAll('.kvc').forEach(k=>kvio.observe(k)); }

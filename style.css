@@ -930,3 +930,52 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
 .fc.haskv .art.kvc{height:clamp(220px,calc(min(56vh,520px) - 250px),300px)}
 .fc.haskv .art.kvc{height:clamp(200px,calc(min(56vh,520px) - 175px),340px)}
 .fc.haskv{display:flex;flex-direction:column}.fc.haskv .art.kvc{flex:1 1 auto;height:auto;min-height:180px}
+/* ===== 第 9–22 場海報的小動畫 ===== */
+.kv-11 .kv-fx,.kv-13 .kv-fx,.kv-15 .kv-fx2,.kv-18 .kv-fx2,.kv-21 .kv-fx{background-image:radial-gradient(1.6px 1.6px at 12% 30%,#fff8,transparent),radial-gradient(1.4px 1.4px at 28% 62%,#fff7,transparent),radial-gradient(1.8px 1.8px at 46% 18%,#fff9,transparent),radial-gradient(1.4px 1.4px at 63% 44%,#fff7,transparent),radial-gradient(1.6px 1.6px at 79% 26%,#fff8,transparent),radial-gradient(1.4px 1.4px at 91% 58%,#fff6,transparent),radial-gradient(1.6px 1.6px at 36% 40%,#fff7,transparent),radial-gradient(1.4px 1.4px at 70% 8%,#fff8,transparent);background-size:100% 50%}
+/* 09 社群網戰：牆上報表亮著，桌上墨痕慢慢擴散 */
+.kv-09 .kv-fx{background:radial-gradient(14% 9% at 10% 21%,rgba(91,155,224,.6),transparent 70%);mix-blend-mode:screen;animation:kvPulse 3.6s ease-in-out infinite}
+.kv-09 .kv-fx2{background:radial-gradient(9% 5% at 25% 51%,rgba(0,0,0,.55),transparent 70%);animation:kvInk 7s ease-in-out infinite}
+@keyframes kvInk{0%,100%{transform:scale(.8);opacity:.3}50%{transform:scale(1.25);opacity:.9}}
+/* 10 回到未來：鐘塔亮著，路上的火痕閃動 */
+.kv-10 .kv-fx{background:radial-gradient(6% 4% at 63% 20%,rgba(255,220,150,.75),transparent 70%);mix-blend-mode:screen;animation:kvPulse 2.8s ease-in-out infinite}
+.kv-10 .kv-fx2{background:linear-gradient(115deg,transparent 45%,rgba(255,138,42,.45) 50%,transparent 55%) 0 0/300% 100%;mix-blend-mode:screen;animation:kvSweep 2.4s linear infinite}
+/* 11 王牌冤家：記憶碎片像雪一樣漂浮 */
+.kv-11 .kv-fx{filter:invert(.6) sepia(1) saturate(3) hue-rotate(-20deg);animation:kvRise 16s linear infinite}
+.kv-11 .kv-fx2{background:radial-gradient(40% 20% at 50% 20%,rgba(255,255,255,.35),transparent 70%);animation:kvPulse 6s ease-in-out infinite}
+/* 12 駭客任務：綠色數字雨，紅色膠囊發亮 */
+.kv-12 .kv-fx{background:repeating-linear-gradient(90deg,transparent 0 14px,rgba(61,255,122,.16) 14px 15px,transparent 15px 31px) 0 0/100% 200%;-webkit-mask-image:linear-gradient(180deg,#000,transparent 70%);mask-image:linear-gradient(180deg,#000,transparent 70%);animation:kvRainV 1.6s linear infinite}
+.kv-12 .kv-fx2{background:radial-gradient(6% 3% at 54% 72%,rgba(255,60,60,.9),transparent 70%),radial-gradient(22% 8% at 52% 58%,rgba(61,255,122,.35),transparent 70%);mix-blend-mode:screen;animation:kvPulse 2.4s ease-in-out infinite}
+@keyframes kvRainV{from{background-position:0 -100%}to{background-position:0 0}}
+/* 13 瓦力：塵土飄升，幼苗發出綠光 */
+.kv-13 .kv-fx{filter:sepia(1) saturate(3) hue-rotate(-15deg);animation:kvRise 18s linear infinite}
+.kv-13 .kv-fx2{background:radial-gradient(5% 4% at 42% 46%,rgba(140,255,120,.65),transparent 70%),radial-gradient(30% 14% at 85% 8%,rgba(255,180,100,.4),transparent 70%);mix-blend-mode:screen;animation:kvPulse 3.6s ease-in-out infinite}
+/* 14 機械公敵：吊燈閃了一下，紅色裂痕發亮 */
+.kv-14 .kv-fx{background:radial-gradient(22% 16% at 60% 10%,rgba(255,245,220,.45),transparent 70%);mix-blend-mode:screen;animation:kvFlicker 4s steps(1) infinite}
+.kv-14 .kv-fx2{background:radial-gradient(6% 6% at 57% 40%,rgba(255,90,78,.75),transparent 70%);mix-blend-mode:screen;animation:kvPulse 2.2s ease-in-out infinite}
+/* 15 蝴蝶效應：蝴蝶和紫色軌跡發光 */
+.kv-15 .kv-fx{background:radial-gradient(22% 12% at 67% 15%,rgba(180,138,214,.6),transparent 70%),radial-gradient(30% 6% at 55% 30%,rgba(180,138,214,.4),transparent 70%);mix-blend-mode:screen;animation:kvPulse 3s ease-in-out infinite}
+.kv-15 .kv-fx2{filter:hue-rotate(250deg) saturate(5);animation:kvRise 12s linear infinite}
+/* 16 楚門的世界：門後的螢幕閃爍，片場燈打光 */
+.kv-16 .kv-fx{background:radial-gradient(10% 7% at 58% 50%,rgba(170,210,255,.7),transparent 70%);mix-blend-mode:screen;animation:kvFlicker 3s steps(1) infinite}
+.kv-16 .kv-fx2{background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.2) 50%,transparent 60%) 0 0/300% 100%;mix-blend-mode:screen;animation:kvSweep 7s linear infinite}
+/* 17 明日邊界：一整面時鐘，同一刻一再重來 */
+.kv-17 .kv-fx{background:radial-gradient(30% 14% at 68% 18%,rgba(201,179,74,.45),transparent 70%);mix-blend-mode:screen;animation:kvLoop 2.6s steps(1) infinite}
+.kv-17 .kv-fx2{background:linear-gradient(90deg,transparent 45%,rgba(255,240,200,.18) 50%,transparent 55%) 0 0/300% 100%;mix-blend-mode:screen;animation:kvSweep 2.6s linear infinite}
+@keyframes kvLoop{0%{opacity:1}10%{opacity:.2}12%{opacity:1}}
+/* 18 星際大戰：航線發光，星星閃爍 */
+.kv-18 .kv-fx{background:radial-gradient(30% 6% at 62% 56%,rgba(255,216,77,.6),transparent 70%);mix-blend-mode:screen;animation:kvPulse 2.6s ease-in-out infinite}
+.kv-18 .kv-fx2{background-size:100% 30%;background-repeat:repeat-x;animation:kvTwinkle 2.6s ease-in-out infinite}
+/* 19 記憶拼圖：昏黃燈光忽明忽暗 */
+.kv-19 .kv-fx{background:radial-gradient(50% 30% at 50% 35%,rgba(255,220,160,.25),transparent 70%);mix-blend-mode:screen;animation:kvFlicker 3.2s steps(1) infinite}
+.kv-19 .kv-fx2{background:linear-gradient(135deg,transparent 48%,rgba(255,255,255,.18) 50%,transparent 52%) 0 0/300% 300%;mix-blend-mode:screen;animation:kvSweep 8s linear infinite}
+/* 20 摩登時代：默片膠卷的閃爍和刮痕 */
+.kv-20 .kv-fx{background:rgba(255,255,255,.06);animation:kvFlicker .5s steps(1) infinite}
+.kv-20 .kv-fx2{background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,.35) 30.2%,transparent 30.5%,transparent 71%,rgba(0,0,0,.4) 71.2%,transparent 71.4%) 0 0/200% 100%;animation:kvScratch 1.1s steps(3) infinite}
+@keyframes kvScratch{from{background-position:0 0}to{background-position:-120% 0}}
+/* 21 雨果的冒險：窗外下雪，檯燈發光 */
+.kv-21 .kv-fx{-webkit-mask-image:radial-gradient(60% 45% at 70% 25%,#000,transparent);mask-image:radial-gradient(60% 45% at 70% 25%,#000,transparent);animation:kvFall 10s linear infinite}
+.kv-21 .kv-fx2{background:radial-gradient(10% 7% at 12% 40%,rgba(255,200,120,.6),transparent 70%);mix-blend-mode:screen;animation:kvPulse 3.4s ease-in-out infinite}
+@keyframes kvFall{from{background-position:0 0}to{background-position:20px 100%}}
+/* 22 2001 太空漫遊：紅色狀態燈平穩地亮著 */
+.kv-22 .kv-fx{background:radial-gradient(3% 2.5% at 95% 38%,rgba(255,40,30,1),transparent 70%),radial-gradient(9% 6% at 95% 38%,rgba(200,36,26,.45),transparent 70%);mix-blend-mode:screen;animation:kvPulse 4s ease-in-out infinite}
+.kv-22 .kv-fx2{background:radial-gradient(30% 16% at 50% 38%,rgba(255,200,160,.25),transparent 70%);mix-blend-mode:screen;animation:kvPulse 7s ease-in-out infinite}
