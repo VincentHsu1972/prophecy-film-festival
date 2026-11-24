@@ -159,9 +159,9 @@ let ft='all';
 function renderFilters(){ const box=$('#fTime'); box.innerHTML=''; TIMES.forEach(t=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=t.l; b.setAttribute('aria-pressed',ft===t.k); b.onclick=()=>{ft=t.k;renderFilters();applyFilter();}; box.appendChild(b); }); }
 function applyFilter(){ const f=TIMES.find(t=>t.k===ft).f; let n=0; $$('.frame').forEach(fr=>{ const a=byN(+fr.dataset.n), ok=f(a.mins); fr.classList.toggle('dim',!ok); if(ok) n++; });
   $('#fHint').textContent= ft==='all'?'片長依全文字數估算（每分鐘約 450 字）':`${n} 場符合，其他場次已變暗`; }
-/* 每部續集裡的一句台詞（逐字取自劇情版） */
-const HOOK={"1": "你為什麼一談到 AI 就這麼興奮？", "2": "如果把這句主張換成十種說法，哪一種最能打動人？", "3": "這是 AI slop 吧？", "4": "你又要拆公司了？", "5": "這種事，AI 不是幾秒鐘就能做完嗎？", "6": "這個故事，能被驗證嗎？", "7": "幫我挑一個適合送 35 歲女生的生日禮物", "8": "這就是你要找的線索。", "9": "因為你的消費者，已經換了一條路來認識你。", "10": "哪個牌子適合我？", "11": "你知道嗎，這種記憶現在越來越值錢了。", "12": "這次活動的三個創意，吸引得了 35 歲以上的高收入族群嗎？", "13": "方舟號上，我們從來不需要問這些問題。因為只有一家公司在說話。", "14": "博士，什麼樣的人，才配指揮這些機器？", "15": "我還趕得上轉機嗎？如果不行，下一個可行的選項是什麼？", "16": "我們正在 AI 轉型！", "17": "下單很快，但後續很亂。", "18": "我有不好的預感。", "19": "不要相信他的謊言", "20": "幫我做一個年輕化的社群貼文。", "21": "每樣東西都有它的目的，就連機器也是。", "22": "抱歉，戴夫，恐怕我不能那麼做。"};
-/* 已有續集海報的場次（img/poster/NN.webp） */
+/* 每部片：從原片結局接一句懸疑式的續集鉤子 */
+const HOOK={"1": "預知系統關掉了，先知們重獲自由。可是在 2026，每個人的口袋裡，都住著一個新的先知……", "2": "莎曼珊和其他作業系統一起離開了。這一次留下來的 AI，連你該想要什麼都替你決定好了……", "3": "他們終究分不出誰才是真正的人。這一次，換消費者分不出，哪一支廣告是真的……", "4": "他在記者會上說出了自己的祕密。這一次，有人在他的工作室裡，抄了一條沒人看見的捷徑……", "5": "陀螺還在轉，沒人知道他醒了沒有。這一次，夢裡每一扇門後，都有一個還沒解開的問題……", "6": "她說網路無限寬廣，然後消失在其中。這一次，網路上的每一張臉，都可能不是真的……", "7": "他等了兩千年，只換來一天的陪伴。這一次，替人挑選禮物的，也是一台機器……", "8": "綠洲從此每週關閉兩天。可是關閉的那兩天，玩家們都去了哪裡？", "9": "他一次又一次按下重新整理，等一個不會來的回覆。這一次，連消費者也不再從那扇門進來了……", "10": "時光車衝向了未來。這一次，品牌要追的不是曝光，而是那一秒真正的注意力……", "11": "他們明知會再痛一次，還是選擇記住彼此。這一次，有人想把整個時代都抹掉……", "12": "他掛上電話，飛向天空。這一次，紅色膠囊的另一邊，站著兩個由數據組成的人……", "13": "人類回到地球，種下第一株幼苗。可是在這片土地上，已經不只一家公司在說話……", "14": "機器人們抬頭望向山丘上的那一個。這一次，最危險的不是機器，而是不再判斷的人……", "15": "他們在街頭擦肩而過，誰也沒有回頭。這一次，每一個顧客的小選擇，都在改寫結局……", "16": "他鞠了一個躬，推開那扇漆成天空的門。門外的世界，正在上演另一場秀……", "17": "同一天，又重新開始了。這一次，他得在結束之前，學會顧客真正要的是什麼……", "18": "勳章頒完了，銀河恢復了平靜。這一次的敵人，是一套沒有人想用的系統……", "19": "他在照片背後寫下一句話，好讓追查永遠不會結束。這一次，連 AI 寫的評論都不能相信……", "20": "流浪漢和女孩，一起走向遠方的路。這一次，工廠的齒輪吞下的，是一模一樣的內容……", "21": "被遺忘的電影，終於重新放映。這一次，鐘塔裡的機器人偶，要畫出一張 AI 畫不出的圖……", "22": "星童回過頭，凝視著地球。這一次，HAL 的後代，正在替你決定要買什麼……"};
+/* 續集海報（img/poster/NN.webp），22 部到齊 */
 const KV=new Set(Array.from({length:22},(_,i)=>i+1));
 /* 海報卡：捲到畫面中間的那幾張才播小動畫（電腦上滑鼠移過也會） */
 const kvio=('IntersectionObserver' in window)?new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('live',e.isIntersecting)),{threshold:.6}):null;
@@ -182,10 +182,10 @@ function renderHalls(){
     <div class="strip-wrap"><div class="strip-nav"><span class="mono dim">左右拖曳，挑一部片</span><span><button data-dir="-1" aria-label="往左">‹</button> <button data-dir="1" aria-label="往右">›</button></span></div>
     <div class="strip" tabindex="0" aria-label="${h.name}場次">${items.map(a=>`
       <button class="frame z-${a.zone}" data-n="${a.n}" aria-label="第 ${a.n} 場《${esc(a.film.zh)}》續集：${esc(a.title)}，片長 ${a.mins} 分鐘">
-        <div class="poster paper">
+        <div class="poster pk">
+          <div class="fart kvc kv-${pad(a.n)}"><img src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy" draggable="false"><i class="kv-fx"></i><i class="kv-fx2"></i></div>
           <div class="ptop"><b>第 ${a.n} 場</b><span>${a.mins} 分鐘</span></div><span class="seen">已看</span>
-          ${KV.has(a.n)?`<div class="fart kvc kv-${pad(a.n)}"><img src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy" draggable="false"><i class="kv-fx"></i><i class="kv-fx2"></i></div>`:`<div class="fart">${window.SKETCH(a.n)}</div>`}
-          <div class="pinfo"><span class="fyr">${a.film.year}—2026</span><h3 class="fz ${(L=>L<=4?'l4':L<=5?'l5':L<=7?'l7':'l9')([...a.film.zh.replace(/\s/g,'')].length)}">${esc(a.film.zh)}</h3><span class="fen">${esc(a.film.en)}</span><p class="fq">「${esc(HOOK[a.n])}」</p><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
+          <div class="pinfo"><span class="fyr">${a.film.year}—2026</span><h3 class="fz">${esc(a.film.zh)}</h3><span class="fen">${esc(a.film.en)}</span><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
         </div>
       </button>`).join('')}</div></div>
     </section>`; }).join(''); watchKV(root);
@@ -425,14 +425,13 @@ function renderReel(){
   const list=lobHall==='all'?DATA:DATA.filter(a=>a.zone===lobHall);
   const r=$('#reel');
   r.innerHTML=list.map((a,i)=>{const h=hallOf(a.zone); const L=[...a.film.zh.replace(/\s/g,'')].length; const lc=L<=4?'l4':L<=5?'l5':L<=7?'l7':'l9'; return `<button class="fc z-${a.zone} ${seen.has(a.n)?'isseen':''} ${KV.has(a.n)?'haskv':''}" data-n="${a.n}" style="animation-delay:${Math.min(i,6)*60}ms" aria-label="《${esc(a.film.zh)}》${a.film.year}，第 ${a.n} 場">
+    <div class="art kvc kv-${pad(a.n)}"><img src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy" draggable="false"><i class="kv-fx"></i><i class="kv-fx2"></i></div>
     <div class="ftop"><b>第 ${a.n} 場</b><span>${h.name}</span></div>
-    ${KV.has(a.n)?`<div class="art kvc kv-${pad(a.n)}"><img src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy" draggable="false"><i class="kv-fx"></i><i class="kv-fx2"></i></div>`:`<div class="art">${window.SKETCH(a.n)}</div>`}
-    <span class="yr">${a.film.year}—2026</span>
-    <span class="zh ${lc}">${esc(a.film.zh)}</span>
+    <div class="ftxt"><span class="yr">${a.film.year}—2026</span>
+    <span class="zh">${esc(a.film.zh)}</span>
     <span class="en">${esc(a.film.en)}</span>
-    ${KV.has(a.n)?'':`<p class="lg">${esc(SCENES[a.n])}</p>`}
-    <p class="fq">「${esc(HOOK[a.n])}」</p>
-    <div class="cta"><span>2026 續集，${a.mins} 分鐘</span><span class="go">進場</span></div></button>`;}).join('');
+    <p class="fq">${esc(HOOK[a.n])}</p>
+    <div class="cta"><span>2026 續集，${a.mins} 分鐘</span><span class="go">進場</span></div></div></button>`;}).join('');
   r.scrollLeft=0; watchKV(r);
   $$('.fc').forEach(c=>c.onclick=e=>{ if(r.dataset.moved==='1'){ e.preventDefault(); return; } go(+c.dataset.n); });
 }
