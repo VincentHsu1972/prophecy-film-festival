@@ -144,7 +144,7 @@ function buildTimeline(){
   $$('.tl-dot').forEach(d=>{ const a=byN(+d.dataset.n);
     const show=()=>{ $$('.tl-dot').forEach(x=>x.classList.toggle('sel',x===d)); const h=hallOf(a.zone);
       const c=$('#tlCard'); c.className='tl-card z-'+a.zone;
-      c.innerHTML=`<img class="tl-pp" src="img/poster/${pad(a.n)}.webp" alt=""><div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(SCENES[a.n])}</h3><span class="arrow">${h.name}　第 ${a.n} 場</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">取票進場</button>`;
+      c.innerHTML=`<img class="tl-pp" src="img/poster/${pad(a.n)}.webp" alt=""><div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(SCENES[a.n])}</h3><span class="arrow">2026 續集《${esc(SEQ(a))}》　${h.name}　第 ${a.n} 場</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">取票進場</button>`;
       c.querySelector('[data-go]').onclick=()=>go(a.n); tick(); };
     d.onmouseenter=show; d.onfocus=show;
     d.onclick=e=>{ e.preventDefault(); if(tlPicked===a.n){ go(a.n); return; } tlPicked=a.n; show(); const c=$('#tlCard'); if(c.getBoundingClientRect().bottom>innerHeight-90) c.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'}); };
@@ -182,11 +182,11 @@ function renderHalls(){
     </div>
     <div class="strip-wrap"><div class="strip-nav"><span class="mono dim">左右拖曳，挑一部片</span><span><button data-dir="-1" aria-label="往左">‹</button> <button data-dir="1" aria-label="往右">›</button></span></div>
     <div class="strip" tabindex="0" aria-label="${h.name}場次">${items.map(a=>`
-      <button class="frame z-${a.zone}" data-n="${a.n}" aria-label="第 ${a.n} 場《${esc(a.film.zh)}》續集：${esc(a.title)}，片長 ${a.mins} 分鐘">
+      <button class="frame z-${a.zone}" data-n="${a.n}" aria-label="第 ${a.n} 場《${esc(a.film.zh)}》續集《${esc(SEQ(a))}》，片長 ${a.mins} 分鐘">
         <div class="poster pk">
           <div class="fart kvc kv-${pad(a.n)}"><img src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy" draggable="false"><i class="kv-fx"></i><i class="kv-fx2"></i></div>
           <div class="ptop"><b>第 ${a.n} 場</b><span>${a.mins} 分鐘</span></div><span class="seen">已看</span>
-          <div class="pinfo"><span class="fyr">${a.film.year}—2026</span><h3 class="fz">${esc(a.film.zh)}</h3><span class="fen">${esc(a.film.en)}</span><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
+          <div class="pinfo"><span class="fyr">${a.film.year}—2026</span><h3 class="fz">${esc(a.film.zh)}</h3><span class="fen">${esc(a.film.en)}</span><h4>續集《${esc(SEQ(a))}》</h4><span class="au">${esc(a.author)}</span></div>
         </div>
       </button>`).join('')}</div></div>
     </section>`; }).join(''); watchKV(root);
@@ -231,8 +231,8 @@ function openReader(n){
     <div class="inner">
       <div class="fn"><span class="fn-k">${h.name}　第 ${a.n} 場</span><span class="fn-sep"> &nbsp;|&nbsp; </span><span class="fn-t"><b>《${esc(a.film.zh)}》</b> <span class="fn-en">${esc(a.film.en)}</span></span></div>
       <div class="odo" id="odo">${a.film.year}</div>
-      <h1 class="tfx tfx-${TFX[a.n]}" aria-label="${esc(a.title)}" style="--n:${[...a.title].length}">${splitTitle(a.title,TFX[a.n])}</h1>
-      <div class="meta">${esc(a.author)} ・ 片長約 ${a.mins} 分鐘</div>
+      <h1 class="tfx tfx-${TFX[a.n]}" aria-label="${esc(SEQ(a))}" style="--n:${[...SEQ(a)].length}">${splitTitle(SEQ(a),TFX[a.n])}</h1>
+      <div class="meta">改編自〈${esc(a.title)}〉　${esc(a.author)} ・ 片長約 ${a.mins} 分鐘</div>
       <button class="seq-btn" type="button" data-seq="${a.n}">▶ 看續集預告　20 秒</button>
     </div><span class="cue">往下，開演</span>
   </section>
@@ -287,6 +287,7 @@ function relatedHTML(a){
 
 /* ---------- story mode ---------- */
 let readMode='story';
+const SEQ=a=>{ const t=(window.STORIES&&window.STORIES[a.n]&&window.STORIES[a.n].title)||''; const i=t.indexOf('：'); return i>=0?t.slice(i+1).trim():(t||a.title); };
 const hasStory=a=>!!(window.STORIES&&window.STORIES[a.n]);
 function modeBar(a){ if(!hasStory(a)) return ''; const s=window.STORIES[a.n];
   return `<div class="modebar" id="modebar"><div class="mb-in"><span class="mono">選擇觀看版本</span>
@@ -319,14 +320,14 @@ function showTicket(a){
   st.className='ticket-stage on z-'+a.zone;
   st.innerHTML=`<div class="tk-wrap"><div class="tk" id="tk">
     <div class="a"><img class="tk-pp" src="img/poster/${pad(a.n)}.webp" alt=""><span class="k">預言成真影展　入場券　限一人</span>
-      <h3>《${esc(a.film.zh)}》續集</h3><div class="ar">${esc(a.title)}</div>
+      <h3>《${esc(a.film.zh)}》續集</h3><div class="ar">${esc(SEQ(a))}</div>
       <div class="row"><div>影廳<b>${h.name}</b></div><div>座位<b>${h.row}-${pad(a.n)}</b></div><div>片長<b>${a.mins} 分</b></div><div>日期<b>${today()}</b></div></div><div class="take"><i>今天帶走的一句話</i>${esc(a.hook)}</div></div>
     <div class="b"><small>場次</small><span class="no">${pad(a.n)}</span><small>${a.film.year}—2026</small></div></div>
     <p class="tk-msg">${had?'這張票根已經在你的票根夾裡了。':'沿著虛線撕下票根，收進票根夾。'}</p>
     <div class="tk-actions">${had?'':'<button class="btn solid" id="tkTear">沿虛線撕下票根</button>'}<button class="btn" id="tkShare">推薦給朋友</button><button class="btn" id="tkDl">下載票券圖</button><button class="btn" id="tkClose">繼續觀賞</button></div></div>`;
   tick(); flick();
   const close=()=>{ st.className='ticket-stage'; st.innerHTML=''; };
-  $('#tkClose').onclick=close; $('#tkShare').onclick=()=>share('預言成真影展',`我剛在「預言成真影展」看了《${a.film.zh}》的續集：${a.hook}`,SITE+'#screen-'+a.n); st.onclick=e=>{ if(e.target===st) close(); };
+  $('#tkClose').onclick=close; $('#tkShare').onclick=()=>share('預言成真影展',`我剛在「預言成真影展」看了《${a.film.zh}》的續集《${SEQ(a)}》：${a.hook}`,SITE+'#screen-'+a.n); st.onclick=e=>{ if(e.target===st) close(); };
   $('#tkDl').onclick=()=>downloadTicket(a);
   const t=$('#tkTear'); if(t) t.onclick=()=>{ $('#tk').classList.add('torn'); tick(); setTimeout(tick,120); stamp(a.n); t.remove(); $('.tk-msg').textContent=seen.size===DATA.length?'22 張全部集滿，閉幕片已為你解鎖。':`收進票根夾了　${seen.size}/22　${hallDoneMsg(a)}`; const tb=$('#tearBtn'); if(tb) tb.textContent='再看一次我的票根'; };
 }
@@ -339,7 +340,7 @@ function downloadTicket(a){
     x.setLineDash([10,8]); x.strokeStyle='#9c937c'; x.lineWidth=3; x.beginPath(); x.moveTo(W-300,50); x.lineTo(W-300,H-50); x.stroke(); x.setLineDash([]);
     x.fillStyle='#6f6857'; x.font='18px monospace'; x.fillText('預言成真影展　入場券　限一人',90,95);
     x.fillStyle='#141414'; x.font='bold 52px serif'; x.fillText(`《${a.film.zh}》續集`,90,170);
-    x.font='28px serif'; const t=a.title.length>30?a.title.slice(0,30)+'…':a.title; x.fillText(t,90,220);
+    x.font='28px serif'; const t=SEQ(a); x.fillText(t,90,220);
     x.fillStyle='#6f6857'; x.font='16px monospace'; [['影廳',h.name],['座位',`${h.row}-${pad(a.n)}`],['片長',a.mins+' 分'],['日期',today()]].forEach((p,i)=>{ x.fillStyle='#6f6857'; x.font='16px monospace'; x.fillText(p[0],90+i*190,300); x.fillStyle='#141414'; x.font='bold 26px sans-serif'; x.fillText(p[1],90+i*190,336); });
     x.fillStyle='#141414'; x.font='16px monospace'; x.textAlign='center'; x.fillText('SCREEN',W-170,150); x.font='bold 110px serif'; x.fillText(pad(a.n),W-170,260); x.font='18px monospace'; x.fillText(`${a.film.year}—2026`,W-170,310);
     x.textAlign='left'; x.fillStyle='#6f6857'; x.font='14px monospace'; x.fillText('預言成真影展　1936 到 2026',90,H-70);
@@ -353,7 +354,7 @@ function renderWallet(){
   const d=$('#drawer'), all=seen.size===DATA.length, left=DATA.filter(a=>!seen.has(a.n)).reduce((s,a)=>s+a.mins,0);
   d.innerHTML=`<button class="x" id="closeW" style="float:right">關閉</button><h2>我的票根夾</h2>
   <p class="dim" style="font-size:14px;margin:0">已看 ${seen.size} 場　再約 ${left} 分鐘就能看完全刊</p>
-  <div class="stubs">${DATA.map(a=>`<button class="z-${a.zone} ${seen.has(a.n)?'on':''}" data-n="${a.n}" title="《${esc(a.film.zh)}》${esc(a.short)}">${pad(a.n)}</button>`).join('')}</div>
+  <div class="stubs">${DATA.map(a=>`<button class="z-${a.zone} ${seen.has(a.n)?'on':''}" data-n="${a.n}" title="《${esc(a.film.zh)}》續集：${esc(SEQ(a))}">${pad(a.n)}</button>`).join('')}</div>
   <div class="hallsum">${HALLS.map(h=>{const t=DATA.filter(a=>a.zone===h.z),s=t.filter(a=>seen.has(a.n)).length;return `<div class="z-${h.z}"><span>${h.name}</span><b>${s}/${t.length}</b></div>`}).join('')}</div>
   <div class="finale ${all?'unlocked':''}"><span class="mono dim">閉幕片</span><h3 style="font-family:var(--serif);margin:6px 0 0">22 則預言，6 個答案</h3>
   <p>${all?'你看完了全部 22 場，閉幕片為你開放。':'集滿 22 張票根解鎖。它會把 22 部續集收成一張地圖：預言成真之後，品牌該做的六件事。'}</p>
@@ -410,7 +411,7 @@ function renderLineup(){
   const m=MOODS.find(x=>x.k===mood), list=m.ns.map(byN), mins=list.reduce((s,a)=>s+(m.cut?3:a.mins),0);
   $('#lineup').innerHTML=`<div class="lineup-head"><div><span class="mono dim">今晚的節目　${list.length} 場，約 ${mins} 分鐘</span><h3>${m.e} ${m.t}</h3></div><p>${esc(m.sub)}</p></div>
   <div class="picks ${m.cut?'five':''}">${list.map((a,i)=>`<button class="pick z-${a.zone}" data-n="${a.n}"><div class="pp"><img src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy" draggable="false"></div><div class="pb">
-   <span class="ord">第 ${i+1} 場　《${esc(a.film.zh)}》</span><h4>${esc(a.title)}</h4>
+   <span class="ord">第 ${i+1} 場　《${esc(a.film.zh)}》續集</span><h4>${esc(SEQ(a))}</h4>
    <q>${esc(a.hook)}</q><span class="go">${m.cut?'看預告片＋影評':`進場，${a.mins} 分鐘`}</span></div></button>`).join('')}</div>`;
   $$('.pick').forEach(b=>b.onclick=()=>go(+b.dataset.n));
 }
@@ -432,6 +433,7 @@ function renderReel(){
     <div class="ftxt"><span class="yr">${a.film.year}—2026</span>
     <span class="zh">${esc(a.film.zh)}</span>
     <span class="en">${esc(a.film.en)}</span>
+    <b class="sq">續集《${esc(SEQ(a))}》</b>
     <p class="fq">${esc(HOOK[a.n])}</p>
     <div class="cta"><span>2026 續集，${a.mins} 分鐘</span><span class="go">進場</span></div></div></button>`;}).join('');
   r.scrollLeft=0; watchKV(r);
@@ -462,7 +464,7 @@ function renderReel(){
 function openIndex(){
   const d=$('#drawer'); d.innerHTML=`<button class="x" id="closeW" style="float:right">關閉</button><div class="idx"><h2>全部場次索引</h2>
   ${HALLS.map(h=>{const items=DATA.filter(a=>a.zone===h.z);return `<section class="z-${h.z}"><div class="hn"><span>${h.name}</span><span>${items.length} 場</span></div>
-   ${items.map(a=>`<button class="row" data-n="${a.n}"><span class="rn ${seen.has(a.n)?'ok':''}">${seen.has(a.n)?'✓':pad(a.n)}</span><img class="ri" src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy"><span class="rt">${esc(a.title)}<small>${esc(a.author)} ・《${esc(a.film.zh)}》${a.film.year}</small></span><span class="rm">${a.mins}′</span></button>`).join('')}</section>`;}).join('')}</div>`;
+   ${items.map(a=>`<button class="row" data-n="${a.n}"><span class="rn ${seen.has(a.n)?'ok':''}">${seen.has(a.n)?'✓':pad(a.n)}</span><img class="ri" src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy"><span class="rt">《${esc(a.film.zh)}》續集：${esc(SEQ(a))}<small>改編自〈${esc(a.title)}〉　${esc(a.author)}</small></span><span class="rm">${a.mins}′</span></button>`).join('')}</section>`;}).join('')}</div>`;
   $('#closeW').onclick=closeWallet; d.querySelectorAll('.row').forEach(b=>b.onclick=()=>{ closeWallet(); go(+b.dataset.n); });
   d.classList.add('open'); $('#scrim').classList.add('open'); d.scrollTop=0; tick();
 }
