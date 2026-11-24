@@ -1113,3 +1113,16 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
 @media (prefers-reduced-motion:reduce){.opening.has-kv .opsk{opacity:.11!important}}
 .tl-card .sq{display:block;font-family:var(--serif);font-weight:700;font-size:16px;color:#f3e3a6;margin:12px 0 4px;padding-top:12px;border-top:1px solid rgba(236,232,223,.12)}
 .tl-card .hk{font-family:var(--serif);font-size:14.5px;line-height:1.7;color:rgba(236,232,223,.82);margin:0}
+/* 開場片牆 */
+.gwall{position:absolute;inset:-12% -8%;display:flex;gap:14px;justify-content:center;transform:rotate(-7deg) scale(1.08);opacity:0;transition:opacity 2.4s ease .3s;pointer-events:none;z-index:0}
+.gwall.on{opacity:1}
+.gcol{flex:0 0 clamp(120px,12vw,190px);overflow:hidden}
+.gtr{display:flex;flex-direction:column;gap:14px;animation:gup var(--dur) linear infinite}
+.gcol.dn .gtr{animation-direction:reverse}
+.gtr img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:2px;filter:brightness(.5) saturate(.85)}
+@keyframes gup{to{transform:translateY(calc(-50% - 7px))}}
+#gate::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 52% 58% at 50% 50%,rgba(5,6,8,.93) 0%,rgba(5,6,8,.82) 45%,rgba(5,6,8,.45) 80%,rgba(5,6,8,.6) 100%)}
+#gate .beam{z-index:1}#gate .gate-in{position:relative;z-index:2}#gate .leader,#gate .skip,#gate>.lb{z-index:3}
+#gate.opening .gwall{opacity:0;transition:opacity .8s}
+@media (max-width:700px){.gwall{gap:10px}.gtr{gap:10px}.gcol{flex-basis:30vw}#gate::after{background:radial-gradient(ellipse 80% 50% at 50% 48%,rgba(5,6,8,.92),rgba(5,6,8,.7) 60%,rgba(5,6,8,.55))}}
+@media (prefers-reduced-motion:reduce){.gtr{animation:none}}

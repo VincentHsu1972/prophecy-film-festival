@@ -92,6 +92,11 @@ function poster(a,bare){
 
 /* ---------- gate ---------- */
 const gate=$('#gate');
+/* 開場背景：22 張續集海報組成的慢速片牆 */
+(function(){ const w=$('#gwall'); if(!w) return; const C=innerWidth<700?4:7, ns=[...Array(22)].map((_,i)=>i+1);
+  w.innerHTML=[...Array(C)].map((_,c)=>{ const col=ns.map((_,k)=>ns[(k*5+c*3)%22]); const imgs=col.map(n=>`<img src="img/poster/sm/${pad(n)}.webp" alt="" loading="eager" decoding="async">`).join('');
+    return `<div class="gcol ${c%2?'dn':''}" style="--dur:${150+c*17}s"><div class="gtr">${imgs}${imgs}</div></div>`; }).join('');
+  requestAnimationFrame(()=>w.classList.add('on')); })();
 function endGate(){ gate.classList.add('letterbox'); setTimeout(()=>{ gate.classList.add('gone'); document.body.classList.remove('gated'); route(); if(carried){ toast(`已帶入 ${carried} 張票根`); carried=0; } },850); try{sessionStorage.setItem('dw-gate','1');}catch(e){} }
 function runLeader(){
   $('#gateIntro').classList.add('hide'); const L=$('#leader'); L.classList.add('on');
