@@ -265,12 +265,12 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); { const sb=op.querySelector('.seq-btn'); if(sb) sb.onclick=()=>{ stopScore&&stopScore(); window.playTrailer(`media/sequel/${sb.dataset.seq}.mp4`,`《${a.film.zh}》續集預告`); }; } flick(); tick(); drawSketch($('#opsk')); playScore(a.n); { const kv=op.querySelector('.kv'); if(kv) requestAnimationFrame(()=>requestAnimationFrame(()=>kv.classList.add('dev'))); }
+  const op=$('#opening'), odo=$('#odo'); { const sb=op.querySelector('.seq-btn'); if(sb) sb.onclick=()=>{ stopScore&&stopScore(); window.playTrailer(`media/sequel/${sb.dataset.seq}.mp4`,`《${a.film.zh}》續集預告`); }; } flick(); tick(); drawSketch($('#opsk')); playScore(a.n); 
   setTimeout(()=>op.classList.add('go'),reduce?0:250);
   const y0=a.film.year, y1=2026, dur=reduce?0:1500, t0=performance.now()+500; let last=y0;
   (function f(now){ const p=Math.min(1,Math.max(0,(now-t0)/dur)); const e=1-Math.pow(1-p,3); const y=Math.round(y0+(y1-y0)*e);
     if(y!==last){ odo.textContent=y; last=y; if(y%2===0) tick(); }
-    if(p<1) requestAnimationFrame(f); else { odo.textContent=y1; odo.classList.add('done'); op.classList.add('titled'); beep(1320,.12,.12); } })(performance.now());
+    if(p<1) requestAnimationFrame(f); else { odo.textContent=y1; odo.classList.add('done'); op.classList.add('titled'); { const kv=op.querySelector('.kv'); if(kv) kv.classList.add('dev'); } beep(1320,.12,.12); } })(performance.now());
   // reveal + progress
   if(rio) rio.disconnect();
   rio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); if(e.target.classList.contains('midsk')) drawSketch(e.target); rio.unobserve(e.target);} }),{root:r,threshold:.1});
