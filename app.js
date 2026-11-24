@@ -103,8 +103,20 @@ function runLeader(){
     if(n<=0){ L.classList.remove('on'); endGate(); return; } requestAnimationFrame(f); })(t0);
   beep(1000); flick();
 }
-$('#enterSound').onclick=()=>{ setSound(true); runLeader(); };
-$('#enterMute').onclick=()=>{ setSound(false); runLeader(); };
+/* 預告片 */
+(function(){ const t=$('#trailer'), v=$('#trailerVid'); if(!t) return;
+  const close=()=>{ v.pause(); t.hidden=true; if(ac&&soundOn) ac.resume().catch(()=>{}); $('#trailerBtn').focus(); };
+  $('#trailerBtn').onclick=()=>{ t.hidden=false; if(ac) ac.suspend().catch(()=>{}); v.currentTime=0; const p=v.play(); if(p) p.catch(()=>{}); $('#trailerClose').focus(); };
+  $('#trailerClose').onclick=close; t.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
+  t.addEventListener('click',e=>{ if(e.target===t) close(); }); v.addEventListener('ended',close); })();
+/* 進場：Logo 的光圈轉開、鏡頭穿過光圈，再接倒數 */
+function openIris(next){ if(reduce||gate.classList.contains('opening')){ next(); return; } gate.classList.add('opening'); beep(330,.06,.25); setTimeout(next,1050); }
+$('#enterSound').onclick=()=>{ setSound(true); openIris(runLeader); };
+$('#enterMute').onclick=()=>{ setSound(false); openIris(runLeader); };
+/* 開場時，眼睛跟著游標看（只在有滑鼠的裝置） */
+(function(){ const eye=document.querySelector('#gateLogo .g-eye'); if(!eye||reduce||!matchMedia('(pointer:fine)').matches) return;
+  gate.addEventListener('pointermove',e=>{ if(gate.classList.contains('opening')) return; const r=$('#gateLogo').getBoundingClientRect(); const dx=(e.clientX-(r.left+r.width/2))/innerWidth, dy=(e.clientY-(r.top+r.height/2))/innerHeight;
+    eye.style.transform=`translate(${Math.max(-1,Math.min(1,dx*2))*34}px,${Math.max(-1,Math.min(1,dy*2))*14}px)`; }); })();
 $('#skip').onclick=()=>endGate();
 /* 每次從首頁進來都放一次片頭倒數；只有直接連到某一場或閉幕片時才略過 */
 if(/^#(screen-\d+|finale)$/.test(location.hash)){ gate.classList.add('gone'); document.body.classList.remove('gated'); }
@@ -147,6 +159,8 @@ let ft='all';
 function renderFilters(){ const box=$('#fTime'); box.innerHTML=''; TIMES.forEach(t=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=t.l; b.setAttribute('aria-pressed',ft===t.k); b.onclick=()=>{ft=t.k;renderFilters();applyFilter();}; box.appendChild(b); }); }
 function applyFilter(){ const f=TIMES.find(t=>t.k===ft).f; let n=0; $$('.frame').forEach(fr=>{ const a=byN(+fr.dataset.n), ok=f(a.mins); fr.classList.toggle('dim',!ok); if(ok) n++; });
   $('#fHint').textContent= ft==='all'?'片長依全文字數估算（每分鐘約 450 字）':`${n} 場符合，其他場次已變暗`; }
+/* 每部續集裡的一句台詞（逐字取自劇情版） */
+const HOOK={"1": "你為什麼一談到 AI 就這麼興奮？", "2": "如果把這句主張換成十種說法，哪一種最能打動人？", "3": "這是 AI slop 吧？", "4": "你又要拆公司了？", "5": "這種事，AI 不是幾秒鐘就能做完嗎？", "6": "這個故事，能被驗證嗎？", "7": "幫我挑一個適合送 35 歲女生的生日禮物", "8": "這就是你要找的線索。", "9": "因為你的消費者，已經換了一條路來認識你。", "10": "哪個牌子適合我？", "11": "你知道嗎，這種記憶現在越來越值錢了。", "12": "這次活動的三個創意，吸引得了 35 歲以上的高收入族群嗎？", "13": "方舟號上，我們從來不需要問這些問題。因為只有一家公司在說話。", "14": "博士，什麼樣的人，才配指揮這些機器？", "15": "我還趕得上轉機嗎？如果不行，下一個可行的選項是什麼？", "16": "我們正在 AI 轉型！", "17": "下單很快，但後續很亂。", "18": "我有不好的預感。", "19": "不要相信他的謊言", "20": "幫我做一個年輕化的社群貼文。", "21": "每樣東西都有它的目的，就連機器也是。", "22": "抱歉，戴夫，恐怕我不能那麼做。"};
 let activeHall='intro';
 function renderTabs(){ $('#hallTabs').innerHTML=HALLS.map(h=>{const t=DATA.filter(a=>a.zone===h.z);const s=t.filter(a=>seen.has(a.n)).length;return `<button role="tab" class="z-${h.z}" aria-selected="${activeHall===h.z}" data-z="${h.z}"><i></i>${h.name}<small>${s}/${t.length}</small></button>`}).join('');
   $$('#hallTabs button').forEach(b=>b.onclick=()=>{ location.hash='hall-'+b.dataset.z; }); }
@@ -166,7 +180,7 @@ function renderHalls(){
         <div class="poster paper">
           <div class="ptop"><b>第 ${a.n} 場</b><span>${a.mins} 分鐘</span></div><span class="seen">已看</span>
           <div class="fart">${window.SKETCH(a.n)}</div>
-          <div class="pinfo"><span class="fyr">${a.film.year}—2026</span><h3 class="fz ${(L=>L<=4?'l4':L<=5?'l5':L<=7?'l7':'l9')([...a.film.zh.replace(/\s/g,'')].length)}">${esc(a.film.zh)}</h3><span class="fen">${esc(a.film.en)}</span><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
+          <div class="pinfo"><span class="fyr">${a.film.year}—2026</span><h3 class="fz ${(L=>L<=4?'l4':L<=5?'l5':L<=7?'l7':'l9')([...a.film.zh.replace(/\s/g,'')].length)}">${esc(a.film.zh)}</h3><span class="fen">${esc(a.film.en)}</span><p class="fq">「${esc(HOOK[a.n])}」</p><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
         </div>
       </button>`).join('')}</div></div>
     </section>`; }).join('');
@@ -412,6 +426,7 @@ function renderReel(){
     <span class="zh ${lc}">${esc(a.film.zh)}</span>
     <span class="en">${esc(a.film.en)}</span>
     <p class="lg">${esc(SCENES[a.n])}</p>
+    <p class="fq">「${esc(HOOK[a.n])}」</p>
     <div class="cta"><span>2026 續集，${a.mins} 分鐘</span><span class="go">進場</span></div></button>`;}).join('');
   r.scrollLeft=0;
   $$('.fc').forEach(c=>c.onclick=e=>{ if(r.dataset.moved==='1'){ e.preventDefault(); return; } go(+c.dataset.n); });
