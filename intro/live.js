@@ -30,16 +30,20 @@ $('go').addEventListener('click',()=>setSnd(true));
 $('snd').addEventListener('click',()=>setSnd(!on));
 
 /* ---------- DEMO 1：駭客任務片頭 ---------- */
-const FILM={n:12,zh:'駭客任務',en:'The Matrix',t:'People Model 讓消費者研究變成一場對話',fx:'rain',c:'#3dff7a'};
-let ft=0;
+const FILM={n:12,zh:'駭客任務',en:'The Matrix',t:'莫斐斯的新訓練程式',fx:'rain',c:'#3dff7a'};
+let ft=0, yt=0;
 function opening(){ const f=FILM, box=$('liveOpen'); if(!box||!window.SKETCH) return;
-  box.className='shot live-open fx-'+f.fx; box.style.setProperty('--fc',f.c);
+  box.className='shot live-open lo2 fx-'+f.fx; box.style.setProperty('--fc',f.c); cancelAnimationFrame(yt);
   $('loSk').innerHTML=window.SKETCH(f.n); draw($('loSk'),1600);
-  let pp=box.querySelector('.lo-pp'); if(!pp){ pp=document.createElement('img'); pp.className='lo-pp'; pp.alt=''; pp.src='../img/poster/12.webp'; box.prepend(pp); } pp.classList.remove('dev'); setTimeout(()=>pp.classList.add('dev'),reduce?0:1700);
-  $('loK').textContent=`Model 廳　第 12 場　《${f.zh}》`;
-  $('loM').textContent='素描　海報顯影　片名出場　原創配樂';
-  const ch=[...f.t]; $('loT').innerHTML='';
-  setTimeout(()=>{ $('loT').innerHTML=ch.map((c,i)=>c===' '?'<span class="ch sp"> </span>':`<span class="ch" style="--i:${i}">${c}</span>`).join(''); },reduce?0:1500); }
+  $('loK').textContent=`Model 廳　第 12 場　《${f.zh}》${f.en}`;
+  $('loM').textContent='改編自〈People Model 讓消費者研究變成一場對話〉';
+  $('loT').innerHTML=''; const y=$('loY'); y.textContent='1999';
+  const done=()=>{ y.textContent='2026'; box.classList.add('titled');
+    $('loT').innerHTML=[...f.t].map((c,i)=>`<span class="ch" style="--i:${i}">${c}</span>`).join(''); };
+  if(reduce){ done(); return; }
+  const t0=performance.now()+500, dur=1500;
+  (function step(now){ const p=Math.min(1,Math.max(0,(now-t0)/dur)), e=1-Math.pow(1-p,3); y.textContent=Math.round(1999+27*e); if(p<1) yt=requestAnimationFrame(step); else done(); })(performance.now());
+}
 
 /* ---------- 22 部各不相同：插圖輪流亮起，配樂跟著換 ---------- */
 let ti=0, tt=0;
