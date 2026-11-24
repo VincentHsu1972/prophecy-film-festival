@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>預言成真影展　預告片舞台</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:"Noto Serif TC","Songti TC",serif;color:#ece8df}
+.layer{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .5s}
+.layer.on{opacity:1}
+.sk{width:56vh;height:84vh;position:relative}
+.sk svg{position:absolute;left:-10%;top:12%;width:120%!important;height:76%!important;overflow:visible}
+.sk .pn{fill:none;stroke:#ece8df;stroke-width:1.6}
+.sk img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:grayscale(1) blur(8px) brightness(.3);transform:scale(1.03);transition:opacity 1.4s,filter 2.4s cubic-bezier(.3,.6,.2,1),transform 5s ease-out}
+.sk.dev img{opacity:1;filter:none;transform:scale(1.09)}
+.sk.dev svg{opacity:0;transition:opacity 1.8s .4s}
+.yr{position:fixed;left:6vw;bottom:8vh;font:400 34px 'Iowan Old Style',Palatino,Georgia,serif;letter-spacing:.12em;color:#cfc9bd;opacity:0;transition:opacity .4s}
+.yr.on{opacity:1}
+#flash .sk{transition:none}
+#big{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:26vh;letter-spacing:.02em;color:#f4efe4}
+#grid{display:grid;grid-template-columns:repeat(11,1fr);gap:.6vw;width:94vw;transform:scale(1);transition:transform 7s ease-out}
+#grid img{width:100%;aspect-ratio:2/3;object-fit:cover;opacity:0;transform:translateY(14px);transition:opacity .35s,transform .45s cubic-bezier(.2,.7,.2,1)}
+#grid img.in{opacity:1;transform:none}
+#grid.zoom{transform:scale(1.12)}
+#white{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .9s}
+#white.on{opacity:.85;transition:none}
+#logo svg{width:44vw;height:auto}
+#logo g,#logo polygon,#logo path{transform-box:fill-box;transform-origin:center}
+#logo.open .g-hole{animation:irisOpen .9s cubic-bezier(.6,0,.3,1) forwards}
+#logo.open .g-blades{animation:bladeTurn .9s cubic-bezier(.6,0,.3,1) forwards;transform-origin:160px 100px;transform-box:view-box}
+#logo.open .g-star{animation:starFlare .8s ease-in forwards}
+#logo.open svg{animation:pushIn 1.3s cubic-bezier(.7,0,.6,1) forwards}
+@keyframes irisOpen{to{transform:scale(3.6) rotate(30deg)}}
+@keyframes bladeTurn{to{transform:rotate(40deg)}}
+@keyframes starFlare{40%{transform:scale(1.6);opacity:1}100%{transform:scale(.2);opacity:0}}
+@keyframes pushIn{0%,40%{transform:scale(1);opacity:1}100%{transform:scale(8);opacity:0}}
+iframe{position:fixed;inset:0;width:100vw;height:100vh;border:0;opacity:0;transition:opacity .5s;background:#000}
+iframe.on{opacity:1}
+#end{flex-direction:column;gap:2.2vh;text-align:center}
+#end img{width:30vw}
+#end .t{font-size:5.4vh;font-weight:700;letter-spacing:.24em}
+#end .l{font-size:3vh;color:#cfc9bd;opacity:0;transition:opacity 1.2s .9s}
+#end.on .l{opacity:1}
+#end .u{font:13px ui-monospace,Menlo,monospace;letter-spacing:.2em;color:#9b9890;opacity:0;transition:opacity 1s 1.8s}
+#end.on .u{opacity:1}
+</style>
+<script src="../../data.js"></script>
+<script src="../../sketch.js"></script>
+<script src="../../score.js"></script>
+</head>
+<body>
+<div class="layer" id="a"><div class="sk" id="skA"></div></div>
+<div class="layer" id="b"><div class="sk" id="skB"></div></div>
+<div class="layer" id="flash"><div class="sk" id="skF"></div></div>
+<div class="layer" id="bigL"><div id="big">2026</div></div>
+<div class="layer" id="gridL"><div id="grid"></div></div>
+<div class="layer" id="logo"></div>
+<iframe id="site" src="../../index.html" title="site"></iframe>
+<div class="layer" id="end"><img src="../../img/logo/mark-dark.svg" alt=""><div class="t">預言成真影展</div><div class="l">十年前的「未來」，已經成了今天的日常。</div><div class="u">vincenthsu1972.github.io/prophecy-film-festival</div></div>
+<div class="yr" id="yr"></div>
+<div id="white"></div>
+<script>
+const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,'0');
+const W=ms=>new Promise(r=>setTimeout(r,ms));
+let ac;
+function on(id){ document.querySelectorAll('.layer.on').forEach(l=>{ if(l.id!==id) l.classList.remove('on'); }); if(id) $(id).classList.add('on'); }
+function draw(box,total){ const els=[...box.querySelectorAll('.pn')];
+  els.forEach((el,i)=>{ let L=300; try{L=Math.ceil(el.getTotalLength())||300}catch(e){} el.style.strokeDasharray=L; el.style.strokeDashoffset=L;
+    el.style.transition=`stroke-dashoffset ${total*.6}ms cubic-bezier(.5,.1,.3,1) ${Math.round(i/Math.max(1,els.length)*total*.5)}ms`; });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>els.forEach(el=>el.style.strokeDashoffset=0))); }
+function sketchCard(box,n,withPoster){ box.className='sk'; box.innerHTML=(withPoster?`<img src="../../img/poster/${pad(n)}.webp" alt="">`:'')+window.SKETCH(n); const sv=box.querySelector('svg'); sv.removeAttribute('class'); sv.removeAttribute('width'); sv.removeAttribute('height'); }
+function year(t){ const y=$('yr'); y.textContent=t; y.classList.toggle('on',!!t); }
+function boom(t=0,f=46,v=.9){ const o=ac.createOscillator(),g=ac.createGain(); o.type='sine'; o.frequency.setValueAtTime(f*2,ac.currentTime+t); o.frequency.exponentialRampToValueAtTime(f,ac.currentTime+t+.5);
+  g.gain.setValueAtTime(0,ac.currentTime+t); g.gain.linearRampToValueAtTime(v,ac.currentTime+t+.02); g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+2.6); o.connect(g); g.connect(ac.destination); o.start(ac.currentTime+t); o.stop(ac.currentTime+t+2.8); }
+function tick(t=0,v=.25){ const o=ac.createOscillator(),g=ac.createGain(); o.type='square'; o.frequency.value=1600; g.gain.setValueAtTime(v,ac.currentTime+t); g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+.05); o.connect(g); g.connect(ac.destination); o.start(ac.currentTime+t); o.stop(ac.currentTime+t+.06); }
+function white(){ const w=$('white'); w.classList.add('on'); requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.remove('on'))); }
+
+async function prepSite(){ const f=$('site'); await new Promise(r=>{ if(f.contentDocument&&f.contentDocument.readyState==='complete') r(); else f.onload=r; });
+  const d=f.contentDocument; d.getElementById('enterMute').click(); }
+
+async function run(){
+  ac=new AudioContext(); window.__ac=ac;
+  // 預先在背景把網站帶到片單
+  prepSite();
+  const logoSrc=await (await fetch('../../index.html')).text();
+  $('logo').innerHTML=logoSrc.match(/<svg class="gate-logo" id="gateLogo"[\s\S]*?<\/svg>/)[0].replace('class="gate-logo"','');
+  SCORE.play(22,ac,.6); await W(300);
+  // 1. 1968：鉛筆畫出 2001 的世界，然後成真
+  sketchCard($('skA'),22,true); on('a'); year('1968'); draw($('skA'),2200);
+  await W(2500); $('skA').classList.add('dev'); await W(3000);
+  // 2. 2013：雲端情人
+  on(null); year(''); await W(500);
+  sketchCard($('skB'),2,true); on('b'); year('2013'); draw($('skB'),1800);
+  await W(2100); $('skB').classList.add('dev'); await W(2700);
+  // 3. 年份加速：素描一張張閃過
+  on('flash'); const seq=[...DATA].sort((x,y)=>x.film.year-y.film.year).filter(a=>a.n!==22&&a.n!==2);
+  let dt=420;
+  for(const a of seq){ sketchCard($('skF'),a.n,false); year(String(a.film.year)); tick(0,.18); await W(dt); dt=Math.max(130,dt*.86); }
+  year(''); on(null); await W(250);
+  // 4. 2026
+  SCORE.stop(true); boom(0,42,1); white(); on('bigL'); await W(1500);
+  SCORE.play(12,ac,.5);
+  // 5. 22 部全數成真：海報一張張落位
+  const g=$('grid'); g.innerHTML=DATA.map(a=>`<img src="../../img/poster/${pad(a.n)}.webp" alt="">`).join(''); on('gridL');
+  const imgs=[...g.children]; for(let i=0;i<imgs.length;i++){ imgs[i].classList.add('in'); if(i%2===0) tick(0,.1); await W(95); }
+  g.classList.add('zoom'); await W(2600);
+  // 6. 光圈打開，穿過去
+  on('logo'); await W(1300); $('logo').classList.add('open'); boom(.35,60,.6); await W(1000); white(); on(null);
+  // 7. 網站本身：片單、片頭、票根
+  const f=$('site'), w=f.contentWindow, d=f.contentDocument; f.classList.add('on'); await W(3600);
+  w.location.hash='screen-12'; await W(5200);
+  d.getElementById('tearBtn').click(); await W(900); const t=d.getElementById('tkTear'); if(t) t.click(); await W(2600);
+  f.classList.remove('on'); await W(500);
+  // 8. 片尾
+  on('end'); await W(5200);
+  SCORE.stop(false); await W(1400);
+  window.__done=true;
+}
+window.__start=run;
+</script>
+</body>
+</html>
