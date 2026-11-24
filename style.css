@@ -1032,3 +1032,20 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
 .pick .pp img{object-position:50% 50%}
 @media (max-width:820px){.fc.haskv{height:min(62vh,540px);min-height:0;max-width:82vw}.fc.haskv .zh{font-size:34px}.fc.haskv .fq{font-size:13px}.frame{width:72vw;max-width:290px}.frame .poster.pk .fz{font-size:28px}}
 @media (max-width:820px){.fc.haskv{width:min(78vw,340px);height:auto;max-width:none}}
+/* 第一屏：海報卡高度跟著視窗算，底部選單不壓到海報 */
+@media (min-width:821px){
+  .fc.haskv{height:clamp(340px,calc(100vh - 384px),600px);min-height:0}
+  @supports (height:100svh){.fc.haskv{height:clamp(340px,calc(100svh - 384px),600px)}}
+}
+@media (min-width:821px) and (max-height:760px){
+  .lobby-head{padding-top:18px!important;padding-bottom:8px!important}
+  .lobby-title{font-size:clamp(26px,3vw,36px)!important;margin:4px 0 10px!important}
+  .fc.haskv{height:clamp(300px,calc(100svh - 330px),600px)}
+  .fc.haskv .fq{-webkit-line-clamp:2}
+}
+@media (min-width:821px) and (max-height:760px){.fc.haskv{height:clamp(280px,calc(100svh - 352px),600px)}}
+/* 片名字級跟著卡片寬度縮放，22 部仍是同一個字級 */
+.fc.haskv,.frame .poster.pk{container-type:inline-size}
+.fc.haskv .zh{font-size:min(40px,10.5cqw)}
+.fc.haskv .fq{font-size:min(13.5px,3.6cqw)}
+.frame .poster.pk .fz{font-size:min(30px,10.5cqw)}
