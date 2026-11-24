@@ -163,6 +163,9 @@ function applyFilter(){ const f=TIMES.find(t=>t.k===ft).f; let n=0; $$('.frame')
 const HOOK={"1": "你為什麼一談到 AI 就這麼興奮？", "2": "如果把這句主張換成十種說法，哪一種最能打動人？", "3": "這是 AI slop 吧？", "4": "你又要拆公司了？", "5": "這種事，AI 不是幾秒鐘就能做完嗎？", "6": "這個故事，能被驗證嗎？", "7": "幫我挑一個適合送 35 歲女生的生日禮物", "8": "這就是你要找的線索。", "9": "因為你的消費者，已經換了一條路來認識你。", "10": "哪個牌子適合我？", "11": "你知道嗎，這種記憶現在越來越值錢了。", "12": "這次活動的三個創意，吸引得了 35 歲以上的高收入族群嗎？", "13": "方舟號上，我們從來不需要問這些問題。因為只有一家公司在說話。", "14": "博士，什麼樣的人，才配指揮這些機器？", "15": "我還趕得上轉機嗎？如果不行，下一個可行的選項是什麼？", "16": "我們正在 AI 轉型！", "17": "下單很快，但後續很亂。", "18": "我有不好的預感。", "19": "不要相信他的謊言", "20": "幫我做一個年輕化的社群貼文。", "21": "每樣東西都有它的目的，就連機器也是。", "22": "抱歉，戴夫，恐怕我不能那麼做。"};
 /* 已有續集海報的場次（img/poster/NN.webp） */
 const KV=new Set([1,2,3,4,5,6,7,8]);
+/* 海報卡：捲到畫面中間的那幾張才播小動畫（電腦上滑鼠移過也會） */
+const kvio=('IntersectionObserver' in window)?new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('live',e.isIntersecting)),{threshold:.6}):null;
+function watchKV(root){ if(kvio&&!reduce) root.querySelectorAll('.kvc').forEach(k=>kvio.observe(k)); }
 let activeHall='intro';
 function renderTabs(){ $('#hallTabs').innerHTML=HALLS.map(h=>{const t=DATA.filter(a=>a.zone===h.z);const s=t.filter(a=>seen.has(a.n)).length;return `<button role="tab" class="z-${h.z}" aria-selected="${activeHall===h.z}" data-z="${h.z}"><i></i>${h.name}<small>${s}/${t.length}</small></button>`}).join('');
   $$('#hallTabs button').forEach(b=>b.onclick=()=>{ location.hash='hall-'+b.dataset.z; }); }
@@ -181,11 +184,11 @@ function renderHalls(){
       <button class="frame z-${a.zone}" data-n="${a.n}" aria-label="第 ${a.n} 場《${esc(a.film.zh)}》續集：${esc(a.title)}，片長 ${a.mins} 分鐘">
         <div class="poster paper">
           <div class="ptop"><b>第 ${a.n} 場</b><span>${a.mins} 分鐘</span></div><span class="seen">已看</span>
-          <div class="fart">${window.SKETCH(a.n)}</div>
+          ${KV.has(a.n)?`<div class="fart kvc kv-${pad(a.n)}"><img src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy" draggable="false"><i class="kv-fx"></i><i class="kv-fx2"></i></div>`:`<div class="fart">${window.SKETCH(a.n)}</div>`}
           <div class="pinfo"><span class="fyr">${a.film.year}—2026</span><h3 class="fz ${(L=>L<=4?'l4':L<=5?'l5':L<=7?'l7':'l9')([...a.film.zh.replace(/\s/g,'')].length)}">${esc(a.film.zh)}</h3><span class="fen">${esc(a.film.en)}</span><p class="fq">「${esc(HOOK[a.n])}」</p><h4>${esc(a.title)}</h4><span class="au">${esc(a.author)}</span></div>
         </div>
       </button>`).join('')}</div></div>
-    </section>`; }).join('');
+    </section>`; }).join(''); watchKV(root);
   $$('.frame').forEach(f=>f.onclick=()=>go(+f.dataset.n));
   $$('.strip-nav button').forEach(b=>b.onclick=()=>{ const s=b.closest('.strip-wrap').querySelector('.strip'); s.scrollBy({left:+b.dataset.dir*360,behavior:'smooth'}); tick(); });
   // drag to scroll
@@ -421,16 +424,16 @@ function renderLobTabs(){
 function renderReel(){
   const list=lobHall==='all'?DATA:DATA.filter(a=>a.zone===lobHall);
   const r=$('#reel');
-  r.innerHTML=list.map((a,i)=>{const h=hallOf(a.zone); const L=[...a.film.zh.replace(/\s/g,'')].length; const lc=L<=4?'l4':L<=5?'l5':L<=7?'l7':'l9'; return `<button class="fc z-${a.zone} ${seen.has(a.n)?'isseen':''}" data-n="${a.n}" style="animation-delay:${Math.min(i,6)*60}ms" aria-label="《${esc(a.film.zh)}》${a.film.year}，第 ${a.n} 場">
+  r.innerHTML=list.map((a,i)=>{const h=hallOf(a.zone); const L=[...a.film.zh.replace(/\s/g,'')].length; const lc=L<=4?'l4':L<=5?'l5':L<=7?'l7':'l9'; return `<button class="fc z-${a.zone} ${seen.has(a.n)?'isseen':''} ${KV.has(a.n)?'haskv':''}" data-n="${a.n}" style="animation-delay:${Math.min(i,6)*60}ms" aria-label="《${esc(a.film.zh)}》${a.film.year}，第 ${a.n} 場">
     <div class="ftop"><b>第 ${a.n} 場</b><span>${h.name}</span></div>
-    <div class="art">${window.SKETCH(a.n)}</div>
+    ${KV.has(a.n)?`<div class="art kvc kv-${pad(a.n)}"><img src="img/poster/${pad(a.n)}.webp" alt="" loading="lazy" draggable="false"><i class="kv-fx"></i><i class="kv-fx2"></i></div>`:`<div class="art">${window.SKETCH(a.n)}</div>`}
     <span class="yr">${a.film.year}—2026</span>
     <span class="zh ${lc}">${esc(a.film.zh)}</span>
     <span class="en">${esc(a.film.en)}</span>
-    <p class="lg">${esc(SCENES[a.n])}</p>
+    ${KV.has(a.n)?'':`<p class="lg">${esc(SCENES[a.n])}</p>`}
     <p class="fq">「${esc(HOOK[a.n])}」</p>
     <div class="cta"><span>2026 續集，${a.mins} 分鐘</span><span class="go">進場</span></div></button>`;}).join('');
-  r.scrollLeft=0;
+  r.scrollLeft=0; watchKV(r);
   $$('.fc').forEach(c=>c.onclick=e=>{ if(r.dataset.moved==='1'){ e.preventDefault(); return; } go(+c.dataset.n); });
 }
 (function reelDrag(){
