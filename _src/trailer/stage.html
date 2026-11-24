@@ -11,7 +11,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:"Noto
 .sk svg{position:absolute;left:-10%;top:12%;width:120%!important;height:76%!important;overflow:visible}
 .sk .pn{fill:none;stroke:#ece8df;stroke-width:1.6}
 .sk img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:grayscale(1) blur(8px) brightness(.3);transform:scale(1.03);transition:opacity 1.4s,filter 2.4s cubic-bezier(.3,.6,.2,1),transform 5s ease-out}
-.sk.dev img{opacity:1;filter:none;transform:scale(1.09)}
+
 .sk.dev svg{opacity:0;transition:opacity 1.8s .4s}
 .yr{position:fixed;left:6vw;bottom:8vh;font:400 34px 'Iowan Old Style',Palatino,Georgia,serif;letter-spacing:.12em;color:#cfc9bd;opacity:0;transition:opacity .4s}
 .yr.on{opacity:1}
@@ -46,6 +46,14 @@ iframe.on{opacity:1}
 #sub{position:fixed;left:0;right:0;bottom:7vh;text-align:center;font-size:4.2vh;font-weight:700;letter-spacing:.08em;color:#f4efe4;text-shadow:0 2px 14px #000,0 0 30px #000;opacity:0;transition:opacity .35s;z-index:20;pointer-events:none}
 #sub.on{opacity:1}
 #sub.band{bottom:0;padding:5vh 0 7vh;background:linear-gradient(180deg,transparent,rgba(0,0,0,.85) 45%)}
+.sk img.full{position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;object-position:50% 32%;opacity:0;filter:grayscale(1) blur(10px) brightness(.25);transform:scale(1.18);transition:opacity 1s,filter 1.8s cubic-bezier(.3,.6,.2,1),transform 4.5s cubic-bezier(.2,.6,.3,1);z-index:0}
+.sk.dev img.full{opacity:1;filter:none;transform:scale(1.04)}
+.full::after{content:none}
+.vig{position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%,transparent 55%,rgba(0,0,0,.8));opacity:0;transition:opacity 1s .6s;z-index:1;pointer-events:none}
+.sk.dev .vig{opacity:1}
+.sk svg{z-index:2}
+#grid{grid-template-columns:repeat(8,1fr);gap:.5vw;width:100vw}
+#gridL{align-items:center;overflow:hidden}
 </style>
 <script src="../../data.js"></script>
 <script src="../../sketch.js"></script>
@@ -72,7 +80,7 @@ function draw(box,total){ const els=[...box.querySelectorAll('.pn')];
   els.forEach((el,i)=>{ let L=300; try{L=Math.ceil(el.getTotalLength())||300}catch(e){} el.style.strokeDasharray=L; el.style.strokeDashoffset=L;
     el.style.transition=`stroke-dashoffset ${total*.6}ms cubic-bezier(.5,.1,.3,1) ${Math.round(i/Math.max(1,els.length)*total*.5)}ms`; });
   requestAnimationFrame(()=>requestAnimationFrame(()=>els.forEach(el=>el.style.strokeDashoffset=0))); }
-function sketchCard(box,n,withPoster){ box.className='sk'; box.innerHTML=(withPoster?`<img src="../../img/poster/${pad(n)}.webp" alt="">`:'')+window.SKETCH(n); const sv=box.querySelector('svg'); sv.removeAttribute('class'); sv.removeAttribute('width'); sv.removeAttribute('height'); }
+function sketchCard(box,n,withPoster){ box.className='sk'; box.innerHTML=(withPoster?`<img class="full" src="../../img/poster/${pad(n)}.webp" alt=""><i class="vig"></i>`:'')+window.SKETCH(n); const sv=box.querySelector('svg'); sv.removeAttribute('class'); sv.removeAttribute('width'); sv.removeAttribute('height'); }
 function year(t){ const y=$('yr'); y.textContent=t; y.classList.toggle('on',!!t); }
 function boom(t=0,f=46,v=.9){ const o=ac.createOscillator(),g=ac.createGain(); o.type='sine'; o.frequency.setValueAtTime(f*2,ac.currentTime+t); o.frequency.exponentialRampToValueAtTime(f,ac.currentTime+t+.5);
   g.gain.setValueAtTime(0,ac.currentTime+t); g.gain.linearRampToValueAtTime(v,ac.currentTime+t+.02); g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+2.6); o.connect(g); g.connect(ac.destination); o.start(ac.currentTime+t); o.stop(ac.currentTime+t+2.8); }
@@ -107,9 +115,9 @@ async function run(){
   SCORE.play(12,ac,.5);
   // 5. 22 部海報
   const f2=document.createElement('iframe'); f2.src='../../index.html#screen-12'; document.body.insertBefore(f2,$('end'));
-  sub(''); const g=$('grid'); g.innerHTML=DATA.map(a=>`<img src="../../img/poster/${pad(a.n)}.webp" alt="">`).join(''); on('gridL');
-  const imgs=[...g.children]; for(let i=0;i<imgs.length;i++){ imgs[i].classList.add('in'); if(i%2===0) tick(0,.1); await W(60); }
-  sub('22 部科幻電影，22 部 2026 續集。'); g.classList.add('zoom'); await W(2300);
+  sub(''); const g=$('grid'); g.innerHTML=[...DATA.map(a=>a.n),12,3].map(n=>`<img src="../../img/poster/${pad(n)}.webp" alt="">`).join(''); on('gridL');
+  const imgs=[...g.children]; for(let i=0;i<imgs.length;i++){ imgs[i].classList.add('in'); if(i%2===0) tick(0,.1); await W(52); }
+  $('sub').classList.add('band'); sub('22 部科幻電影，22 部 2026 續集。'); g.classList.add('zoom'); await W(2300);
   // 6. 光圈
   sub(''); on('logo'); await W(700); $('logo').classList.add('open'); boom(.35,60,.6); await W(900); white(); on(null);
   // 7. 網站
