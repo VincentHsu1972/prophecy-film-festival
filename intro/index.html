@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>三分鐘介紹｜預言成真影展</title>
 <link rel="icon" href="../img/logo/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="deck.css?v=20261124201233">
+<link rel="stylesheet" href="deck.css?v=20261124204842">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -24,7 +24,7 @@
 <main id="deck" aria-live="polite">
 
 <!-- 1 -->
-<section class="s s-title" data-t="10">
+<section class="s s-title" data-t="8">
   <div class="leader" aria-hidden="true"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="88"/><circle cx="100" cy="100" r="70"/><line x1="100" y1="0" x2="100" y2="200"/><line x1="0" y1="100" x2="200" y2="100"/></svg></div>
   <div class="c">
     <p class="mono dim">二十二部　今晚上映</p>
@@ -35,8 +35,13 @@
   </div>
 </section>
 
+<!-- 預告片 -->
+<section class="s s-trailer" data-t="31">
+  <video id="tv" src="../media/trailer.mp4" poster="../media/trailer.jpg" playsinline preload="auto" aria-label="預言成真影展預告片（30 秒，含字幕）"></video>
+</section>
+
 <!-- 2 -->
-<section class="s" data-t="15">
+<section class="s" data-t="11">
   <div class="c narrow">
     <h2>沒有人會把一本刊物，<br>從第一頁讀到最後一頁。</h2>
     <h2 class="reveal d2">但每個人，<br>都記得自己看過的<span class="hl2">電影</span>。</h2>
@@ -45,7 +50,7 @@
 </section>
 
 <!-- 3 -->
-<section class="s" data-t="13">
+<section class="s" data-t="10">
   <div class="c">
     <h2>九十年來，有人把未來<br>拍成了二十二部電影。</h2>
     <div class="films" aria-hidden="true">
@@ -56,7 +61,7 @@
 </section>
 
 <!-- 4 -->
-<section class="s split" data-t="15">
+<section class="s split" data-t="13">
   <div class="txt">
     <h2>燈還亮著，<br>片單緩緩流過。</h2>
     <p class="verse reveal d1">不放原版劇照。<br>每一部，都有一張專為 2026 續集繪製的海報。</p>
@@ -66,18 +71,18 @@
 </section>
 
 <!-- 5 -->
-<section class="s split rev" data-t="22">
+<section class="s split rev" data-t="17">
   <div class="txt">
     <p class="mono k">示範放映　一　燈暗</p>
     <h2>燈暗下來，<br>先畫一張素描。</h2>
-    <p class="verse reveal d1">然後，片名像<span class="hl2">數字雨</span>一樣落下。</p>
+    <p class="verse reveal d1">素描顯影成海報，<br>片名像<span class="hl2">數字雨</span>一樣落下。</p>
     <p class="verse reveal d2">配樂從黑暗裡響起——<br>只為這部片寫的，別處聽不到。</p>
   </div>
   <figure class="shot live-open" id="liveOpen" aria-label="片頭動畫：駭客任務的素描描線與片名出場"><div class="lo-sk" id="loSk"></div><p class="lo-k mono" id="loK"></p><h3 class="lo-t" id="loT"></h3><p class="lo-m mono" id="loM"></p></figure>
 </section>
 
 <!-- 6 -->
-<section class="s split" data-t="25">
+<section class="s split" data-t="22">
   <div class="txt">
     <p class="mono k">示範放映　二　續集</p>
     <h2>莫斐斯回來了，<br>帶著<span>紅色膠囊</span>。</h2>
@@ -89,7 +94,7 @@
 </section>
 
 <!-- 7 -->
-<section class="s split rev" data-t="18">
+<section class="s split rev" data-t="15">
   <div class="txt">
     <p class="mono k">示範放映　三　回到原文</p>
     <h2><span class="num">1999</span> 的預言，<br><span class="num hl2">2026</span> 的現實。</h2>
@@ -100,7 +105,7 @@
 </section>
 
 <!-- 8 -->
-<section class="s split" data-t="17">
+<section class="s split" data-t="14">
   <div class="txt">
     <p class="mono k">示範放映　四　散場</p>
     <h2>散場時，<br>帶走一張票根。</h2>
@@ -111,7 +116,7 @@
 </section>
 
 <!-- 9 -->
-<section class="s split rev" data-t="20">
+<section class="s split rev" data-t="15">
   <div class="txt">
     <h2>換一部片，<br>影廳就換了光。</h2>
     <p class="verse reveal d1">暖桃色的信紙、默片的字卡、<br>霓虹雨夜、一整片星空。</p>
@@ -126,7 +131,7 @@
 </section>
 
 <!-- 10 -->
-<section class="s" data-t="12">
+<section class="s" data-t="10">
   <div class="c wide">
     <h2>從 1936 到 2026，<br>每一則預言，都在今年準時上映。</h2>
     <figure class="shot wideshot"><img src="img/timeline.jpg" alt="預言時間軸畫面"></figure>
@@ -154,14 +159,14 @@
     <button id="play" aria-label="暫停">❚❚</button>
     <button id="next" aria-label="下一頁">›</button>
     <button id="snd" class="snd" aria-label="開啟配樂" aria-pressed="false">♪ 配樂 關</button>
-    <span class="mono" id="cnt">01 / 11</span>
+    <span class="mono" id="cnt">01 / 12</span>
     <span class="mono dim" id="clock">0:00 / 3:00</span>
   </div>
 </div>
 <script src="../sketch.js"></script>
 <script src="../scene.js"></script>
 <script src="../score.js"></script>
-<script src="live.js?v=20261124201233"></script>
-<script src="deck.js?v=20261124201233"></script>
+<script src="live.js?v=20261124204842"></script>
+<script src="deck.js?v=20261124204842"></script>
 </body>
 </html>

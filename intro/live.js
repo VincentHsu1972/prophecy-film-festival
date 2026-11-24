@@ -23,7 +23,9 @@ function ensure(){ try{ if(navigator.audioSession) navigator.audioSession.type='
 function music(n,vol){ if(!on||!window.SCORE||!ensure()) return; window.SCORE.play(n,ac,vol); }
 const THEME=7, END=21;
 function setSnd(v){ on=v; const b=$('snd'); b.setAttribute('aria-pressed',v); b.textContent=v?'♪ 配樂 開':'♪ 配樂 關'; b.setAttribute('aria-label',v?'關閉配樂':'開啟配樂');
-  if(v){ ensure(); if(cur===8) music(+document.querySelectorAll('#scenes .tile[data-n]')[ti].dataset.n,.4); else score(Math.max(cur,0)); } else if(window.SCORE) window.SCORE.stop(); }
+  if(cur===1&&tv) tv.muted=!v;
+  if(v&&cur===1){ ensure(); return; }
+  if(v){ ensure(); if(cur===9) music(+document.querySelectorAll('#scenes .tile[data-n]')[ti].dataset.n,.4); else score(Math.max(cur,0)); } else if(window.SCORE) window.SCORE.stop(); }
 $('go').addEventListener('click',()=>setSnd(true));
 $('snd').addEventListener('click',()=>setSnd(!on));
 
@@ -33,8 +35,9 @@ let ft=0;
 function opening(){ const f=FILM, box=$('liveOpen'); if(!box||!window.SKETCH) return;
   box.className='shot live-open fx-'+f.fx; box.style.setProperty('--fc',f.c);
   $('loSk').innerHTML=window.SKETCH(f.n); draw($('loSk'),1600);
+  let pp=box.querySelector('.lo-pp'); if(!pp){ pp=document.createElement('img'); pp.className='lo-pp'; pp.alt=''; pp.src='../img/poster/12.webp'; box.prepend(pp); } pp.classList.remove('dev'); setTimeout(()=>pp.classList.add('dev'),reduce?0:1700);
   $('loK').textContent=`Model 廳　第 12 場　《${f.zh}》`;
-  $('loM').textContent='原創配樂　素描　片名出場';
+  $('loM').textContent='素描　海報顯影　片名出場　原創配樂';
   const ch=[...f.t]; $('loT').innerHTML='';
   setTimeout(()=>{ $('loT').innerHTML=ch.map((c,i)=>c===' '?'<span class="ch sp"> </span>':`<span class="ch" style="--i:${i}">${c}</span>`).join(''); },reduce?0:1500); }
 
@@ -47,12 +50,17 @@ function tiles(){ const T=[...document.querySelectorAll('#scenes .tile[data-n]')
 function demoScene(){ const t=$('demoScene'); if(!t) return; const a=t.querySelector('.art'); a.innerHTML=window.SCENE?window.SCENE(12):''; setTimeout(()=>draw(a,2000),600); }
 
 /* 配樂：DEMO 四頁都是駭客任務；結語（第 11 頁）換成雨果的圓舞曲；其餘是影展主題 */
-function score(i){ if(i===8) return; if(i>=4&&i<=7) music(12,.4); else music(i===10?END:THEME,.32); }
+function score(i){ if(i===1||i===9) return; if(i>=5&&i<=8) music(12,.4); else music(i===11?END:THEME,.32); }
+/* 預告片：進到這頁就從頭播放（有開配樂就帶聲音），離開就暫停 */
+const tv=$('tv');
+function trailer(onSlide){ if(!tv) return; if(onSlide){ if(window.SCORE) window.SCORE.stop(true); tv.currentTime=0; tv.muted=!on; const p=tv.play(); if(p) p.catch(()=>{ tv.muted=true; tv.play().catch(()=>{}); }); } else tv.pause(); }
+$('play').addEventListener('click',()=>{ if(cur===1&&tv){ if(tv.paused) tv.play().catch(()=>{}); else tv.pause(); } });
 
 document.addEventListener('slide',e=>{ const i=e.detail; cur=i;
-  clearInterval(ft); if(i!==8){ clearInterval(tt); }
-  if(i===4){ opening(); ft=setInterval(opening,10000); }
-  if(i===5) demoScene();
-  if(i===8) tiles();
+  clearInterval(ft); if(i!==9){ clearInterval(tt); }
+  trailer(i===1);
+  if(i===5){ opening(); ft=setInterval(opening,10000); }
+  if(i===6) demoScene();
+  if(i===9) tiles();
   score(i); });
 })();
