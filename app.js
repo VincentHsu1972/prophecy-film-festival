@@ -161,6 +161,8 @@ function applyFilter(){ const f=TIMES.find(t=>t.k===ft).f; let n=0; $$('.frame')
   $('#fHint').textContent= ft==='all'?'片長依全文字數估算（每分鐘約 450 字）':`${n} 場符合，其他場次已變暗`; }
 /* 每部續集裡的一句台詞（逐字取自劇情版） */
 const HOOK={"1": "你為什麼一談到 AI 就這麼興奮？", "2": "如果把這句主張換成十種說法，哪一種最能打動人？", "3": "這是 AI slop 吧？", "4": "你又要拆公司了？", "5": "這種事，AI 不是幾秒鐘就能做完嗎？", "6": "這個故事，能被驗證嗎？", "7": "幫我挑一個適合送 35 歲女生的生日禮物", "8": "這就是你要找的線索。", "9": "因為你的消費者，已經換了一條路來認識你。", "10": "哪個牌子適合我？", "11": "你知道嗎，這種記憶現在越來越值錢了。", "12": "這次活動的三個創意，吸引得了 35 歲以上的高收入族群嗎？", "13": "方舟號上，我們從來不需要問這些問題。因為只有一家公司在說話。", "14": "博士，什麼樣的人，才配指揮這些機器？", "15": "我還趕得上轉機嗎？如果不行，下一個可行的選項是什麼？", "16": "我們正在 AI 轉型！", "17": "下單很快，但後續很亂。", "18": "我有不好的預感。", "19": "不要相信他的謊言", "20": "幫我做一個年輕化的社群貼文。", "21": "每樣東西都有它的目的，就連機器也是。", "22": "抱歉，戴夫，恐怕我不能那麼做。"};
+/* 已有續集海報的場次（img/poster/NN.webp） */
+const KV=new Set([1,2,3,4,5,6,7,8]);
 let activeHall='intro';
 function renderTabs(){ $('#hallTabs').innerHTML=HALLS.map(h=>{const t=DATA.filter(a=>a.zone===h.z);const s=t.filter(a=>seen.has(a.n)).length;return `<button role="tab" class="z-${h.z}" aria-selected="${activeHall===h.z}" data-z="${h.z}"><i></i>${h.name}<small>${s}/${t.length}</small></button>`}).join('');
   $$('#hallTabs button').forEach(b=>b.onclick=()=>{ location.hash='hall-'+b.dataset.z; }); }
@@ -220,8 +222,8 @@ function openReader(n){
   <div class="rbar"><button class="back" id="backR">← 回片單</button><span class="t">${h.name}　第 ${a.n} 場　《${esc(a.film.zh)}》續集</span>
     <span class="reel"><svg viewBox="0 0 40 40" id="reelSvg"><circle cx="20" cy="20" r="18" fill="none" stroke="currentColor"/><g id="reelG">${[0,72,144,216,288].map(d=>`<circle cx="${20+10*Math.cos(d*Math.PI/180)}" cy="${20+10*Math.sin(d*Math.PI/180)}" r="3.4" fill="currentColor"/>`).join('')}</g><circle cx="20" cy="20" r="2.4" fill="currentColor"/></svg><span id="reelPct">0%</span></span>
     <span class="jump"><button data-j="sTrailer">預告片</button><button data-j="sReview">影評</button><button data-j="sFeature">正片</button></span><button class="x" id="closeR">✕ 離場</button><div class="prog" id="prog"></div></div>
-  <section class="opening" id="opening">
-    <div class="bgposter">${poster(a,true)}</div><div class="opsk fx-${TFX[a.n]}" id="opsk">${window.SKETCH?window.SKETCH(a.n):''}</div><div class="lbt"></div><div class="lbb"></div>
+  <section class="opening ${KV.has(a.n)?'has-kv':''}" id="opening">
+    ${KV.has(a.n)?`<div class="kv kv-${pad(a.n)}"><img class="kv-bg" src="img/poster/${pad(a.n)}-blur.webp" alt=""><div class="kv-art"><img src="img/poster/${pad(a.n)}.webp" alt="《${esc(a.film.zh)}》續集海報"><i class="kv-fx"></i><i class="kv-fx2"></i></div></div>`:`<div class="bgposter">${poster(a,true)}</div>`}<div class="opsk fx-${TFX[a.n]}" id="opsk">${window.SKETCH?window.SKETCH(a.n):''}</div><div class="lbt"></div><div class="lbb"></div>
     <div class="inner">
       <div class="fn"><span class="fn-k">${h.name}　第 ${a.n} 場</span><span class="fn-sep"> &nbsp;|&nbsp; </span><span class="fn-t"><b>《${esc(a.film.zh)}》</b> <span class="fn-en">${esc(a.film.en)}</span></span></div>
       <div class="odo" id="odo">${a.film.year}</div>
@@ -257,7 +259,7 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); flick(); tick(); drawSketch($('#opsk')); playScore(a.n);
+  const op=$('#opening'), odo=$('#odo'); flick(); tick(); drawSketch($('#opsk')); playScore(a.n); { const kv=op.querySelector('.kv'); if(kv) requestAnimationFrame(()=>requestAnimationFrame(()=>kv.classList.add('dev'))); }
   setTimeout(()=>op.classList.add('go'),reduce?0:250);
   const y0=a.film.year, y1=2026, dur=reduce?0:1500, t0=performance.now()+500; let last=y0;
   (function f(now){ const p=Math.min(1,Math.max(0,(now-t0)/dur)); const e=1-Math.pow(1-p,3); const y=Math.round(y0+(y1-y0)*e);
