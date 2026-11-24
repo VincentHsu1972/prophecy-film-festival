@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>續集預告舞台</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:"Noto Serif TC","Songti TC",serif;color:#ece8df}
+.L{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .6s}
+.L.on{opacity:1}
+#sk{width:70vw;height:70vh}
+#sk svg{width:100%;height:100%;overflow:visible}
+#sk .pn{fill:none;stroke:#ece8df;stroke-width:1.5}
+#pf{position:fixed;inset:0;overflow:hidden}
+#pf img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 25%;filter:grayscale(1) blur(10px) brightness(.25);transform:scale(1.2);transition:filter 2s cubic-bezier(.3,.6,.2,1),transform 9s cubic-bezier(.2,.6,.3,1)}
+#pf.dev img{filter:none;transform:scale(1.04)}
+#pf::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.3),transparent 30%,transparent 50%,rgba(0,0,0,.85))}
+.crop{position:fixed;inset:0;overflow:hidden}
+.crop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.9);transition:transform 2.2s ease-out}
+.crop.go img{transform:scale(2.15)}
+#num{flex-direction:column;gap:2vh;background:rgba(0,0,0,.55)}
+#num b{font:400 22vh/1 "Iowan Old Style",Palatino,Georgia,serif;color:var(--c)}
+#num span{font-size:3vh;color:#ece8df;max-width:70vw;text-align:center;line-height:1.5}
+#tt{flex-direction:column;gap:2.4vh;text-align:center}
+#tt .k{font:400 2.4vh ui-monospace,Menlo,monospace;letter-spacing:.4em;color:var(--c)}
+#tt h1{margin:0;font-size:7vh;line-height:1.3;max-width:84vw;letter-spacing:.04em}
+#end{flex-direction:column;gap:1.8vh;text-align:center}
+#end .f{font-size:5vh;font-weight:700;letter-spacing:.14em}
+#end .s{font:400 2.2vh ui-monospace,Menlo,monospace;letter-spacing:.35em;color:var(--c)}
+#end img{width:18vw;margin-top:3vh;opacity:.85}
+#cap{position:fixed;left:6vw;top:7vh;font:400 3vh "Iowan Old Style",Palatino,Georgia,serif;letter-spacing:.1em;color:#cfc9bd;opacity:0;transition:opacity .5s;z-index:9}
+#cap.on{opacity:1}
+#sub{position:fixed;left:0;right:0;bottom:8vh;text-align:center;font-size:4.2vh;font-weight:700;letter-spacing:.06em;line-height:1.5;padding:0 8vw;color:#f4efe4;text-shadow:0 2px 14px #000,0 0 30px #000;opacity:0;transition:opacity .4s;z-index:9}
+#sub.on{opacity:1}
+#white{position:fixed;inset:0;background:#fff;opacity:0;transition:opacity .9s;z-index:20;pointer-events:none}
+#white.on{opacity:.8;transition:none}
+</style>
+<script src="../../data.js"></script>
+<script src="../../sketch.js"></script>
+<script src="../../score.js"></script>
+<script src="../../stories.js"></script>
+</head>
+<body>
+<div class="L" id="skL"><div id="sk"></div></div>
+<div class="L" id="pfL"><div id="pf"></div></div>
+<div class="L" id="c1"><div class="crop"></div></div>
+<div class="L" id="c2"><div class="crop"></div></div>
+<div class="L" id="num"><b></b><span></span></div>
+<div class="L" id="tt"><div class="k"></div><h1></h1></div>
+<div class="L" id="end"><div class="f"></div><div class="s">2026 續集　即將上映</div><img src="../../img/logo/mark-dark.svg" alt=""></div>
+<div id="cap"></div><div id="sub"></div><div id="white"></div>
+<script>
+const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,'0'), W=ms=>new Promise(r=>setTimeout(r,ms));
+const ACC={1:'#6FB6FF',2:'#E07A5F',3:'#FF4F9A',4:'#E8B04A',5:'#C9A46A',6:'#59D4A0',7:'#9DB8FF',8:'#FF5FD2',9:'#5B9BE0',10:'#FF8A2A',11:'#E07A2B',12:'#3DFF7A',13:'#C46B1C',14:'#FF5A4E',15:'#B48AD6',16:'#5FA8E0',17:'#C9B34A',18:'#FFD84D',19:'#B39C72',20:'#D8D5CE',21:'#C9874A',22:'#E04A3A'};
+let ac;
+function on(id){ document.querySelectorAll('.L.on').forEach(l=>{ if(l.id!==id) l.classList.remove('on'); }); if(id) $(id).classList.add('on'); }
+function sub(t){ const e=$('sub'); if(t){ e.textContent=t; e.classList.add('on'); } else e.classList.remove('on'); }
+function cap(t){ const e=$('cap'); if(t){ e.textContent=t; e.classList.add('on'); } else e.classList.remove('on'); }
+function white(){ const w=$('white'); w.classList.add('on'); requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.remove('on'))); }
+function boom(t=0,f=44,v=.9){ const o=ac.createOscillator(),g=ac.createGain(); o.frequency.setValueAtTime(f*2,ac.currentTime+t); o.frequency.exponentialRampToValueAtTime(f,ac.currentTime+t+.5);
+  g.gain.setValueAtTime(0,ac.currentTime+t); g.gain.linearRampToValueAtTime(v,ac.currentTime+t+.02); g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+2.4); o.connect(g); g.connect(ac.destination); o.start(ac.currentTime+t); o.stop(ac.currentTime+t+2.6); }
+function hit(t=0,v=.35){ const n=ac.createBufferSource(), b=ac.createBuffer(1,ac.sampleRate*.25,ac.sampleRate), d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
+  n.buffer=b; const g=ac.createGain(); g.gain.value=v; n.connect(g); g.connect(ac.destination); n.start(ac.currentTime+t); }
+function draw(box,total){ const els=[...box.querySelectorAll('.pn')];
+  els.forEach((el,i)=>{ let L=300; try{L=Math.ceil(el.getTotalLength())||300}catch(e){} el.style.strokeDasharray=L; el.style.strokeDashoffset=L;
+    el.style.transition=`stroke-dashoffset ${total*.6}ms cubic-bezier(.5,.1,.3,1) ${Math.round(i/Math.max(1,els.length)*total*.5)}ms`; });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>els.forEach(el=>el.style.strokeDashoffset=0))); }
+
+async function run(n,hook){
+  const a=DATA.find(x=>x.n===n), st=STORIES[n], img=`../../img/poster/${pad(n)}.webp`;
+  document.documentElement.style.setProperty('--c',ACC[n]||'#e8d4a2');
+  const [h1,h2]=(()=>{ const i=hook.indexOf('。'); return i>0?[hook.slice(0,i+1),hook.slice(i+1)]:[hook,'']; })();
+  const numLine=(st.text.split('\n').find(l=>l.startsWith('NUM: '))||'').slice(5).split('｜');
+  const seqTitle=(st.title.split('：')[1]||a.title);
+  $('pf').innerHTML=`<img src="${img}" alt="">`;
+  $('c1').firstElementChild.innerHTML=`<img src="${img}" style="object-position:30% 28%" alt="">`;
+  $('c2').firstElementChild.innerHTML=`<img src="${img}" style="object-position:72% 40%" alt="">`;
+  $('tt').querySelector('.k').textContent=`《${a.film.zh}》　${a.film.year} — 2026`;
+  $('tt').querySelector('h1').textContent=seqTitle;
+  $('end').querySelector('.f').textContent=`《${a.film.zh}》`;
+  if(numLine[0]){ $('num').querySelector('b').textContent=numLine[0]; $('num').querySelector('span').textContent=numLine[1]||''; }
+  await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));
+  ac=new AudioContext(); SCORE.play(n,ac,.6);
+  // 0–3：鉛筆分鏡
+  $('sk').innerHTML=window.SKETCH(n); const sv=$('sk').querySelector('svg'); sv.removeAttribute('class'); sv.removeAttribute('width'); sv.removeAttribute('height');
+  on('skL'); cap(`${a.film.year}　《${a.film.zh}》`); draw($('sk'),2200); await W(2700);
+  // 3–11：分鏡成真，原片結局 → 懸疑
+  on('pfL'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev'))); await W(700);
+  sub(h1); await W(3300); sub(''); await W(250); sub(h2); await W(3500); sub(''); cap('');
+  // 11–14：快切細節＋關鍵數字
+  hit(0,.4); on('c1'); $('c1').firstElementChild.classList.add('go'); await W(700);
+  hit(0,.4); on('c2'); $('c2').firstElementChild.classList.add('go'); await W(700);
+  if(numLine[0]){ hit(0,.5); on('num'); await W(1700); } else { on('pfL'); await W(1200); }
+  // 14–17：續集片名
+  boom(0,42,1); white(); on('tt'); await W(3000);
+  // 17–20：片尾
+  on('end'); await W(2400); SCORE.stop(false); await W(700);
+  window.__done=true;
+}
+window.__start=async()=>{ const n=+new URLSearchParams(location.search).get('n')||12;
+  const src=await (await fetch('../../app.js')).text(); const HOOK=JSON.parse(src.match(/const HOOK=(\{.*?\});/)[1]);
+  run(n,HOOK[n]); };
+</script>
+</body>
+</html>

@@ -1,13 +1,16 @@
 """錄製影展預告片（概念版）：播放 _src/trailer/stage.html 的分鏡，配上網站即時合成的原創配樂。
 先在 repo 根目錄開伺服器：python3 -m http.server 8765
 再執行：python3 _src/tools/record_trailer.py  → media/trailer.mp4 與 media/trailer.jpg"""
-import asyncio, base64, glob, os, shutil, subprocess, time
+import asyncio, base64, glob, os, shutil, subprocess, sys, time
+# 用法：record_trailer.py [舞台頁路徑] [輸出檔]，預設為影展總預告
+STAGE = sys.argv[1] if len(sys.argv) > 1 else '_src/trailer/stage.html'
+DEST = sys.argv[2] if len(sys.argv) > 2 else 'media/trailer.mp4'
 from playwright.async_api import async_playwright
 
 U = 'http://127.0.0.1:8765/'
 W, H = 1280, 720
 OUT = 'media'
-TMP = '/tmp/trailer_rec'
+TMP = '/tmp/trailer_rec_' + str(os.getpid())
 
 # 把頁面裡所有送到喇叭的聲音，同時錄一份下來
 AUDIO_TAP = r"""
@@ -61,7 +64,7 @@ async def main():
         await ctx.add_init_script(AUDIO_TAP)
         await ctx.add_init_script("try{localStorage.removeItem('dw-stubs');localStorage.removeItem('dw-sound')}catch(e){}")
         pg = await ctx.new_page(); t_page = time.time() * 1000
-        await pg.goto(U + '_src/trailer/stage.html'); await pg.wait_for_timeout(1500)
+        await pg.goto(U + STAGE); await pg.wait_for_timeout(1500)
         await pg.evaluate('window.__start()')
         await pg.wait_for_function('window.__done===true', timeout=120000, polling=500)
         a64 = await pg.evaluate("""async()=>{ window.__mr.stop(); await new Promise(r=>setTimeout(r,800));
@@ -73,7 +76,7 @@ async def main():
     vid = glob.glob(f'{TMP}/*.webm'); vid = [v for v in vid if not v.endswith('audio.webm')][0]
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', vid, '-itsoffset', f'{offset:.3f}', '-i', f'{TMP}/audio.webm',
                     '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23', '-pix_fmt', 'yuv420p', '-r', '30',
-                    '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', f'{OUT}/trailer.mp4'], check=True)
+                    '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', DEST], check=True)
     print('audio offset', round(offset, 2), 's')
 
 asyncio.run(main())

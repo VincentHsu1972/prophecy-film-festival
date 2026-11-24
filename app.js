@@ -105,8 +105,9 @@ function runLeader(){
 }
 /* 預告片 */
 (function(){ const t=$('#trailer'), v=$('#trailerVid'); if(!t) return;
-  const close=()=>{ v.pause(); t.hidden=true; if(ac&&soundOn) ac.resume().catch(()=>{}); $('#trailerBtn').focus(); };
-  $('#trailerBtn').onclick=()=>{ t.hidden=false; if(ac) ac.suspend().catch(()=>{}); v.currentTime=0; const p=v.play(); if(p) p.catch(()=>{}); $('#trailerClose').focus(); };
+  const close=()=>{ v.pause(); t.hidden=true; if(ac&&soundOn) ac.resume().catch(()=>{}); };
+  window.playTrailer=(src,label)=>{ v.src=src; t.setAttribute('aria-label',label); t.hidden=false; if(ac) ac.suspend().catch(()=>{}); v.currentTime=0; const p=v.play(); if(p) p.catch(()=>{}); $('#trailerClose').focus(); };
+  $('#trailerBtn').onclick=()=>{ v.src='media/trailer.mp4'; t.hidden=false; if(ac) ac.suspend().catch(()=>{}); v.currentTime=0; const p=v.play(); if(p) p.catch(()=>{}); $('#trailerClose').focus(); };
   $('#trailerClose').onclick=close; t.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
   t.addEventListener('click',e=>{ if(e.target===t) close(); }); v.addEventListener('ended',close); })();
 /* 進場：Logo 的光圈轉開、鏡頭穿過光圈，再接倒數 */
@@ -232,6 +233,7 @@ function openReader(n){
       <div class="odo" id="odo">${a.film.year}</div>
       <h1 class="tfx tfx-${TFX[a.n]}" aria-label="${esc(a.title)}" style="--n:${[...a.title].length}">${splitTitle(a.title,TFX[a.n])}</h1>
       <div class="meta">${esc(a.author)} ・ 片長約 ${a.mins} 分鐘</div>
+      <button class="seq-btn" type="button" data-seq="${a.n}">▶ 看續集預告　20 秒</button>
     </div><span class="cue">往下，開演</span>
   </section>
   <div class="vs">
@@ -262,7 +264,7 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); flick(); tick(); drawSketch($('#opsk')); playScore(a.n); { const kv=op.querySelector('.kv'); if(kv) requestAnimationFrame(()=>requestAnimationFrame(()=>kv.classList.add('dev'))); }
+  const op=$('#opening'), odo=$('#odo'); { const sb=op.querySelector('.seq-btn'); if(sb) sb.onclick=()=>{ stopScore&&stopScore(); window.playTrailer(`media/sequel/${sb.dataset.seq}.mp4`,`《${a.film.zh}》續集預告`); }; } flick(); tick(); drawSketch($('#opsk')); playScore(a.n); { const kv=op.querySelector('.kv'); if(kv) requestAnimationFrame(()=>requestAnimationFrame(()=>kv.classList.add('dev'))); }
   setTimeout(()=>op.classList.add('go'),reduce?0:250);
   const y0=a.film.year, y1=2026, dur=reduce?0:1500, t0=performance.now()+500; let last=y0;
   (function f(now){ const p=Math.min(1,Math.max(0,(now-t0)/dur)); const e=1-Math.pow(1-p,3); const y=Math.round(y0+(y1-y0)*e);
