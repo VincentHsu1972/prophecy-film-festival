@@ -33,6 +33,7 @@ CARD_JS = r"""
   let html='', op=.34;
   if(bg&&bg.n) html=`<div style="width:58%">${sk(bg.n)}</div>`;
   if(bg&&bg.many) html=`<div style="display:grid;grid-template-columns:repeat(${bg.cols},1fr);gap:${bg.gap||28}px;width:${bg.w||86}%">${bg.many.map(n=>`<div>${sk(n)}</div>`).join('')}</div>`, op=bg.op||.26;
+  if(bg&&bg.posters) html=`<div style="display:grid;grid-template-columns:repeat(11,1fr);gap:6px;width:96%">${bg.posters.map(n=>`<img src="img/poster/${String(n).padStart(2,'0')}.webp" style="width:100%;aspect-ratio:2/3;object-fit:cover;display:block">`).join('')}</div>`, op=.42;
   if(bg&&bg.logo) html='<img src="img/logo/mark-dark.svg" alt="" style="width:62%">', op=.22;
   if(bg!==undefined){ box.innerHTML=html; box.style.opacity=op; box.style.transition='none'; box.style.transform='scale(1)';
     box.querySelectorAll('svg').forEach(s=>{ s.style.cssText='width:100%;height:auto;overflow:visible'; });
@@ -82,9 +83,9 @@ async def main():
         await go("(()=>{const r=document.querySelector('#reader'),e=document.querySelector('#storyPane .st-title');r.scrollTo({top:e.getBoundingClientRect().top+r.scrollTop-90,behavior:'smooth'})})()"); await wait(3600)
         await go("(()=>{const r=document.querySelector('#reader'),e=document.querySelector('#storyPane .midsk');r.scrollTo({top:e.getBoundingClientRect().top+r.scrollTop-160,behavior:'smooth'})})()"); await wait(4600)
         await go("(()=>{const r=document.querySelector('#reader'),e=document.querySelector('#storyPane figure.num');r.scrollTo({top:e.getBoundingClientRect().top+r.scrollTop-260,behavior:'smooth'})})()"); await wait(3200)
-        await card('二十二部電影，<br>二十二部續集。',{'many':list(range(1,23)),'cols':6,'gap':14,'w':92,'op':.3}); await wait(2600)
+        await card('二十二部電影，<br>二十二部續集。',{'posters':list(range(1,23))}); await wait(2600)
         # 快剪：其他幾部的片頭
-        for n, t in [(3, 3800), (20, 3800), (18, 3800)]:
+        for n, t in [(3, 5200), (20, 5200), (18, 5200)]:
             await go(f"location.hash='screen-{n}'"); await wait(300); await card(None); await wait(t)
             await card(''); await wait(500)
         await go("location.hash='screen-2'"); await wait(2600)
