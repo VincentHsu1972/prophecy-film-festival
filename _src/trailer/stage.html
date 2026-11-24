@@ -115,7 +115,7 @@ async function run(){
   SCORE.play(12,ac,.5);
   // 5. 22 部海報
   const f2=document.createElement('iframe'); f2.src='../../index.html#screen-12'; document.body.insertBefore(f2,$('end'));
-  f2.addEventListener('load',()=>{ const st=f2.contentDocument.createElement('style'); st.textContent='.opening .kv-art{left:0!important;width:100%!important;max-width:none!important;transform:none!important;aspect-ratio:auto!important}.opening .kv-art>img{object-position:50% 12%!important}'; f2.contentDocument.head.appendChild(st); });
+  f2.addEventListener('load',()=>{ const st=f2.contentDocument.createElement('style'); st.textContent='.opening .kv-art{left:0!important;right:0!important;top:0!important;height:100%!important;width:100%!important;max-width:none!important;transform:none!important;aspect-ratio:auto!important;border:0!important}.opening .kv-art>img{object-position:50% 12%!important}.opening .kv-art::after{background:linear-gradient(180deg,transparent 45%,rgba(5,6,10,.85))!important}.opening.has-kv .opsk{display:none!important}.opening.has-kv .inner{left:50%!important;top:auto!important;bottom:7vh!important;transform:translateX(-50%)!important;width:86vw!important;text-align:center!important}.opening.has-kv .inner *{text-align:center!important;justify-content:center!important}'; f2.contentDocument.head.appendChild(st); });
   sub(''); const g=$('grid'); g.innerHTML=[...DATA.map(a=>a.n),12,3].map(n=>`<img src="../../img/poster/${pad(n)}.webp" alt="">`).join(''); on('gridL');
   const imgs=[...g.children]; for(let i=0;i<imgs.length;i++){ imgs[i].classList.add('in'); if(i%2===0) tick(0,.1); await W(52); }
   $('sub').classList.add('band'); sub('22 部科幻電影，22 部 2026 續集。'); g.classList.add('zoom'); await W(2300);
