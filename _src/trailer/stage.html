@@ -115,6 +115,7 @@ async function run(){
   SCORE.play(12,ac,.5);
   // 5. 22 部海報
   const f2=document.createElement('iframe'); f2.src='../../index.html#screen-12'; document.body.insertBefore(f2,$('end'));
+  f2.addEventListener('load',()=>{ const st=f2.contentDocument.createElement('style'); st.textContent='.opening .kv-art{left:0!important;width:100%!important;max-width:none!important;transform:none!important;aspect-ratio:auto!important}.opening .kv-art>img{object-position:50% 12%!important}'; f2.contentDocument.head.appendChild(st); });
   sub(''); const g=$('grid'); g.innerHTML=[...DATA.map(a=>a.n),12,3].map(n=>`<img src="../../img/poster/${pad(n)}.webp" alt="">`).join(''); on('gridL');
   const imgs=[...g.children]; for(let i=0;i<imgs.length;i++){ imgs[i].classList.add('in'); if(i%2===0) tick(0,.1); await W(52); }
   $('sub').classList.add('band'); sub('22 部科幻電影，22 部 2026 續集。'); g.classList.add('zoom'); await W(2300);
@@ -122,7 +123,7 @@ async function run(){
   sub(''); on('logo'); await W(700); $('logo').classList.add('open'); boom(.35,60,.6); await W(900); white(); on(null);
   // 7. 網站
   const f=$('site'); f.classList.add('on'); $('sub').classList.add('band'); sub('挑一部，進場。'); await W(2300);
-  f2.classList.add('on'); f.classList.remove('on'); await W(3200);
+  sub(''); f2.classList.add('on'); f.classList.remove('on'); await W(3200);
   sub(''); f2.classList.remove('on'); await W(400);
   // 8. 片尾
   on('end'); await W(3800);
