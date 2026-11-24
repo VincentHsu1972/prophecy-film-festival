@@ -860,9 +860,9 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
 /* 預告片 */
 .trailer-link{margin-top:18px;background:none;border:0;color:var(--mute);font:inherit;font-size:14px;letter-spacing:.12em;text-decoration:underline;text-underline-offset:5px;cursor:pointer;padding:8px 12px}
 .trailer-link:hover,.trailer-link:focus-visible{color:var(--ink)}
-.trailer{position:fixed;inset:0;z-index:300;background:rgba(5,6,7,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px}
-.trailer[hidden]{display:none}
-.trailer video{width:min(1100px,96vw);max-height:80vh;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+#trailer{position:fixed;inset:0;z-index:300;background:rgba(5,6,7,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px}
+#trailer[hidden]{display:none}
+#trailer video{width:min(1100px,96vw);max-height:80vh;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.6)}
 #gate.opening .trailer-link{opacity:0}
 
 /* ===== 續集海報：分鏡稿顯影成成片，再加上依片而定的小動畫 ===== */

@@ -61,7 +61,7 @@ function setSound(on){ soundOn=on; try{localStorage.setItem('dw-sound',on?'1':'0
   if(on){ unlockAudio(); startHum(); if(hum) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.4); if(cur) playScore(cur.n); }
   else { if(hum&&ac){ hum.g.gain.setTargetAtTime(0,ac.currentTime,.2); } stopScore(); } }
 /* 每部片的原創配樂（score.js）：開聲音時進場自動播放，離場淡出 */
-function playScore(n){ if(!soundOn||!window.SCORE||!audio()) return; if(ac.state!=='running') ac.resume().catch(()=>{}); window.SCORE.play(n,ac); if(hum) hum.g.gain.setTargetAtTime(.012,ac.currentTime,.6); }
+function playScore(n){ if(!soundOn||!window.SCORE||!audio()) return; if(ac.state!=='running') ac.resume().catch(()=>{}); window.SCORE.play(n,ac); if(hum) hum.g.gain.setTargetAtTime(0,ac.currentTime,.3); }
 function stopScore(){ if(!window.SCORE||!window.SCORE.playing) return; window.SCORE.stop(); if(hum&&ac&&soundOn) hum.g.gain.setTargetAtTime(.045,ac.currentTime,.8); }
 $('#soundBtn').onclick=()=>setSound(!soundOn);
 function flick(){ const f=$('.flicker'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
@@ -106,6 +106,7 @@ function runLeader(){
 /* 預告片 */
 (function(){ const t=$('#trailer'), v=$('#trailerVid'); if(!t) return;
   const close=()=>{ v.pause(); t.hidden=true; if(ac&&soundOn) ac.resume().catch(()=>{}); };
+  window.closeTrailer=()=>{ if(!t.hidden||!v.paused) close(); }; addEventListener('hashchange',()=>window.closeTrailer());
   window.playTrailer=(src,label)=>{ v.src=src; t.setAttribute('aria-label',label); t.hidden=false; if(ac) ac.suspend().catch(()=>{}); v.currentTime=0; const p=v.play(); if(p) p.catch(()=>{}); $('#trailerClose').focus(); };
   $('#trailerBtn').onclick=()=>{ v.src='media/trailer.mp4'; t.hidden=false; if(ac) ac.suspend().catch(()=>{}); v.currentTime=0; const p=v.play(); if(p) p.catch(()=>{}); $('#trailerClose').focus(); };
   $('#trailerClose').onclick=close; t.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
