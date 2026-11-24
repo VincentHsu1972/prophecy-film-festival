@@ -38,10 +38,14 @@ iframe.on{opacity:1}
 #end{flex-direction:column;gap:2.2vh;text-align:center}
 #end img{width:30vw}
 #end .t{font-size:5.4vh;font-weight:700;letter-spacing:.24em}
-#end .l{font-size:3vh;color:#cfc9bd;opacity:0;transition:opacity 1.2s .9s}
+#end .l{font-size:3vh;color:#cfc9bd;opacity:0;transition:opacity .8s .5s}
 #end.on .l{opacity:1}
-#end .u{font:13px ui-monospace,Menlo,monospace;letter-spacing:.2em;color:#9b9890;opacity:0;transition:opacity 1s 1.8s}
+#end .u{font:13px ui-monospace,Menlo,monospace;letter-spacing:.2em;color:#9b9890;opacity:0;transition:opacity .8s 1.1s}
 #end.on .u{opacity:1}
+.yr{top:7vh;bottom:auto}
+#sub{position:fixed;left:0;right:0;bottom:7vh;text-align:center;font-size:4.2vh;font-weight:700;letter-spacing:.08em;color:#f4efe4;text-shadow:0 2px 14px #000,0 0 30px #000;opacity:0;transition:opacity .35s;z-index:20;pointer-events:none}
+#sub.on{opacity:1}
+#sub.band{bottom:0;padding:5vh 0 7vh;background:linear-gradient(180deg,transparent,rgba(0,0,0,.85) 45%)}
 </style>
 <script src="../../data.js"></script>
 <script src="../../sketch.js"></script>
@@ -57,6 +61,7 @@ iframe.on{opacity:1}
 <iframe id="site" src="../../index.html" title="site"></iframe>
 <div class="layer" id="end"><img src="../../img/logo/mark-dark.svg" alt=""><div class="t">預言成真影展</div><div class="l">十年前的「未來」，已經成了今天的日常。</div><div class="u">vincenthsu1972.github.io/prophecy-film-festival</div></div>
 <div class="yr" id="yr"></div>
+<div id="sub"></div>
 <div id="white"></div>
 <script>
 const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,'0');
@@ -72,6 +77,7 @@ function year(t){ const y=$('yr'); y.textContent=t; y.classList.toggle('on',!!t)
 function boom(t=0,f=46,v=.9){ const o=ac.createOscillator(),g=ac.createGain(); o.type='sine'; o.frequency.setValueAtTime(f*2,ac.currentTime+t); o.frequency.exponentialRampToValueAtTime(f,ac.currentTime+t+.5);
   g.gain.setValueAtTime(0,ac.currentTime+t); g.gain.linearRampToValueAtTime(v,ac.currentTime+t+.02); g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+2.6); o.connect(g); g.connect(ac.destination); o.start(ac.currentTime+t); o.stop(ac.currentTime+t+2.8); }
 function tick(t=0,v=.25){ const o=ac.createOscillator(),g=ac.createGain(); o.type='square'; o.frequency.value=1600; g.gain.setValueAtTime(v,ac.currentTime+t); g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+.05); o.connect(g); g.connect(ac.destination); o.start(ac.currentTime+t); o.stop(ac.currentTime+t+.06); }
+function sub(t){ const e=$('sub'); if(t){ e.textContent=t; e.classList.add('on'); } else e.classList.remove('on'); }
 function white(){ const w=$('white'); w.classList.add('on'); requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.remove('on'))); }
 
 async function prepSite(){ const f=$('site'); await new Promise(r=>{ if(f.contentDocument&&f.contentDocument.readyState==='complete') r(); else f.onload=r; });
@@ -83,36 +89,36 @@ async function run(){
   prepSite();
   const logoSrc=await (await fetch('../../index.html')).text();
   $('logo').innerHTML=logoSrc.match(/<svg class="gate-logo" id="gateLogo"[\s\S]*?<\/svg>/)[0].replace('class="gate-logo"','');
-  SCORE.play(22,ac,.6); await W(300);
-  // 1. 1968：鉛筆畫出 2001 的世界，然後成真
-  sketchCard($('skA'),22,true); on('a'); year('1968'); draw($('skA'),2200);
-  await W(2500); $('skA').classList.add('dev'); await W(3000);
-  // 2. 2013：雲端情人
-  on(null); year(''); await W(500);
-  sketchCard($('skB'),2,true); on('b'); year('2013'); draw($('skB'),1800);
-  await W(2100); $('skB').classList.add('dev'); await W(2700);
-  // 3. 年份加速：素描一張張閃過
-  on('flash'); const seq=[...DATA].sort((x,y)=>x.film.year-y.film.year).filter(a=>a.n!==22&&a.n!==2);
-  let dt=420;
-  for(const a of seq){ sketchCard($('skF'),a.n,false); year(String(a.film.year)); tick(0,.18); await W(dt); dt=Math.max(130,dt*.86); }
-  year(''); on(null); await W(250);
+  SCORE.play(22,ac,.6); await W(200);
+  // 1. 1968
+  sketchCard($('skA'),22,true); on('a'); year('1968'); draw($('skA'),1500); sub('1968 年，電影說：AI 會拒絕人類的指令。');
+  await W(1700); $('skA').classList.add('dev'); await W(2100);
+  // 2. 2013
+  on(null); year(''); sub(''); await W(300);
+  sketchCard($('skB'),2,true); on('b'); year('2013'); draw($('skB'),1200); sub('2013 年，電影說：人會愛上 AI 的聲音。');
+  await W(1300); $('skB').classList.add('dev'); await W(2000);
+  // 3. 年份加速
+  on('flash'); sub('那時候，我們都說這是科幻。'); const seq=[...DATA].sort((x,y)=>x.film.year-y.film.year).filter(a=>a.n!==22&&a.n!==2);
+  let dt=260;
+  for(const a of seq){ sketchCard($('skF'),a.n,false); year(String(a.film.year)); tick(0,.16); await W(dt); dt=Math.max(90,dt*.86); }
+  year(''); sub(''); on(null); await W(150);
   // 4. 2026
-  SCORE.stop(true); boom(0,42,1); white(); on('bigL'); await W(1500);
+  SCORE.stop(true); boom(0,42,1); white(); on('bigL'); await W(400); sub('2026 年，它們都成真了。'); await W(1300);
   SCORE.play(12,ac,.5);
-  // 5. 22 部全數成真：海報一張張落位
-  const g=$('grid'); g.innerHTML=DATA.map(a=>`<img src="../../img/poster/${pad(a.n)}.webp" alt="">`).join(''); on('gridL');
-  const imgs=[...g.children]; for(let i=0;i<imgs.length;i++){ imgs[i].classList.add('in'); if(i%2===0) tick(0,.1); await W(95); }
-  g.classList.add('zoom'); await W(2600);
-  // 6. 光圈打開，穿過去
-  on('logo'); await W(1300); $('logo').classList.add('open'); boom(.35,60,.6); await W(1000); white(); on(null);
-  // 7. 網站本身：片單、片頭、票根
-  const f=$('site'), w=f.contentWindow, d=f.contentDocument; f.classList.add('on'); await W(3600);
-  w.location.hash='screen-12'; await W(5200);
-  d.getElementById('tearBtn').click(); await W(900); const t=d.getElementById('tkTear'); if(t) t.click(); await W(2600);
-  f.classList.remove('on'); await W(500);
+  // 5. 22 部海報
+  const f2=document.createElement('iframe'); f2.src='../../index.html#screen-12'; document.body.insertBefore(f2,$('end'));
+  sub(''); const g=$('grid'); g.innerHTML=DATA.map(a=>`<img src="../../img/poster/${pad(a.n)}.webp" alt="">`).join(''); on('gridL');
+  const imgs=[...g.children]; for(let i=0;i<imgs.length;i++){ imgs[i].classList.add('in'); if(i%2===0) tick(0,.1); await W(60); }
+  sub('22 部科幻電影，22 部 2026 續集。'); g.classList.add('zoom'); await W(2300);
+  // 6. 光圈
+  sub(''); on('logo'); await W(700); $('logo').classList.add('open'); boom(.35,60,.6); await W(900); white(); on(null);
+  // 7. 網站
+  const f=$('site'); f.classList.add('on'); $('sub').classList.add('band'); sub('挑一部，進場。'); await W(2300);
+  f2.classList.add('on'); f.classList.remove('on'); await W(3200);
+  sub(''); f2.classList.remove('on'); await W(400);
   // 8. 片尾
-  on('end'); await W(5200);
-  SCORE.stop(false); await W(1400);
+  on('end'); await W(3800);
+  SCORE.stop(false); await W(900);
   window.__done=true;
 }
 window.__start=run;
