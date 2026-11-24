@@ -222,7 +222,7 @@ function go(n){ location.hash='screen-'+n; }
 function openReader(n){
   const a=byN(n); if(!a) return; cur=a; const h=hallOf(a.zone), i=DATA.indexOf(a), prev=DATA[i-1], next=DATA[i+1];
   const r=$('#reader'); r.className='reader open z-'+a.zone;
-  const still=a.still?`<figure class="still rv"><img src="img/still/${pad(a.n)}.webp" alt="第 ${a.n} 場續集插圖" loading="lazy" width="${a.still[0]}" height="${a.still[1]}"><figcaption>原文插圖　p.${a.p[0]}–${a.p[1]}</figcaption></figure>`:'';
+  const still=a.still?`<figure class="still rv"><img src="img/still/${pad(a.n)}.webp?v=2" alt="第 ${a.n} 場續集插圖" loading="lazy" width="${a.still[0]}" height="${a.still[1]}"><figcaption>原文插圖　p.${a.p[0]}–${a.p[1]}</figcaption></figure>`:'';
   r.innerHTML=`
   <div class="rbar"><button class="back" id="backR">← 回片單</button><span class="t">${h.name}　第 ${a.n} 場　《${esc(a.film.zh)}》續集</span>
     <span class="reel"><svg viewBox="0 0 40 40" id="reelSvg"><circle cx="20" cy="20" r="18" fill="none" stroke="currentColor"/><g id="reelG">${[0,72,144,216,288].map(d=>`<circle cx="${20+10*Math.cos(d*Math.PI/180)}" cy="${20+10*Math.sin(d*Math.PI/180)}" r="3.4" fill="currentColor"/>`).join('')}</g><circle cx="20" cy="20" r="2.4" fill="currentColor"/></svg><span id="reelPct">0%</span></span>
