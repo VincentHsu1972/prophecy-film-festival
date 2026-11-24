@@ -1111,3 +1111,5 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
   .opening.has-kv.titled .opsk,.opening.has-kv.titled .kv.dev~.opsk{opacity:.1!important}
 }
 @media (prefers-reduced-motion:reduce){.opening.has-kv .opsk{opacity:.11!important}}
+.tl-card .sq{display:block;font-family:var(--serif);font-weight:700;font-size:16px;color:#f3e3a6;margin:12px 0 4px;padding-top:12px;border-top:1px solid rgba(236,232,223,.12)}
+.tl-card .hk{font-family:var(--serif);font-size:14.5px;line-height:1.7;color:rgba(236,232,223,.82);margin:0}

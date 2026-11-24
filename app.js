@@ -145,7 +145,7 @@ function buildTimeline(){
   $$('.tl-dot').forEach(d=>{ const a=byN(+d.dataset.n);
     const show=()=>{ $$('.tl-dot').forEach(x=>x.classList.toggle('sel',x===d)); const h=hallOf(a.zone);
       const c=$('#tlCard'); c.className='tl-card z-'+a.zone;
-      c.innerHTML=`<img class="tl-pp" src="img/poster/${pad(a.n)}.webp" alt=""><div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}</p><h3>${esc(SCENES[a.n])}</h3><span class="arrow">2026 續集《${esc(SEQ(a))}》　${h.name}　第 ${a.n} 場</span><p>${esc(a.film.reality)}</p></div><button class="btn solid" data-go="${a.n}">取票進場</button>`;
+      c.innerHTML=`<img class="tl-pp" src="img/poster/${pad(a.n)}.webp" alt=""><div class="y">${a.film.year}</div><div><p class="mono dim">《${esc(a.film.zh)}》${esc(a.film.en)}　${h.name}　第 ${a.n} 場</p><h3>${esc(SCENES[a.n])}</h3><b class="sq">續集《${esc(SEQ(a))}》</b><p class="hk">${esc(HOOK[a.n])}</p></div><button class="btn solid" data-go="${a.n}">取票進場</button>`;
       c.querySelector('[data-go]').onclick=()=>go(a.n); tick(); };
     d.onmouseenter=show; d.onfocus=show;
     d.onclick=e=>{ e.preventDefault(); if(tlPicked===a.n){ go(a.n); return; } tlPicked=a.n; show(); const c=$('#tlCard'); if(c.getBoundingClientRect().bottom>innerHeight-90) c.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'}); };
