@@ -244,7 +244,7 @@ function openReader(n){
   </section>
   <div class="vs">
     <div><span class="mono">${a.film.year} 年的電影</span><p>${esc(SCENES[a.n])}</p><span class="big">${a.film.year}</span></div>
-    <div><span class="mono">2026 年的現實</span><p>${esc(a.film.reality)}</p><span class="big">2026</span></div>
+    <div><span class="mono">2026 的洞察</span><p>${esc(a.film.reality)}</p><span class="big">2026</span></div>
   </div>
   ${modeBar(a)}
   ${storyPane(a)}
