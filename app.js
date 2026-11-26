@@ -51,11 +51,20 @@ function share(title,text,url,o={}){
   $('#shGrid').innerHTML='<button class="sh-n net-ig" type="button" id="shIG"><i>IG</i><span>IG 限動</span></button>'+nets.map(([k,h])=>`<a class="sh-n net-${k.toLowerCase()}" href="${h}" ${k==='Email'?'':'target="_blank" rel="noopener"'}><i>${ICO[k]}</i><span>${k}</span></a>`).join('')+(navigator.share?'<button class="sh-n sh-more" type="button" id="shMore"><i>…</i><span>更多</span></button>':'');
   const copyFull=async()=>{ try{ await navigator.clipboard.writeText(full); return true; }catch(e){ return false; } };
   /* IG 限動：先備好 1080×1920 限動圖；手機直接叫出分享選單（選 Instagram → 限時動態），電腦則下載圖片。文案與連結同時複製，貼到「連結」貼紙即可 */
-  const storySrc=o.story||'img/story/site.jpg'; let storyFile=null;
-  fetch(storySrc).then(r=>r.blob()).then(b=>{ storyFile=new File([b],`預言成真影展${o.n?'_第'+o.n+'場':''}_限動.jpg`,{type:'image/jpeg'}); }).catch(()=>{});
-  $('#shIG').onclick=async()=>{ const ok=await copyFull();
-    if(storyFile&&navigator.canShare&&navigator.canShare({files:[storyFile]})){ try{ await navigator.share({files:[storyFile]}); }catch(e){ if(e&&e.name==='AbortError') return; } toast(ok?'連結已複製：在 IG 選「限時動態」，加「連結」貼紙貼上':'在 IG 選「限時動態」，再加「連結」貼紙'); }
-    else { const l=document.createElement('a'); l.href=storySrc; l.download=storyFile?storyFile.name:'預言成真影展_限動.jpg'; l.click(); toast('限動圖已下載。用手機開 IG 限時動態選這張圖，再加「連結」貼紙'+(ok?'（連結已複製）':'')); } };
+  const storySrc=o.story||'img/story/site.jpg', fname=`預言成真影展${o.n?'_第'+o.n+'場':''}_限動.jpg`;
+  const storyP=fetch(storySrc).then(r=>r.blob()).then(b=>new File([b],fname,{type:'image/jpeg'})).catch(()=>null);
+  $('#shIG').onclick=async()=>{ const f=await storyP; const can=!!(f&&navigator.canShare&&navigator.canShare({files:[f]}));
+    if(!can){ showIG(); return; }   // 電腦或不支援傳檔的瀏覽器：IG 限動只能在手機發，改給手機接力
+    const ok=await copyFull();
+    try{ await navigator.share({files:[f]}); }catch(e){ if(e&&e.name==='AbortError') return; }
+    toast(ok?'連結已複製：在 IG 選「限時動態」，加「連結」貼紙貼上':'在 IG 選「限時動態」，再加「連結」貼紙'); };
+  /* 電腦版 IG 面板：掃 QR 用手機開啟同一個分享，再按 IG 限動 */
+  const showIG=()=>{ const pn=$('#shIGp'), card=$('#shareSheet .sh-card'); card.classList.add('igmode'); pn.hidden=false;
+    $('#shIGimg').src=storySrc; const q2=$('#shIGqr'); q2.innerHTML='';
+    loadQR().then(()=>{ const q=window.qrcode(0,'M'); q.addData(`${BASE}?ig=${o.n||0}`); q.make(); q2.innerHTML=q.createSvgTag({cellSize:4,margin:2,scalable:true}); });
+    $('#shIGdl').onclick=()=>{ const l=document.createElement('a'); l.href=storySrc; l.download=fname; l.click(); };
+    $('#shIGback').onclick=()=>{ pn.hidden=true; card.classList.remove('igmode'); $('#shIG').focus(); }; $('#shIGback').focus(); };
+  { const pn=$('#shIGp'); if(pn){ pn.hidden=true; $('#shareSheet .sh-card').classList.remove('igmode'); } $('#shIG').classList.toggle('pulse',!!o.igPulse); }
   const mo=$('#shMore'); if(mo) mo.onclick=async()=>{ try{ await navigator.share({title,text:full}); }catch(e){} };
   $('#shCopy').onclick=async()=>{ if(!(await copyFull())){ const i=$('#shUrl'); i.value=full; i.select(); document.execCommand&&document.execCommand('copy'); i.value=url; } $('#shCopy').textContent='已複製'; toast('文案與連結已複製，貼到 Teams、LINE 都可以'); setTimeout(()=>{ $('#shCopy').textContent='複製文案＋連結'; },1800); };
   $('#shCopyUrl').onclick=async()=>{ try{ await navigator.clipboard.writeText(url); }catch(e){ const i=$('#shUrl'); i.select(); document.execCommand&&document.execCommand('copy'); } toast('網址已複製'); };
@@ -67,9 +76,14 @@ function share(title,text,url,o={}){
       const l=document.createElement('a'); l.download=`預言成真影展_QR${o.n?'_第'+o.n+'場':''}.png`; l.href=c.toDataURL('image/png'); l.click(); }; }).catch(()=>{ qb.textContent=''; });
   sh.hidden=false; requestAnimationFrame(()=>sh.classList.add('on')); setTimeout(()=>$('#shCopy').focus(),50);
 }
+function shareSite(o={}){ share('預言成真影展','22 部科幻電影，22 部 2026 續集。當年的科幻，今年的日常。',BASE,{story:'img/story/site.jpg',...o}); }
 function closeShare(){ const sh=$('#shareSheet'); if(!sh||sh.hidden) return; sh.classList.remove('on'); setTimeout(()=>{ sh.hidden=true; },220); }
-function shareFilm(a){ share('預言成真影展',`《${a.film.zh}》的 2026 續集《${SEQ(a)}》：${HOOK[a.n]||a.hook}`,`${BASE}s/${pad(a.n)}.html`,{head:`《${a.film.zh}》續集：${SEQ(a)}`,img:`img/og/${pad(a.n)}.jpg`,story:`img/story/${pad(a.n)}.jpg`,n:a.n,dl:['下載續集海報',()=>{ const l=document.createElement('a'); l.href=`img/poster/${pad(a.n)}.webp`; l.download=`預言成真影展_${a.film.zh}續集海報.webp`; l.click(); }]}); }
-(()=>{ const sb=$('#shareBtn'); if(sb) sb.onclick=()=>{ if(cur&&$('#reader').classList.contains('open')) shareFilm(cur); else share('預言成真影展','22 部科幻電影，22 部 2026 續集。當年的科幻，今年的日常。',BASE); };
+function shareFilm(a,x={}){ share('預言成真影展',`《${a.film.zh}》的 2026 續集《${SEQ(a)}》：${HOOK[a.n]||a.hook}`,`${BASE}s/${pad(a.n)}.html`,{head:`《${a.film.zh}》續集：${SEQ(a)}`,img:`img/og/${pad(a.n)}.jpg`,story:`img/story/${pad(a.n)}.jpg`,n:a.n,dl:['下載續集海報',()=>{ const l=document.createElement('a'); l.href=`img/poster/${pad(a.n)}.webp`; l.download=`預言成真影展_${a.film.zh}續集海報.webp`; l.click(); }],...x}); }
+/* 從電腦掃 QR 接力：?ig=片號（0＝整個影展），手機一打開就跳出分享面板，按「IG 限動」即可 */
+(()=>{ const q=new URLSearchParams(location.search), g=q.get('ig'); if(g===null) return;
+  history.replaceState(null,'',location.pathname+location.hash);
+  setTimeout(()=>{ const a=byN(+g); a?shareFilm(a,{igPulse:true}):shareSite({igPulse:true}); toast('按「IG 限動」，選 Instagram →「限時動態」'); },700); })();
+(()=>{ const sb=$('#shareBtn'); if(sb) sb.onclick=()=>{ if(cur&&$('#reader').classList.contains('open')) shareFilm(cur); else shareSite(); };
   const sh=$('#shareSheet'); if(sh){ $('#shX').onclick=closeShare; sh.onclick=e=>{ if(e.target===sh) closeShare(); }; addEventListener('keydown',e=>{ if(e.key==='Escape') closeShare(); }); } })();
 
 /* ---------- sound (WebAudio, generated, no files) ---------- */

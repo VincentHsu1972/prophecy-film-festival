@@ -1178,3 +1178,15 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
 .sh-url{margin-bottom:6px}
 .sh-sub{margin:0 0 14px;text-align:right}.sh-sub button{background:none;border:0;color:#a9a497;font:inherit;font-size:12px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px}
 .sh-sub button:hover,.sh-sub button:focus-visible{color:#ece8df}
+.sh-card.igmode .sh-pv,.sh-card.igmode .sh-url,.sh-card.igmode .sh-sub,.sh-card.igmode .sh-grid,.sh-card.igmode .sh-foot{display:none}
+.sh-igp[hidden]{display:none}
+.sh-back{background:none;border:0;color:#a9a497;font:inherit;font-size:13px;cursor:pointer;padding:4px 0;margin-bottom:12px}
+.sh-back:hover,.sh-back:focus-visible{color:#ece8df}
+.sh-igrow{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:start}
+.sh-igrow img{width:150px;aspect-ratio:9/16;object-fit:cover;border-radius:8px;border:1px solid rgba(236,232,223,.12)}
+.sh-igrow b{display:block;font-size:17px;margin-bottom:6px}.sh-igrow p{margin:0 0 12px;font-size:13px;line-height:1.7;color:#b9b3a5}
+.sh-igqr{width:132px;height:132px;background:#fff;border-radius:6px;padding:4px;margin-bottom:12px}.sh-igqr svg{width:100%;height:100%;display:block}
+.sh-igrow .btn{font-size:13px;padding:8px 12px}
+.sh-n.pulse i{animation:igp 1.2s ease-in-out infinite}
+@keyframes igp{50%{box-shadow:0 0 0 8px rgba(214,36,159,.25)}}
+@media (prefers-reduced-motion:reduce){.sh-n.pulse i{animation:none;box-shadow:0 0 0 4px rgba(214,36,159,.4)}}

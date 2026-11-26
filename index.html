@@ -10,7 +10,7 @@
 <meta property="og:type" content="website"><meta property="og:site_name" content="預言成真影展"><meta property="og:title" content="預言成真影展｜當年的科幻，今年的日常。"><meta property="og:description" content="22 部科幻電影，22 部 2026 續集。每一部都有專屬海報、配樂與 20 秒預告。"><meta property="og:url" content="https://vincenthsu1972.github.io/prophecy-film-festival/"><meta property="og:image" content="https://vincenthsu1972.github.io/prophecy-film-festival/img/og/site.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://vincenthsu1972.github.io/prophecy-film-festival/img/og/site.jpg">
 <link rel="icon" href="img/logo/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="style.css?v=125912">
+<link rel="stylesheet" href="style.css?v=130708">
 </head>
 <body class="gated">
 <canvas id="dust" aria-hidden="true"></canvas>
@@ -162,6 +162,15 @@
     <div class="sh-url"><input id="shUrl" readonly aria-label="分享連結"><button class="btn solid" id="shCopy" type="button">複製文案＋連結</button></div>
     <p class="sh-sub"><button type="button" id="shCopyUrl">只複製網址</button></p>
     <div class="sh-grid" id="shGrid"></div>
+    <div class="sh-igp" id="shIGp" hidden>
+      <button class="sh-back" id="shIGback" type="button">← 返回分享</button>
+      <div class="sh-igrow"><img id="shIGimg" alt="IG 限動圖預覽"><div>
+        <b>IG 限動要用手機發</b>
+        <p>Instagram 不開放電腦發限時動態。用手機相機掃下面的 QR Code，會打開同一個分享，按「IG 限動」就會直接進 IG。</p>
+        <div class="sh-igqr" id="shIGqr" aria-label="用手機掃描以分享到 IG 限動"></div>
+        <button class="btn" id="shIGdl" type="button">或下載限動圖</button>
+      </div></div>
+    </div>
     <div class="sh-foot"><div class="sh-qr" id="shQr" aria-label="QR Code"></div><div class="sh-qtx"><b>手機掃描，直接進場</b><p>現場分享最快：讓對方用手機相機掃一下。</p><div class="sh-dls"><button class="btn" id="shQrDl" type="button">下載 QR Code</button><button class="btn" id="shDl" type="button" hidden></button></div></div></div>
   </div>
 </div>
@@ -171,6 +180,6 @@
 <script src="stories.js?v=193038"></script>
 <script src="scene.js?v=211917"></script>
 <script src="score.js?v=202740"></script>
-<script src="app.js?v=125912"></script>
+<script src="app.js?v=130708"></script>
 </body>
 </html>
