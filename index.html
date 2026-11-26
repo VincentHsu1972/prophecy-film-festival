@@ -10,7 +10,7 @@
 <meta property="og:type" content="website"><meta property="og:site_name" content="預言成真影展"><meta property="og:title" content="預言成真影展｜當年的科幻，今年的日常。"><meta property="og:description" content="22 部科幻電影，22 部 2026 續集。每一部都有專屬海報、配樂與 20 秒預告。"><meta property="og:url" content="https://vincenthsu1972.github.io/prophecy-film-festival/"><meta property="og:image" content="https://vincenthsu1972.github.io/prophecy-film-festival/img/og/site.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://vincenthsu1972.github.io/prophecy-film-festival/img/og/site.jpg">
 <link rel="icon" href="img/logo/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="style.css?v=130708">
+<link rel="stylesheet" href="style.css?v=131410">
 </head>
 <body class="gated">
 <canvas id="dust" aria-hidden="true"></canvas>
@@ -165,11 +165,15 @@
     <div class="sh-igp" id="shIGp" hidden>
       <button class="sh-back" id="shIGback" type="button">← 返回分享</button>
       <div class="sh-igrow"><img id="shIGimg" alt="IG 限動圖預覽"><div>
-        <b>IG 限動要用手機發</b>
-        <p>Instagram 不開放電腦發限時動態。用手機相機掃下面的 QR Code，會打開同一個分享，按「IG 限動」就會直接進 IG。</p>
+        <b>IG 限動要用手機發，三步完成</b>
         <div class="sh-igqr" id="shIGqr" aria-label="用手機掃描以分享到 IG 限動"></div>
-        <button class="btn" id="shIGdl" type="button">或下載限動圖</button>
+        <ol class="sh-steps">
+          <li><b>用手機相機掃上面的 QR Code</b>，手機會打開這部片的分享。</li>
+          <li><b>按閃動的「IG 限動」</b>，選 Instagram →「限時動態」。左邊這張圖會自動放進 IG。</li>
+          <li><b>加「連結」貼紙，長按貼上</b>（連結已自動複製），發佈。</li>
+        </ol>
       </div></div>
+      <div class="sh-alt"><p>手邊沒有手機？下載限動圖傳到手機，在 IG 限時動態選這張圖，再加連結貼紙。</p><div class="sh-dls"><button class="btn" id="shIGdl" type="button">下載限動圖</button><button class="btn" id="shIGcp" type="button">複製連結</button></div></div>
     </div>
     <div class="sh-foot"><div class="sh-qr" id="shQr" aria-label="QR Code"></div><div class="sh-qtx"><b>手機掃描，直接進場</b><p>現場分享最快：讓對方用手機相機掃一下。</p><div class="sh-dls"><button class="btn" id="shQrDl" type="button">下載 QR Code</button><button class="btn" id="shDl" type="button" hidden></button></div></div></div>
   </div>
@@ -180,6 +184,6 @@
 <script src="stories.js?v=193038"></script>
 <script src="scene.js?v=211917"></script>
 <script src="score.js?v=202740"></script>
-<script src="app.js?v=131156"></script>
+<script src="app.js?v=131410"></script>
 </body>
 </html>

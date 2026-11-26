@@ -65,6 +65,7 @@ function share(title,text,url,o={}){
     $('#shIGimg').src=storySrc; const q2=$('#shIGqr'); q2.innerHTML='';
     loadQR().then(()=>{ const q=window.qrcode(0,'M'); q.addData(`${BASE}?ig=${o.n||0}`); q.make(); q2.innerHTML=q.createSvgTag({cellSize:4,margin:2,scalable:true}); });
     $('#shIGdl').onclick=()=>{ const l=document.createElement('a'); l.href=storySrc; l.download=fname; l.click(); };
+    $('#shIGcp').onclick=async()=>{ try{ await navigator.clipboard.writeText(url); toast('連結已複製'); }catch(e){ toast('請複製：'+url); } };
     $('#shIGback').onclick=()=>{ pn.hidden=true; card.classList.remove('igmode'); $('#shIG').focus(); }; $('#shIGback').focus(); };
   { const pn=$('#shIGp'); if(pn){ pn.hidden=true; $('#shareSheet .sh-card').classList.remove('igmode'); } $('#shIG').classList.toggle('pulse',!!o.igPulse); }
   const mo=$('#shMore'); if(mo) mo.onclick=async()=>{ try{ await navigator.share({title,text:full}); }catch(e){} };

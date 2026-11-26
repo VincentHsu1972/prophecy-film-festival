@@ -1190,3 +1190,11 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
 .sh-n.pulse i{animation:igp 1.2s ease-in-out infinite}
 @keyframes igp{50%{box-shadow:0 0 0 8px rgba(214,36,159,.25)}}
 @media (prefers-reduced-motion:reduce){.sh-n.pulse i{animation:none;box-shadow:0 0 0 4px rgba(214,36,159,.4)}}
+.sh-igrow{grid-template-columns:170px 1fr}.sh-igrow img{width:170px}
+.sh-igrow>div>b{font-size:17px;margin-bottom:12px}
+.sh-steps{margin:0;padding:0 0 0 1.3em;font-size:13px;line-height:1.65;color:#b9b3a5}
+.sh-steps li{margin-bottom:8px}.sh-steps li b{display:inline;font-size:13px;color:#ece8df;margin:0}
+.sh-steps li::marker{color:#d6249f;font-weight:700}
+.sh-alt{margin-top:16px;padding-top:14px;border-top:1px solid rgba(236,232,223,.1)}
+.sh-alt p{margin:0 0 10px;font-size:12.5px;color:#a9a497;line-height:1.6}
+@media (max-width:480px){.sh-igrow{grid-template-columns:110px 1fr}.sh-igrow img{width:110px}}
