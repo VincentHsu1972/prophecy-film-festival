@@ -1171,3 +1171,5 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
 @media (max-width:480px){.sh{align-items:flex-end;padding:0}.sh-card{border-radius:14px 14px 0 0;width:100%;max-height:92svh}.sh-pv{grid-template-columns:110px 1fr}.sh-pv img{width:110px}.sh-foot{grid-template-columns:96px 1fr}.sh-qr{width:96px;height:96px}}
 @media (prefers-reduced-motion:reduce){.sh,.sh-card{transition:none}}
 .sh[hidden]{display:none!important}
+@media (max-width:820px){.opening.go .lbt,.opening.go .lbb{height:0}}
+.opening .inner{z-index:4}
