@@ -1,0 +1,43 @@
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="http://127.0.0.1:8766/node_modules/@fontsource/noto-serif-tc/700.css"><link rel="stylesheet" href="http://127.0.0.1:8766/node_modules/@fontsource/noto-serif-tc/400.css">
+<!-- IG 限時動態圖（1080×1920）。?n=1..22 為各片；不帶 n 為整站。用 _src/tools/render_og.py 輸出到 img/story/ -->
+<style>
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#07080a;color:#ece8df;font-family:"Noto Serif TC",serif}
+.t{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;letter-spacing:.04em;line-height:1}
+.a{color:transparent;-webkit-text-stroke:2px #ece8df}
+.c3{display:inline-flex;flex-direction:column;font-size:.3em;line-height:1.05;padding:.42em .32em;border:3px solid #ece8df;margin-left:.22em}.c3 i{font-style:normal}
+.bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(50px) brightness(.32) saturate(1.2);transform:scale(1.25)}
+.pp{position:absolute;left:50%;top:250px;width:720px;aspect-ratio:2/3;transform:translateX(-50%);box-shadow:0 40px 90px rgba(0,0,0,.75)}
+.pp img{width:100%;height:100%;object-fit:cover;display:block}
+.top{position:absolute;top:110px;left:0;right:0;font-size:58px}
+.tx{position:absolute;left:90px;right:90px;top:1360px;text-align:center}
+.yr{font-size:34px;letter-spacing:.06em;color:var(--c)}
+.seq{font-size:78px;font-weight:700;line-height:1.25;margin:16px 0 22px}
+.hk{font-size:34px;line-height:1.65;color:#d9d3c4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ft{position:absolute;bottom:70px;left:0;right:0;text-align:center;font-family:sans-serif;font-size:26px;letter-spacing:.2em;color:#8f8a7e}
+.wall{position:absolute;inset:-120px -160px;display:flex;gap:16px;transform:rotate(-8deg);opacity:.6}
+.wall div{display:flex;flex-direction:column;gap:16px;width:200px}.wall img{width:200px;aspect-ratio:2/3;object-fit:cover;filter:brightness(.55)}
+.veil{position:absolute;inset:0;background:radial-gradient(ellipse 75% 45% at 50% 50%,rgba(7,8,10,.94),rgba(7,8,10,.7) 65%,rgba(7,8,10,.45))}
+.mid{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center}
+.mid .t{font-size:150px}.mid .s{font-size:50px;margin-top:40px;color:#e3ddcf}.mid .m{font-family:sans-serif;font-size:30px;letter-spacing:.2em;color:#9a9588;margin-top:28px}
+</style>
+<body><div id="r"></div>
+<script src="../../data.js"></script><script src="../../stories.js"></script>
+<script>
+const pad=n=>String(n).padStart(2,'0'), n=+new URLSearchParams(location.search).get('n'), r=document.getElementById('r');
+const title=`<span class="a">預言</span><span>成真</span><span class="c3"><i>影</i><i>展</i></span>`;
+if(!n){
+  const cols=[...Array(7)].map((_,c)=>`<div style="margin-top:${(c%2)*-150}px">${[0,1,2,3,4,5,6,7,8].map(k=>`<img src="../../img/poster/sm/${pad((k*5+c*3)%22+1)}.webp">`).join('')}</div>`).join('');
+  r.innerHTML=`<div class="wall">${cols}</div><div class="veil"></div><div class="mid"><div class="m">決策智慧 10 週年</div><div class="t" style="margin-top:40px">${title}</div><div class="s">當年的科幻，今年的日常。</div><div class="m">二十二部電影　二十二部 2026 續集</div></div><div class="ft">連結在貼紙裡</div>`;
+} else {
+  fetch('../../app.js').then(x=>x.text()).then(async src=>{
+    const HOOK=eval('('+src.match(/const HOOK=(\{.*?\});/s)[1]+')');
+    const sq=await (await fetch('../trailer/sequel.html')).text(); const ACC=eval('('+sq.match(/const ACC=(\{[^;]*\});/)[1]+')');
+    const a=window.DATA.find(x=>x.n===n), t=STORIES[n].title, seq=t.slice(t.indexOf('：')+1);
+    r.innerHTML=`<div style="--c:${ACC[n]}"><div class="bg" style="background-image:url(../../img/poster/${pad(n)}.webp)"></div>
+      <div class="t top">${title}</div><div class="pp"><img src="../../img/poster/${pad(n)}.webp"></div>
+      <div class="tx"><div class="yr">《${a.film.zh}》${a.film.year} → 2026 續集</div><div class="seq">${seq}</div><div class="hk">${HOOK[n]}</div></div>
+      <div class="ft">第 ${n} 場　連結在貼紙裡</div></div>`;
+  });
+}
+</script>

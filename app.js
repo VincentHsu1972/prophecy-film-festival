@@ -46,10 +46,19 @@ function share(title,text,url,o={}){
   const sh=$('#shareSheet'); if(!sh) return; const E=encodeURIComponent, full=text+'\n'+url;
   $('#shT').textContent=o.head||title; $('#shD').textContent=text; $('#shUrl').value=url;
   const im=$('#shImg'); im.src=o.img||'img/og/site.jpg';
-  const nets=[['LINE',`https://line.me/R/share?text=${E(full)}`],['Facebook',`https://www.facebook.com/sharer/sharer.php?u=${E(url)}`],['Threads',`https://www.threads.net/intent/post?text=${E(full)}`],['X',`https://twitter.com/intent/tweet?text=${E(text)}&url=${E(url)}`],['LinkedIn',`https://www.linkedin.com/sharing/share-offsite/?url=${E(url)}`],['Email',`mailto:?subject=${E(title)}&body=${E(full)}`]];
-  $('#shGrid').innerHTML=nets.map(([k,h])=>`<a class="sh-n net-${k.toLowerCase()}" href="${h}" ${k==='Email'?'':'target="_blank" rel="noopener"'}><i>${k==='Facebook'?'f':k==='LinkedIn'?'in':k==='Email'?'✉':k==='Threads'?'@':k==='LINE'?'L':'X'}</i><span>${k}</span></a>`).join('')+(navigator.share?'<button class="sh-n sh-more" type="button" id="shMore"><i>…</i><span>更多</span></button>':'');
-  const mo=$('#shMore'); if(mo) mo.onclick=async()=>{ try{ await navigator.share({title,text,url}); }catch(e){} };
-  $('#shCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText(url); }catch(e){ const i=$('#shUrl'); i.select(); document.execCommand&&document.execCommand('copy'); } $('#shCopy').textContent='已複製'; toast('連結已複製，貼給對方就能打開'); setTimeout(()=>{ $('#shCopy').textContent='複製連結'; },1800); };
+  const nets=[['LINE',`https://line.me/R/share?text=${E(full)}`],['Facebook',`https://www.facebook.com/sharer/sharer.php?u=${E(url)}`],['Teams',`https://teams.microsoft.com/share?href=${E(url)}&msgText=${E(text)}&preview=true`],['Threads',`https://www.threads.net/intent/post?text=${E(full)}`],['X',`https://twitter.com/intent/tweet?text=${E(text)}&url=${E(url)}`],['LinkedIn',`https://www.linkedin.com/sharing/share-offsite/?url=${E(url)}`],['Email',`mailto:?subject=${E(title)}&body=${E(full)}`]];
+  const ICO={LINE:'L',Facebook:'f',Teams:'T',Threads:'@',X:'X',LinkedIn:'in',Email:'✉'};
+  $('#shGrid').innerHTML='<button class="sh-n net-ig" type="button" id="shIG"><i>IG</i><span>IG 限動</span></button>'+nets.map(([k,h])=>`<a class="sh-n net-${k.toLowerCase()}" href="${h}" ${k==='Email'?'':'target="_blank" rel="noopener"'}><i>${ICO[k]}</i><span>${k}</span></a>`).join('')+(navigator.share?'<button class="sh-n sh-more" type="button" id="shMore"><i>…</i><span>更多</span></button>':'');
+  const copyFull=async()=>{ try{ await navigator.clipboard.writeText(full); return true; }catch(e){ return false; } };
+  /* IG 限動：先備好 1080×1920 限動圖；手機直接叫出分享選單（選 Instagram → 限時動態），電腦則下載圖片。文案與連結同時複製，貼到「連結」貼紙即可 */
+  const storySrc=o.story||'img/story/site.jpg'; let storyFile=null;
+  fetch(storySrc).then(r=>r.blob()).then(b=>{ storyFile=new File([b],`預言成真影展${o.n?'_第'+o.n+'場':''}_限動.jpg`,{type:'image/jpeg'}); }).catch(()=>{});
+  $('#shIG').onclick=async()=>{ const ok=await copyFull();
+    if(storyFile&&navigator.canShare&&navigator.canShare({files:[storyFile]})){ try{ await navigator.share({files:[storyFile]}); }catch(e){ if(e&&e.name==='AbortError') return; } toast(ok?'連結已複製：在 IG 選「限時動態」，加「連結」貼紙貼上':'在 IG 選「限時動態」，再加「連結」貼紙'); }
+    else { const l=document.createElement('a'); l.href=storySrc; l.download=storyFile?storyFile.name:'預言成真影展_限動.jpg'; l.click(); toast('限動圖已下載。用手機開 IG 限時動態選這張圖，再加「連結」貼紙'+(ok?'（連結已複製）':'')); } };
+  const mo=$('#shMore'); if(mo) mo.onclick=async()=>{ try{ await navigator.share({title,text:full}); }catch(e){} };
+  $('#shCopy').onclick=async()=>{ if(!(await copyFull())){ const i=$('#shUrl'); i.value=full; i.select(); document.execCommand&&document.execCommand('copy'); i.value=url; } $('#shCopy').textContent='已複製'; toast('文案與連結已複製，貼到 Teams、LINE 都可以'); setTimeout(()=>{ $('#shCopy').textContent='複製文案＋連結'; },1800); };
+  $('#shCopyUrl').onclick=async()=>{ try{ await navigator.clipboard.writeText(url); }catch(e){ const i=$('#shUrl'); i.select(); document.execCommand&&document.execCommand('copy'); } toast('網址已複製'); };
   const dl=$('#shDl'); if(o.dl){ dl.hidden=false; dl.textContent=o.dl[0]; dl.onclick=o.dl[1]; } else dl.hidden=true;
   const qb=$('#shQr'); qb.innerHTML='';
   loadQR().then(()=>{ const q=window.qrcode(0,'M'); q.addData(url); q.make(); qb.innerHTML=q.createSvgTag({cellSize:4,margin:2,scalable:true});
@@ -59,7 +68,7 @@ function share(title,text,url,o={}){
   sh.hidden=false; requestAnimationFrame(()=>sh.classList.add('on')); setTimeout(()=>$('#shCopy').focus(),50);
 }
 function closeShare(){ const sh=$('#shareSheet'); if(!sh||sh.hidden) return; sh.classList.remove('on'); setTimeout(()=>{ sh.hidden=true; },220); }
-function shareFilm(a){ share('預言成真影展',`《${a.film.zh}》的 2026 續集《${SEQ(a)}》：${HOOK[a.n]||a.hook}`,`${BASE}s/${pad(a.n)}.html`,{head:`《${a.film.zh}》續集：${SEQ(a)}`,img:`img/og/${pad(a.n)}.jpg`,n:a.n,dl:['下載續集海報',()=>{ const l=document.createElement('a'); l.href=`img/poster/${pad(a.n)}.webp`; l.download=`預言成真影展_${a.film.zh}續集海報.webp`; l.click(); }]}); }
+function shareFilm(a){ share('預言成真影展',`《${a.film.zh}》的 2026 續集《${SEQ(a)}》：${HOOK[a.n]||a.hook}`,`${BASE}s/${pad(a.n)}.html`,{head:`《${a.film.zh}》續集：${SEQ(a)}`,img:`img/og/${pad(a.n)}.jpg`,story:`img/story/${pad(a.n)}.jpg`,n:a.n,dl:['下載續集海報',()=>{ const l=document.createElement('a'); l.href=`img/poster/${pad(a.n)}.webp`; l.download=`預言成真影展_${a.film.zh}續集海報.webp`; l.click(); }]}); }
 (()=>{ const sb=$('#shareBtn'); if(sb) sb.onclick=()=>{ if(cur&&$('#reader').classList.contains('open')) shareFilm(cur); else share('預言成真影展','22 部科幻電影，22 部 2026 續集。當年的科幻，今年的日常。',BASE); };
   const sh=$('#shareSheet'); if(sh){ $('#shX').onclick=closeShare; sh.onclick=e=>{ if(e.target===sh) closeShare(); }; addEventListener('keydown',e=>{ if(e.key==='Escape') closeShare(); }); } })();
 
@@ -353,7 +362,7 @@ function showTicket(a){
     <div class="tk-actions">${had?'':'<button class="btn solid" id="tkTear">沿虛線撕下票根</button>'}<button class="btn" id="tkShare">推薦給朋友</button><button class="btn" id="tkDl">下載票券圖</button><button class="btn" id="tkClose">繼續觀賞</button></div></div>`;
   tick(); flick();
   const close=()=>{ st.className='ticket-stage'; st.innerHTML=''; };
-  $('#tkClose').onclick=close; $('#tkShare').onclick=()=>share('預言成真影展',`我剛在「預言成真影展」看了《${a.film.zh}》的續集《${SEQ(a)}》：${HOOK[a.n]||a.hook}`,`${BASE}s/${pad(a.n)}.html`,{head:`《${a.film.zh}》續集：${SEQ(a)}`,img:`img/og/${pad(a.n)}.jpg`,n:a.n,dl:['下載票券圖',()=>downloadTicket(a)]}); st.onclick=e=>{ if(e.target===st) close(); };
+  $('#tkClose').onclick=close; $('#tkShare').onclick=()=>share('預言成真影展',`我剛在「預言成真影展」看了《${a.film.zh}》的續集《${SEQ(a)}》：${HOOK[a.n]||a.hook}`,`${BASE}s/${pad(a.n)}.html`,{head:`《${a.film.zh}》續集：${SEQ(a)}`,img:`img/og/${pad(a.n)}.jpg`,story:`img/story/${pad(a.n)}.jpg`,n:a.n,dl:['下載票券圖',()=>downloadTicket(a)]}); st.onclick=e=>{ if(e.target===st) close(); };
   $('#tkDl').onclick=()=>downloadTicket(a);
   const t=$('#tkTear'); if(t) t.onclick=()=>{ $('#tk').classList.add('torn'); tick(); setTimeout(tick,120); stamp(a.n); t.remove(); $('.tk-msg').textContent=seen.size===DATA.length?'22 張全部集滿，閉幕片已為你解鎖。':`收進票根夾了　${seen.size}/22　${hallDoneMsg(a)}`; const tb=$('#tearBtn'); if(tb) tb.textContent='再看一次我的票根'; };
 }
