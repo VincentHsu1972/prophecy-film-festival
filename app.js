@@ -53,7 +53,7 @@ function share(title,text,url,o={}){
   $('#shGrid').innerHTML='<button class="sh-n net-ig" type="button" id="shIG"><i>IG</i><span>IG 限動</span></button>'+nets.map(([k,h])=>`<a class="sh-n net-${k.toLowerCase()}" href="${h}" ${k==='Email'?'':'target="_blank" rel="noopener"'}><i>${ICO[k]}</i><span>${k}</span></a>`).join('')+(navigator.share?'<button class="sh-n sh-more" type="button" id="shMore"><i>…</i><span>更多</span></button>':'');
   const copyFull=async()=>{ try{ await navigator.clipboard.writeText(full); return true; }catch(e){ return false; } };
   /* IG 限動：先備好 1080×1920 限動圖；手機直接叫出分享選單（選 Instagram → 限時動態），電腦則下載圖片。文案與連結同時複製，貼到「連結」貼紙即可 */
-  const storySrc=o.story||'img/story/site.jpg', fname=`預言成真影展${o.n?'_第'+o.n+'場':''}_限動.jpg`;
+  const storySrc=(o.story||'img/story/site.jpg')+'?v=2', fname=`預言成真影展${o.n?'_第'+o.n+'場':''}_限動.jpg`;
   const storyP=fetch(storySrc).then(r=>r.blob()).then(b=>new File([b],fname,{type:'image/jpeg'})).catch(()=>null);
   $('#shIG').onclick=async()=>{ const f=await storyP; const can=IS_PHONE&&!!(f&&navigator.canShare&&navigator.canShare({files:[f]}));
     if(!can){ showIG(); return; }   // 電腦或不支援傳檔的瀏覽器：IG 限動只能在手機發，改給手機接力
