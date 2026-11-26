@@ -7,8 +7,10 @@
 <meta name="referrer" content="no-referrer">
 <title>預言成真影展</title>
 <meta name="description" content="當年的科幻，今年的日常。22 部科幻電影的續集，在 2026 年上演。">
+<meta property="og:type" content="website"><meta property="og:site_name" content="預言成真影展"><meta property="og:title" content="預言成真影展｜當年的科幻，今年的日常。"><meta property="og:description" content="22 部科幻電影，22 部 2026 續集。每一部都有專屬海報、配樂與 20 秒預告。"><meta property="og:url" content="https://vincenthsu1972.github.io/prophecy-film-festival/"><meta property="og:image" content="https://vincenthsu1972.github.io/prophecy-film-festival/img/og/site.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://vincenthsu1972.github.io/prophecy-film-festival/img/og/site.jpg">
 <link rel="icon" href="img/logo/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="style.css?v=222506">
+<link rel="stylesheet" href="style.css?v=085243">
 </head>
 <body class="gated">
 <canvas id="dust" aria-hidden="true"></canvas>
@@ -44,6 +46,7 @@
   <a class="brand" href="#top"><img class="brand-eye" src="img/logo/eye-dark.svg" alt="">預言成真影展</a>
   <nav class="nav">
     <button class="idx-btn" id="idxBtn"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg><span>22 場索引</span></button>
+    <button id="shareBtn" class="icon" aria-label="分享"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v7h14v-7"/></svg></button>
     <button id="soundBtn" class="icon" aria-pressed="false" aria-label="放映機音效"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg></button>
     <button class="wallet-btn" id="walletBtn" aria-label="打開票根夾"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10" stroke-dasharray="2 2"/></svg><b id="wCount">0/22</b></button>
   </nav>
@@ -151,12 +154,22 @@
   <button class="btn" id="trailerClose" type="button">關閉</button>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sh" id="shareSheet" hidden>
+  <div class="sh-card" role="dialog" aria-modal="true" aria-labelledby="shT">
+    <button class="sh-x" id="shX" type="button" aria-label="關閉">×</button>
+    <p class="sh-k">分享</p>
+    <div class="sh-pv"><img id="shImg" alt=""><div><b id="shT"></b><p id="shD"></p></div></div>
+    <div class="sh-url"><input id="shUrl" readonly aria-label="分享連結"><button class="btn solid" id="shCopy" type="button">複製連結</button></div>
+    <div class="sh-grid" id="shGrid"></div>
+    <div class="sh-foot"><div class="sh-qr" id="shQr" aria-label="QR Code"></div><div class="sh-qtx"><b>手機掃描，直接進場</b><p>現場分享最快：讓對方用手機相機掃一下。</p><div class="sh-dls"><button class="btn" id="shQrDl" type="button">下載 QR Code</button><button class="btn" id="shDl" type="button" hidden></button></div></div></div>
+  </div>
+</div>
 
 <script src="data.js?v=112020"></script>
 <script src="sketch.js?v=120954"></script>
 <script src="stories.js?v=193038"></script>
 <script src="scene.js?v=211917"></script>
 <script src="score.js?v=202740"></script>
-<script src="app.js?v=112020"></script>
+<script src="app.js?v=085314"></script>
 </body>
 </html>

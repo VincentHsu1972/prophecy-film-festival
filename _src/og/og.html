@@ -1,0 +1,48 @@
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="http://127.0.0.1:8766/node_modules/@fontsource/noto-serif-tc/700.css"><link rel="stylesheet" href="http://127.0.0.1:8766/node_modules/@fontsource/noto-serif-tc/400.css">
+<!-- 社群分享預覽圖（1200×630）。?n=1..22 為各片；不帶 n 為整站。用 _src/tools/render_og.py 輸出到 img/og/ -->
+<style>
+html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#07080a;color:#ece8df;font-family:"Noto Serif TC",serif}
+.s,.hk{font-family:"Noto Serif TC",serif!important}
+.wall{position:absolute;inset:-60px -40px;display:flex;gap:12px;transform:rotate(-7deg);opacity:.55}
+.wall div{display:flex;flex-direction:column;gap:12px;width:130px}
+.wall img{width:130px;aspect-ratio:2/3;object-fit:cover;filter:brightness(.55)}
+.veil{position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 50% 50%,rgba(7,8,10,.94),rgba(7,8,10,.72) 60%,rgba(7,8,10,.5))}
+.c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.t{display:flex;align-items:center;gap:10px;font-weight:700;font-size:118px;letter-spacing:.04em;line-height:1}
+.a{color:transparent;-webkit-text-stroke:2px #ece8df}
+.c3 i{font-style:normal}.c3{display:inline-flex;flex-direction:column;font-size:34px;line-height:1.05;padding:12px 9px;border:2.5px solid #ece8df;margin-left:16px}
+.s{font-family:sans-serif;font-size:30px;letter-spacing:.08em;color:#d9d3c4}
+.m{font-family:sans-serif;font-size:20px;letter-spacing:.2em;color:#8f8a7e}
+/* 單片 */
+.film{position:absolute;inset:0}
+.film .pp{position:absolute;right:56px;top:35px;height:560px;aspect-ratio:2/3;box-shadow:0 30px 60px rgba(0,0,0,.7)}
+.film .pp img{width:100%;height:100%;object-fit:cover}
+.film .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(40px) brightness(.28) saturate(1.2);transform:scale(1.2)}
+.film .tx{position:absolute;left:64px;top:56px;bottom:52px;width:660px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:30px;letter-spacing:.04em}
+.brand .a{-webkit-text-stroke:1px #ece8df}.brand .c3{font-size:10px;padding:4px 3px;border-width:1px;margin-left:6px}
+.yr{margin-top:auto;font-family:sans-serif;font-size:24px;letter-spacing:.06em;color:var(--c)}
+.seq{font-size:64px;font-weight:700;line-height:1.2;margin:14px 0 18px}
+.hk{font-family:sans-serif;font-size:25px;line-height:1.6;color:#d9d3c4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ft{margin-top:22px;font-family:sans-serif;font-size:19px;letter-spacing:.12em;color:#8f8a7e}
+</style>
+<body><div id="r"></div>
+<script src="../../data.js"></script><script src="../../stories.js"></script>
+<script>
+const pad=n=>String(n).padStart(2,'0'), q=new URLSearchParams(location.search), n=+q.get('n'), r=document.getElementById('r');
+const title=`<span class="a">預言</span><span>成真</span><span class="c3"><i>影</i><i>展</i></span>`;
+if(!n){
+  const cols=[...Array(10)].map((_,c)=>`<div style="margin-top:${(c%2)*-90}px">${[0,1,2,3,4].map(k=>`<img src="../../img/poster/sm/${pad((k*5+c*3)%22+1)}.webp">`).join('')}</div>`).join('');
+  r.innerHTML=`<div class="wall">${cols}</div><div class="veil"></div><div class="c"><div class="m">決策智慧 10 週年</div><div class="t">${title}</div><div class="s">當年的科幻，今年的日常。</div><div class="m">二十二部電影　二十二部 2026 續集</div></div>`;
+} else {
+  fetch('../../app.js').then(x=>x.text()).then(src=>{
+    const HOOK=eval('('+src.match(/const HOOK=(\{.*?\});/s)[1]+')');
+    const a=window.DATA.find(x=>x.n===n), t=STORIES[n].title, seq=t.slice(t.indexOf('：')+1);
+    const ACC={1:'#6FB6FF',2:'#E07A5F',3:'#FF4F9A',4:'#E8B04A',5:'#C9A46A',6:'#59D4A0',7:'#9DB8FF',8:'#FF5FD2',9:'#5B9BE0',10:'#FF8A2A',11:'#E07A2B',12:'#3DFF7A',13:'#C46B1C',14:'#FF5A4E',15:'#B48AD6',16:'#5FA8E0',17:'#C9B34A',18:'#FFD84D',19:'#B39C72',20:'#D8D5CE',21:'#C9874A',22:'#E04A3A'};
+    r.innerHTML=`<div class="film" style="--c:${ACC[n]}"><div class="bg" style="background-image:url(../../img/poster/${pad(n)}.webp)"></div>
+      <div class="pp"><img src="../../img/poster/${pad(n)}.webp"></div>
+      <div class="tx"><div class="brand">${title}</div><div class="yr">《${a.film.zh}》${a.film.year} → 2026 續集</div><div class="seq">${seq}</div><div class="hk">${HOOK[n]}</div><div class="ft">第 ${n} 場　點開看劇情版</div></div></div>`;
+  });
+}
+</script>

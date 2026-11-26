@@ -39,9 +39,29 @@ let carried=0;
   m[1].split('.').map(Number).filter(n=>n>=1&&n<=22).forEach(n=>{ if(!seen.has(n)){ seen.add(n); carried++; } });
   save(); try{ history.replaceState(null,'',location.pathname+'#lobby'); }catch(e){} })();
 const SITE=location.origin+location.pathname;
-async function share(title,text,url){
-  try{ if(navigator.share){ await navigator.share({title,text,url}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
-  try{ await navigator.clipboard.writeText(url); toast('連結已複製，貼給對方就能打開'); }catch(e){ toast('請複製網址：'+url); } }
+const BASE=SITE.replace(/index\.html$/,'');
+/* 分享面板：複製連結、社群、Email、QR Code、下載圖檔；手機另有系統分享 */
+let qrLoad=null; const loadQR=()=>qrLoad||(qrLoad=new Promise((ok,no)=>{ if(window.qrcode) return ok(); const sc=document.createElement('script'); sc.src='js/qrcode.js'; sc.onload=ok; sc.onerror=no; document.head.appendChild(sc); }));
+function share(title,text,url,o={}){
+  const sh=$('#shareSheet'); if(!sh) return; const E=encodeURIComponent, full=text+'\n'+url;
+  $('#shT').textContent=o.head||title; $('#shD').textContent=text; $('#shUrl').value=url;
+  const im=$('#shImg'); im.src=o.img||'img/og/site.jpg';
+  const nets=[['LINE',`https://line.me/R/share?text=${E(full)}`],['Facebook',`https://www.facebook.com/sharer/sharer.php?u=${E(url)}`],['Threads',`https://www.threads.net/intent/post?text=${E(full)}`],['X',`https://twitter.com/intent/tweet?text=${E(text)}&url=${E(url)}`],['LinkedIn',`https://www.linkedin.com/sharing/share-offsite/?url=${E(url)}`],['Email',`mailto:?subject=${E(title)}&body=${E(full)}`]];
+  $('#shGrid').innerHTML=nets.map(([k,h])=>`<a class="sh-n net-${k.toLowerCase()}" href="${h}" ${k==='Email'?'':'target="_blank" rel="noopener"'}><i>${k==='Facebook'?'f':k==='LinkedIn'?'in':k==='Email'?'✉':k==='Threads'?'@':k==='LINE'?'L':'X'}</i><span>${k}</span></a>`).join('')+(navigator.share?'<button class="sh-n sh-more" type="button" id="shMore"><i>…</i><span>更多</span></button>':'');
+  const mo=$('#shMore'); if(mo) mo.onclick=async()=>{ try{ await navigator.share({title,text,url}); }catch(e){} };
+  $('#shCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText(url); }catch(e){ const i=$('#shUrl'); i.select(); document.execCommand&&document.execCommand('copy'); } $('#shCopy').textContent='已複製'; toast('連結已複製，貼給對方就能打開'); setTimeout(()=>{ $('#shCopy').textContent='複製連結'; },1800); };
+  const dl=$('#shDl'); if(o.dl){ dl.hidden=false; dl.textContent=o.dl[0]; dl.onclick=o.dl[1]; } else dl.hidden=true;
+  const qb=$('#shQr'); qb.innerHTML='';
+  loadQR().then(()=>{ const q=window.qrcode(0,'M'); q.addData(url); q.make(); qb.innerHTML=q.createSvgTag({cellSize:4,margin:2,scalable:true});
+    $('#shQrDl').onclick=()=>{ const N=q.getModuleCount(), c=document.createElement('canvas'), s=12, m=4; c.width=c.height=(N+m*2)*s; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.fillStyle='#000';
+      for(let r=0;r<N;r++) for(let k=0;k<N;k++) if(q.isDark(r,k)) g.fillRect((k+m)*s,(r+m)*s,s,s);
+      const l=document.createElement('a'); l.download=`預言成真影展_QR${o.n?'_第'+o.n+'場':''}.png`; l.href=c.toDataURL('image/png'); l.click(); }; }).catch(()=>{ qb.textContent=''; });
+  sh.hidden=false; requestAnimationFrame(()=>sh.classList.add('on')); setTimeout(()=>$('#shCopy').focus(),50);
+}
+function closeShare(){ const sh=$('#shareSheet'); if(!sh||sh.hidden) return; sh.classList.remove('on'); setTimeout(()=>{ sh.hidden=true; },220); }
+function shareFilm(a){ share('預言成真影展',`《${a.film.zh}》的 2026 續集《${SEQ(a)}》：${HOOK[a.n]||a.hook}`,`${BASE}s/${pad(a.n)}.html`,{head:`《${a.film.zh}》續集：${SEQ(a)}`,img:`img/og/${pad(a.n)}.jpg`,n:a.n,dl:['下載續集海報',()=>{ const l=document.createElement('a'); l.href=`img/poster/${pad(a.n)}.webp`; l.download=`預言成真影展_${a.film.zh}續集海報.webp`; l.click(); }]}); }
+(()=>{ const sb=$('#shareBtn'); if(sb) sb.onclick=()=>{ if(cur&&$('#reader').classList.contains('open')) shareFilm(cur); else share('預言成真影展','22 部科幻電影，22 部 2026 續集。當年的科幻，今年的日常。',BASE); };
+  const sh=$('#shareSheet'); if(sh){ $('#shX').onclick=closeShare; sh.onclick=e=>{ if(e.target===sh) closeShare(); }; addEventListener('keydown',e=>{ if(e.key==='Escape') closeShare(); }); } })();
 
 /* ---------- sound (WebAudio, generated, no files) ---------- */
 let ac=null, hum=null, soundOn=false;
@@ -231,7 +251,7 @@ function openReader(n){
   r.innerHTML=`
   <div class="rbar"><button class="back" id="backR">← 回片單</button><span class="t">${h.name}　第 ${a.n} 場　《${esc(a.film.zh)}》續集</span>
     <span class="reel"><svg viewBox="0 0 40 40" id="reelSvg"><circle cx="20" cy="20" r="18" fill="none" stroke="currentColor"/><g id="reelG">${[0,72,144,216,288].map(d=>`<circle cx="${20+10*Math.cos(d*Math.PI/180)}" cy="${20+10*Math.sin(d*Math.PI/180)}" r="3.4" fill="currentColor"/>`).join('')}</g><circle cx="20" cy="20" r="2.4" fill="currentColor"/></svg><span id="reelPct">0%</span></span>
-    <span class="jump"><button data-j="sTrailer">預告片</button><button data-j="sReview">影評</button><button data-j="sFeature">正片</button></span><button class="x" id="closeR">✕ 離場</button><div class="prog" id="prog"></div></div>
+    <span class="jump"><button data-j="sTrailer">預告片</button><button data-j="sReview">影評</button><button data-j="sFeature">正片</button></span><button class="rsh" id="shareR" aria-label="分享這部片"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v7h14v-7"/></svg><span>分享</span></button><button class="x" id="closeR">✕ 離場</button><div class="prog" id="prog"></div></div>
   <section class="opening ${KV.has(a.n)?'has-kv':''}" id="opening">
     ${KV.has(a.n)?`<div class="kv kv-${pad(a.n)}"><img class="kv-bg" src="img/poster/${pad(a.n)}-blur.webp" alt=""><div class="kv-art"><img src="img/poster/${pad(a.n)}.webp" alt="《${esc(a.film.zh)}》續集海報"><i class="kv-fx"></i><i class="kv-fx2"></i></div></div>`:`<div class="bgposter">${poster(a,true)}</div>`}<div class="opsk fx-${TFX[a.n]}" id="opsk">${window.SKETCH?window.SKETCH(a.n):''}</div><div class="lbt"></div><div class="lbb"></div>
     <div class="inner">
@@ -239,7 +259,7 @@ function openReader(n){
       <div class="odo" id="odo">${a.film.year}</div>
       <h1 class="tfx tfx-${TFX[a.n]}" aria-label="${esc(SEQ(a))}" style="--n:${[...SEQ(a)].length}">${splitTitle(SEQ(a),TFX[a.n])}</h1>
       <div class="meta">改編自〈${esc(a.title)}〉　${esc(a.author)} ・ 片長約 ${a.mins} 分鐘</div>
-      <button class="seq-btn" type="button" data-seq="${a.n}">▶ 看續集預告　20 秒</button>
+      <span class="op-acts"><button class="seq-btn" type="button" data-seq="${a.n}">▶ 看續集預告　20 秒</button><button class="seq-btn sh-btn" type="button">分享這部片</button></span>
     </div><span class="cue">往下，開演</span>
   </section>
   <div class="vs">
@@ -270,7 +290,7 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); { const sb=op.querySelector('.seq-btn'); if(sb) sb.onclick=()=>{ stopScore&&stopScore(); window.playTrailer(`media/sequel/${sb.dataset.seq}.mp4`,`《${a.film.zh}》續集預告`); }; } flick(); tick(); drawSketch($('#opsk')); playScore(a.n); 
+  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); if(sb) sb.onclick=()=>{ stopScore&&stopScore(); window.playTrailer(`media/sequel/${sb.dataset.seq}.mp4`,`《${a.film.zh}》續集預告`); }; } flick(); tick(); drawSketch($('#opsk')); playScore(a.n); 
   setTimeout(()=>op.classList.add('go'),reduce?0:250);
   const y0=a.film.year, y1=2026, dur=reduce?0:1500, t0=performance.now()+500; let last=y0;
   (function f(now){ const p=Math.min(1,Math.max(0,(now-t0)/dur)); const e=1-Math.pow(1-p,3); const y=Math.round(y0+(y1-y0)*e);
@@ -333,7 +353,7 @@ function showTicket(a){
     <div class="tk-actions">${had?'':'<button class="btn solid" id="tkTear">沿虛線撕下票根</button>'}<button class="btn" id="tkShare">推薦給朋友</button><button class="btn" id="tkDl">下載票券圖</button><button class="btn" id="tkClose">繼續觀賞</button></div></div>`;
   tick(); flick();
   const close=()=>{ st.className='ticket-stage'; st.innerHTML=''; };
-  $('#tkClose').onclick=close; $('#tkShare').onclick=()=>share('預言成真影展',`我剛在「預言成真影展」看了《${a.film.zh}》的續集《${SEQ(a)}》：${a.hook}`,SITE+'#screen-'+a.n); st.onclick=e=>{ if(e.target===st) close(); };
+  $('#tkClose').onclick=close; $('#tkShare').onclick=()=>share('預言成真影展',`我剛在「預言成真影展」看了《${a.film.zh}》的續集《${SEQ(a)}》：${HOOK[a.n]||a.hook}`,`${BASE}s/${pad(a.n)}.html`,{head:`《${a.film.zh}》續集：${SEQ(a)}`,img:`img/og/${pad(a.n)}.jpg`,n:a.n,dl:['下載票券圖',()=>downloadTicket(a)]}); st.onclick=e=>{ if(e.target===st) close(); };
   $('#tkDl').onclick=()=>downloadTicket(a);
   const t=$('#tkTear'); if(t) t.onclick=()=>{ $('#tk').classList.add('torn'); tick(); setTimeout(tick,120); stamp(a.n); t.remove(); $('.tk-msg').textContent=seen.size===DATA.length?'22 張全部集滿，閉幕片已為你解鎖。':`收進票根夾了　${seen.size}/22　${hallDoneMsg(a)}`; const tb=$('#tearBtn'); if(tb) tb.textContent='再看一次我的票根'; };
 }
@@ -368,8 +388,8 @@ function renderWallet(){
   <div class="w-share"><button class="btn" id="wInvite">邀朋友一起看</button><button class="btn" id="wCarry" ${seen.size?'':'disabled'}>帶到另一台裝置</button></div><p class="dim w-note">「帶到另一台裝置」會產生一個連結，在手機或電腦打開它，看過的場次就會自動合併過去。</p>
   <p style="margin-top:20px"><button class="btn" id="wIdx">全部場次索引</button></p><button class="reset" id="resetW">清除我的觀影紀錄</button>`;
   $('#closeW').onclick=closeWallet; $('#wIdx').onclick=openIndex;
-  $('#wInvite').onclick=()=>share('預言成真影展','22 部科幻電影，2026 年的續集。一起來挑一部？',SITE);
-  $('#wCarry').onclick=()=>{ if(seen.size) share('我的票根夾',`預言成真影展：我已看 ${seen.size} 場，打開連結接著看`,SITE+'#stubs='+[...seen].sort((x,y)=>x-y).join('.')); };
+  $('#wInvite').onclick=()=>share('預言成真影展','22 部科幻電影，2026 年的續集。一起來挑一部？',BASE);
+  $('#wCarry').onclick=()=>{ if(seen.size) share('我的票根夾',`預言成真影展：我已看 ${seen.size} 場，打開連結接著看`,BASE+'#stubs='+[...seen].sort((x,y)=>x-y).join('.')); };
   d.querySelectorAll('.stubs button').forEach(b=>b.onclick=()=>{ closeWallet(); go(+b.dataset.n); });
   $('#resetW').onclick=()=>{ if(!seen.size) return; seen=new Set(); save(); markSeen(); renderWallet(); toast('觀影紀錄已清除'); };
   if(all) $('#finBtn').onclick=()=>{ closeWallet(); location.hash='finale'; };
