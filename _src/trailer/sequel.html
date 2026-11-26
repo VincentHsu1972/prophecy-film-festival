@@ -33,14 +33,42 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:"Noto
 #sub.on{opacity:1}
 #white{position:fixed;inset:0;background:#fff;opacity:0;transition:opacity .9s;z-index:20;pointer-events:none}
 #white.on{opacity:.8;transition:none}
+#fx{position:fixed;inset:0;width:100vw;height:100vh;z-index:5;mix-blend-mode:screen;opacity:0;transition:opacity .8s;pointer-events:none}
+#sk .pn{stroke:var(--c)!important;filter:drop-shadow(0 0 6px var(--c))}
+#scL{background:radial-gradient(ellipse at 50% 55%,color-mix(in srgb,var(--c) 14%,#000),#000 70%)}
+#sc{width:62vw;transform:scale(.92);transition:transform 3.6s cubic-bezier(.2,.6,.2,1)}#scL.on #sc{transform:scale(1.06)}
+#sc svg{width:100%;height:auto;overflow:visible}#sc .pn{fill:none;stroke:var(--c);stroke-width:1.6;filter:drop-shadow(0 0 5px var(--c))}#sc text{fill:var(--c);stroke:none}
+#chL{flex-direction:column;gap:2.2vh;text-align:center;background:#000}
+#chL .no{font:400 2.4vh ui-monospace,Menlo,monospace;letter-spacing:.5em;color:var(--c)}
+#chL .nm{font-size:8.4vh;font-weight:700;letter-spacing:.08em;transform:scale(1.08);transition:transform .6s ease-out}#chL.on .nm{transform:scale(1)}
+#chL .bar{width:0;height:2px;background:var(--c);transition:width .5s ease-out}#chL.on .bar{width:22vw}
+#pf .sweep{position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.16) 50%,transparent 65%);transform:translateX(-100%);transition:transform 2.6s ease-in-out .8s}
+#pf.dev .sweep{transform:translateX(100%)}
+#pf.dev img{transform:scale(1.04);transition:filter 2s cubic-bezier(.3,.6,.2,1),transform 6s ease-out}#pf.dev.z img{transform:scale(1.16)}
+#qL{background:#000}#qL .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(24px) brightness(.28);transform:scale(1.2)}
+#qL q{position:relative;quotes:none;font-size:5.6vh;font-weight:700;line-height:1.55;max-width:74vw;text-align:center;letter-spacing:.04em}
+#qL q::before{content:"";display:block;width:6vw;height:2px;background:var(--c);margin:0 auto 4vh}
+#qL q i{font-style:normal;opacity:0;transition:opacity .15s}#qL q i.v{opacity:1}
+.crop.gl img{animation:gl .45s steps(3) both}
+@keyframes gl{0%{filter:hue-rotate(80deg) saturate(2);transform:scale(2) translateX(-2%)}33%{filter:none;transform:scale(2.05) translateX(1.5%)}66%{filter:contrast(1.6) brightness(1.3);transform:scale(2.1) translateX(-.6%)}100%{filter:none;transform:scale(2.12)}}
+.crop::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 2px,transparent 2px 4px)}
+#tt{background:radial-gradient(ellipse at 50% 50%,color-mix(in srgb,var(--c) 10%,#000) 0%,#000 65%)}
+#tt h1{text-shadow:0 0 40px color-mix(in srgb,var(--c) 50%,transparent)}
+#end{background:#000}
 </style>
 <script src="../../data.js"></script>
 <script src="../../sketch.js"></script>
 <script src="../../score.js"></script>
 <script src="../../stories.js"></script>
+<script src="../../scene.js"></script>
+<script src="fx.js"></script>
 </head>
 <body>
+<canvas id="fx"></canvas>
 <div class="L" id="skL"><div id="sk"></div></div>
+<div class="L" id="scL"><div id="sc" class="midsk live"></div></div>
+<div class="L" id="chL"><div class="no"></div><div class="nm"></div><div class="bar"></div></div>
+<div class="L" id="qL"><div class="bg"></div><q></q></div>
 <div class="L" id="pfL"><div id="pf"></div></div>
 <div class="L" id="c1"><div class="crop"></div></div>
 <div class="L" id="c2"><div class="crop"></div></div>
@@ -65,35 +93,55 @@ function draw(box,total){ const els=[...box.querySelectorAll('.pn')];
     el.style.transition=`stroke-dashoffset ${total*.6}ms cubic-bezier(.5,.1,.3,1) ${Math.round(i/Math.max(1,els.length)*total*.5)}ms`; });
   requestAnimationFrame(()=>requestAnimationFrame(()=>els.forEach(el=>el.style.strokeDashoffset=0))); }
 
+const fxo=v=>{ $('fx').style.opacity=v; };
 async function run(n,hook){
-  const a=DATA.find(x=>x.n===n), st=STORIES[n], img=`../../img/poster/${pad(n)}.webp`;
-  document.documentElement.style.setProperty('--c',ACC[n]||'#e8d4a2');
+  const a=DATA.find(x=>x.n===n), st=STORIES[n], img=`../../img/poster/${pad(n)}.webp`, C=ACC[n]||'#e8d4a2';
+  document.documentElement.style.setProperty('--c',C);
+  // 劇情版裡的電影感素材：中場插圖的動畫 CSS、章名、一句金句
+  try{ const css=await (await fetch('../../style.css')).text(); const keep=css.split('\n').filter(l=>/^\.midsk(\.live|\s+g\[class\])|^@keyframes a-/.test(l)).join('\n'); const el=document.createElement('style'); el.textContent=keep; document.head.appendChild(el); }catch(e){}
+  const lines=st.text.split('\n');
+  const chs=lines.filter(l=>l.startsWith('## ')).map(l=>l.slice(3)).filter(t=>!/前情提要|尾聲|終章|終卷/.test(t));
+  const pick=[chs[Math.floor(chs.length*.2)],chs[Math.floor(chs.length*.5)],chs[Math.floor(chs.length*.8)]].filter((v,i,ar)=>v&&ar.indexOf(v)===i).slice(0,3);
+  const quotes=lines.filter(l=>l.startsWith('> ')).map(l=>l.slice(2).trim()).filter(q=>q.length>=8&&q.length<=30);
+  const quote=(quotes.find(q=>!/\d/.test(q))||quotes[0]||'');
   const [h1,h2]=(()=>{ const i=hook.indexOf('。'); return i>0?[hook.slice(0,i+1),hook.slice(i+1)]:[hook,'']; })();
-  const numLine=(st.text.split('\n').find(l=>l.startsWith('NUM: '))||'').slice(5).split('｜');
+  const numLine=(lines.find(l=>l.startsWith('NUM: '))||'').slice(5).split('｜');
   const seqTitle=(st.title.split('：')[1]||a.title);
-  $('pf').innerHTML=`<img src="${img}" alt="">`;
+  $('pf').innerHTML=`<img src="${img}" alt=""><div class="sweep"></div>`;
   $('c1').firstElementChild.innerHTML=`<img src="${img}" style="object-position:30% 28%" alt="">`;
   $('c2').firstElementChild.innerHTML=`<img src="${img}" style="object-position:72% 40%" alt="">`;
+  $('qL').querySelector('.bg').style.backgroundImage=`url(${img})`;
+  $('qL').querySelector('q').innerHTML=[...quote].map(c=>`<i>${c}</i>`).join('');
   $('tt').querySelector('.k').textContent=`《${a.film.zh}》　${a.film.year} — 2026`;
   $('tt').querySelector('h1').textContent=seqTitle;
   $('end').querySelector('.f').textContent=`《${a.film.zh}》`;
   if(numLine[0]){ $('num').querySelector('b').textContent=numLine[0]; $('num').querySelector('span').textContent=numLine[1]||''; }
+  $('sc').innerHTML=window.SCENE?window.SCENE(n):'';
   await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));
+  FX.start($('fx'),n,C);
   ac=new AudioContext(); SCORE.play(n,ac,.6);
-  // 0–3：鉛筆分鏡
+  // 0–3：片種特效＋鉛筆分鏡
   $('sk').innerHTML=window.SKETCH(n); const sv=$('sk').querySelector('svg'); sv.removeAttribute('class'); sv.removeAttribute('width'); sv.removeAttribute('height');
-  on('skL'); cap(`${a.film.year}　《${a.film.zh}》`); draw($('sk'),2200); await W(2700);
-  // 3–11：分鏡成真，原片結局 → 懸疑
-  on('pfL'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev'))); await W(700);
-  sub(h1); await W(3300); sub(''); await W(250); sub(h2); await W(3500); sub(''); cap('');
-  // 11–14：快切細節＋關鍵數字
-  hit(0,.4); on('c1'); $('c1').firstElementChild.classList.add('go'); await W(700);
-  hit(0,.4); on('c2'); $('c2').firstElementChild.classList.add('go'); await W(700);
-  if(numLine[0]){ hit(0,.5); on('num'); await W(1700); } else { on('pfL'); await W(1200); }
-  // 14–17：續集片名
-  boom(0,42,1); white(); on('tt'); await W(3000);
-  // 17–20：片尾
-  on('end'); await W(2400); SCORE.stop(false); await W(700);
+  fxo(.9); on('skL'); cap(`${a.film.year}　《${a.film.zh}》`); draw($('sk'),2200); await W(2900);
+  // 3–6：中場插圖動起來＋原片結局
+  hit(0,.25); on('scL'); draw($('sc'),1800); fxo(.55); sub(h1); await W(3100); sub('');
+  // 6–8：章名快剪
+  fxo(.85); cap('');
+  for(const c of pick){ const m=c.split('｜'); $('chL').querySelector('.no').textContent=m.length>1?m[0]:''; $('chL').querySelector('.nm').textContent=m[m.length-1];
+    $('chL').classList.remove('on'); void $('chL').offsetWidth; hit(0,.45); on('chL'); await W(560);
+    on('c'+(pick.indexOf(c)%2+1)); $('c'+(pick.indexOf(c)%2+1)).firstElementChild.classList.add('gl'); await W(130); }
+  // 8–11.6：海報顯影＋懸疑
+  fxo(.35); on('pfL'); requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('pf').classList.add('dev'); setTimeout(()=>$('pf').classList.add('z'),200); })); await W(500);
+  sub(h2); await W(3300); sub('');
+  // 11.6–13.4：金句逐字
+  if(quote){ fxo(.6); on('qL'); const cs=[...$('qL').querySelectorAll('i')]; for(let i=0;i<cs.length;i++){ cs[i].classList.add('v'); await W(Math.min(55,1000/cs.length)); } await W(900); }
+  // 13.4–14.6：關鍵數字或快切
+  if(numLine[0]){ hit(0,.5); fxo(.4); on('num'); await W(1300); }
+  else { hit(0,.4); on('c1'); $('c1').firstElementChild.classList.remove('gl'); void $('c1').offsetWidth; $('c1').firstElementChild.classList.add('gl'); await W(450); hit(0,.4); on('c2'); await W(450); }
+  // 14.6–17.4：續集片名
+  boom(0,42,1); white(); fxo(.9); on('tt'); await W(2800);
+  // 17.4–20：片尾
+  on('end'); fxo(.5); await W(2300); SCORE.stop(false); fxo(0); await W(700);
   window.__done=true;
 }
 window.__start=async()=>{ const n=+new URLSearchParams(location.search).get('n')||12;

@@ -74,7 +74,8 @@ async def main():
     open(f'{TMP}/audio.webm', 'wb').write(base64.b64decode(a64[0]))
     offset = max(0, (a64[1] - t_page) / 1000)
     vid = glob.glob(f'{TMP}/*.webm'); vid = [v for v in vid if not v.endswith('audio.webm')][0]
-    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', vid, '-itsoffset', f'{offset:.3f}', '-i', f'{TMP}/audio.webm',
+    trim = max(0, offset - 0.25) if 'sequel' in STAGE else 0   # 續集預告：剪掉載入素材的前置黑畫面，從配樂前 0.25 秒開始
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-ss', f'{trim:.3f}', '-i', vid, '-itsoffset', f'{offset-trim:.3f}', '-i', f'{TMP}/audio.webm',
                     '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23', '-pix_fmt', 'yuv420p', '-r', '30',
                     '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', DEST], check=True)
     print('audio offset', round(offset, 2), 's')
