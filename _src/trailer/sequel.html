@@ -58,6 +58,27 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:"Noto
 #sA{background:#000;overflow:hidden}#sA img{width:100%;height:100%;object-fit:cover;transform:scale(1.02);transition:transform 4.2s cubic-bezier(.2,.6,.2,1)}#sA.on img{transform:scale(1.12) translateX(-1.5%)}
 #chL .cbg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.38) saturate(.9);transform:scale(1.08);transition:transform .9s ease-out}#chL.on .cbg{transform:scale(1)}
 #chL .no,#chL .nm,#chL .bar{position:relative}#chL .nm{text-shadow:0 2px 30px #000}
+/* ---- 剪輯語法：依片型分 7 種，避免 22 支長得一樣 ---- */
+.m-whisper .L,.m-cosmic .L{transition:opacity 1.4s ease}
+.m-whisper #sub{font-weight:400;letter-spacing:.14em;font-size:3.8vh;transition:opacity 1s}
+.m-cosmic #sub{font-weight:400;letter-spacing:.5em;font-size:2.8vh;bottom:12vh;color:#d9d4c8}
+.m-digital #sub{font:400 3.4vh ui-monospace,Menlo,monospace;color:var(--c);letter-spacing:.04em;text-shadow:0 0 12px #000,0 0 2px var(--c)}
+.m-digital #sub::after{content:"▍";animation:blk .6s steps(1) infinite}@keyframes blk{50%{opacity:0}}
+.m-clock #sub{font-weight:400;letter-spacing:.1em}
+.iris{animation:iris .8s cubic-bezier(.3,.6,.2,1) both}@keyframes iris{from{clip-path:circle(0% at 50% 50%)}to{clip-path:circle(80% at 50% 50%)}}
+.glin{animation:glin .4s steps(4) both}@keyframes glin{0%{transform:translateX(-3%);filter:hue-rotate(90deg) saturate(3)}25%{transform:translateX(2%)}50%{transform:none;filter:contrast(1.8)}100%{transform:none;filter:none}}
+.bw{filter:grayscale(1) contrast(1.25) brightness(.95)}
+.jit{animation:jit .18s steps(2) infinite}@keyframes jit{50%{transform:translate(.15%,-.2%)}}
+#it{background:#050505;flex-direction:column}
+#it .card{border:3px double #d8d5ce;padding:5vh 7vw;max-width:70vw;text-align:center;font-size:4.6vh;line-height:1.6;letter-spacing:.08em;color:#e9e6df;position:relative}
+#it .card::before,#it .card::after{content:"❦";position:absolute;left:50%;transform:translateX(-50%);font-size:3vh;color:#bdb9b0}#it .card::before{top:-2.2vh;background:#050505;padding:0 1vw}#it .card::after{bottom:-2.2vh;background:#050505;padding:0 1vw}
+#tt h1 .ch{display:inline-block;opacity:0;transition:opacity .5s,transform .8s;transform:translateY(.3em)}#tt h1 .ch.v{opacity:1;transform:none}
+.m-cosmic #tt h1{font-weight:400;letter-spacing:.9em;transition:letter-spacing 3s cubic-bezier(.2,.6,.2,1)}.m-cosmic #tt.on h1{letter-spacing:.3em}
+.m-digital #tt h1{font-family:ui-monospace,Menlo,monospace;font-weight:400;color:#f4f4f4}
+.pol{background:#f3efe6;padding:2.4vh 2.4vh 9vh;transform:rotate(-3deg);box-shadow:0 20px 60px rgba(0,0,0,.7);position:relative}
+.pol img{width:46vh;height:46vh;object-fit:cover;display:block;filter:sepia(.25) contrast(1.05)}
+.pol span{position:absolute;left:0;right:0;bottom:2.6vh;text-align:center;color:#2a2620;font-size:3.6vh;font-weight:700;letter-spacing:.06em}
+#mem{background:#000}
 </style>
 <script src="../../data.js"></script>
 <script src="../../sketch.js"></script>
@@ -77,6 +98,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:"Noto
 <div class="L" id="c1"><div class="crop"></div></div>
 <div class="L" id="c2"><div class="crop"></div></div>
 <div class="L" id="num"><b></b><span></span></div>
+<div class="L" id="it"><div class="card"></div></div>
+<div class="L" id="mem"><div class="pol"><img alt=""><span></span></div></div>
 <div class="L" id="tt"><div class="k"></div><h1></h1></div>
 <div class="L" id="end"><div class="f"></div><div class="s">2026 續集　即將上映</div><img src="../../img/logo/mark-dark.svg" alt=""></div>
 <div id="cap"></div><div id="sub"></div><div id="white"></div>
@@ -98,6 +121,30 @@ function draw(box,total){ const els=[...box.querySelectorAll('.pn')];
   requestAnimationFrame(()=>requestAnimationFrame(()=>els.forEach(el=>el.style.strokeDashoffset=0))); }
 
 const fxo=v=>{ $('fx').style.opacity=v; };
+/* ---- 音效庫：每種剪輯語法用不同的聲音 ---- */
+const T=()=>ac.currentTime;
+function env(node,t,v,a,d){ const g=ac.createGain(); g.gain.setValueAtTime(0,T()+t); g.gain.linearRampToValueAtTime(v,T()+t+a); g.gain.exponentialRampToValueAtTime(.0008,T()+t+a+d); node.connect(g); g.connect(ac.destination); return g; }
+function tone(t,f,v,a,d,type='sine'){ const o=ac.createOscillator(); o.type=type; o.frequency.value=f; env(o,t,v,a,d); o.start(T()+t); o.stop(T()+t+a+d+.05); return o; }
+function noise(t,dur,v,ff=null,q=1){ const n=ac.createBufferSource(), b=ac.createBuffer(1,Math.ceil(ac.sampleRate*dur),ac.sampleRate), d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; n.buffer=b;
+  let node=n; if(ff){ const f=ac.createBiquadFilter(); f.type='bandpass'; f.Q.value=q; if(Array.isArray(ff)){ f.frequency.setValueAtTime(ff[0],T()+t); f.frequency.exponentialRampToValueAtTime(ff[1],T()+t+dur); } else f.frequency.value=ff; n.connect(f); node=f; }
+  env(node,t,v,dur*.3,dur*.7); n.start(T()+t); n.stop(T()+t+dur+.05); }
+const SFX={
+  tick:(t=0)=>{ tone(t,2600,.12,.001,.03,'square'); },
+  tock:(t=0)=>{ tone(t,1700,.1,.001,.04,'square'); },
+  chime:(t=0,f=880)=>{ [1,2.76,5.4].forEach((m,i)=>tone(t,f*m,.18/(i+1),.005,2.6-i*.6)); },
+  bell:(t=0)=>{ [0,.9,1.8].forEach(k=>SFX.chime(t+k,523)); },
+  shutter:(t=0)=>{ noise(t,.05,.5,4000,.7); noise(t+.07,.06,.4,2500,.7); },
+  whoosh:(t=0,d=.7)=>{ noise(t,d,.35,[300,4000],1.2); },
+  rise:(t=0,d=1.4)=>{ noise(t,d,.25,[200,6000],2); const o=ac.createOscillator(); o.type='sawtooth'; o.frequency.setValueAtTime(110,T()+t); o.frequency.exponentialRampToValueAtTime(440,T()+t+d); env(o,t,.05,d*.9,.15); o.start(T()+t); o.stop(T()+t+d+.2); },
+  beep:(t=0,f=1320,d=.06)=>{ tone(t,f,.12,.002,d,'square'); },
+  key:(t=0)=>{ noise(t,.025,.22,3500,1.5); },
+  heart:(t=0)=>{ tone(t,58,.7,.01,.18); tone(t+.22,52,.5,.01,.2); },
+  drone:(t=0,d=4,f=55)=>{ tone(t,f,.22,d*.6,d*.6); tone(t,f*1.5,.08,d*.7,d*.5); },
+  rewind:(t=0)=>{ const o=ac.createOscillator(); o.type='sawtooth'; o.frequency.setValueAtTime(1200,T()+t); o.frequency.exponentialRampToValueAtTime(80,T()+t+.45); env(o,t,.08,.02,.45); o.start(T()+t); o.stop(T()+t+.55); noise(t,.45,.15,[3000,300],1); },
+  projector:(t=0,d=20)=>{ for(let k=0;k<d*18;k++) noise(t+k/18,.02,.06+.03*(k%2),1800,2); },
+  static:(t=0,d=.3)=>{ noise(t,d,.25); },
+};
+
 async function run(n,hook){
   const a=DATA.find(x=>x.n===n), st=STORIES[n], img=`../../img/poster/${pad(n)}.webp`, C=ACC[n]||'#e8d4a2';
   document.documentElement.style.setProperty('--c',C);
@@ -129,31 +176,99 @@ async function run(n,hook){
   await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));
   FX.start($('fx'),n,C);
   ac=new AudioContext(); SCORE.play(n,ac,.6);
-  // 0–3：片種特效＋鉛筆分鏡
-  $('sk').innerHTML=window.SKETCH(n); const sv=$('sk').querySelector('svg'); sv.removeAttribute('class'); sv.removeAttribute('width'); sv.removeAttribute('height');
-  fxo(.9); on('skL'); cap(`${a.film.year}　《${a.film.zh}》`); draw($('sk'),2200); await W(2900);
-  // 3–6：中場插圖動起來＋原片結局
-  if(P){ hit(0,.25); on('sA'); fxo(.3); sub(h1); await W(3100); sub(''); }
-  else { hit(0,.25); on('scL'); draw($('sc'),1800); fxo(.55); sub(h1); await W(3100); sub(''); }
-  // 6–8：章名快剪
-  fxo(.85); cap('');
+  // 剪輯語法（依片型）
+  const MODE={3:'slam',4:'slam',12:'slam',17:'slam',18:'slam', 2:'whisper',7:'whisper',11:'whisper',15:'whisper',16:'whisper',
+    1:'digital',6:'digital',8:'digital',9:'digital',14:'digital', 10:'clock',13:'clock',21:'clock', 5:'cosmic',22:'cosmic', 19:'memento', 20:'silent'}[n]||'slam';
+  document.body.classList.add('m-'+MODE);
   const bgs=[SC[1]||P,SC[2]||P,P], crop=['22% 30%','78% 62%','50% 45%'], one=SC.filter(Boolean).length===1;
-  for(const [k,c] of pick.entries()){ const m=c.split('｜'); $('chL').querySelector('.no').textContent=m.length>1?m[0]:''; $('chL').querySelector('.nm').textContent=m[m.length-1];
-    { const cb=$('chL').querySelector('.cbg'); cb.style.backgroundImage=hasSc&&bgs[k]?`url(${bgs[k]})`:'none'; cb.style.backgroundSize=one?'190%':'cover'; cb.style.backgroundPosition=one?crop[k]:'center'; }
-    $('chL').classList.remove('on'); void $('chL').offsetWidth; hit(0,.45); on('chL');
-    if(hasSc){ await W(760); } else { await W(560); on('c'+(k%2+1)); $('c'+(k%2+1)).firstElementChild.classList.add('gl'); await W(130); } }
-  // 8–11.6：海報顯影＋懸疑
-  fxo(.35); on('pfL'); requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('pf').classList.add('dev'); setTimeout(()=>$('pf').classList.add('z'),200); })); await W(500);
-  sub(h2); await W(3300); sub('');
-  // 11.6–13.4：金句逐字
-  if(quote){ fxo(.6); on('qL'); const cs=[...$('qL').querySelectorAll('i')]; for(let i=0;i<cs.length;i++){ cs[i].classList.add('v'); await W(Math.min(55,1000/cs.length)); } await W(900); }
-  // 13.4–14.6：關鍵數字或快切
-  if(numLine[0]){ hit(0,.5); fxo(.4); on('num'); await W(1300); }
-  else { hit(0,.4); on('c1'); $('c1').firstElementChild.classList.remove('gl'); void $('c1').offsetWidth; $('c1').firstElementChild.classList.add('gl'); await W(450); hit(0,.4); on('c2'); await W(450); }
-  // 14.6–17.4：續集片名
-  boom(0,42,1); white(); fxo(.9); on('tt'); await W(2800);
-  // 17.4–20：片尾
-  on('end'); fxo(.5); await W(2300); SCORE.stop(false); fxo(0); await W(700);
+  const sk=()=>{ $('sk').innerHTML=window.SKETCH(n); const sv=$('sk').querySelector('svg'); sv.removeAttribute('class'); sv.removeAttribute('width'); sv.removeAttribute('height'); };
+  const enter=(id,cls)=>{ const el=$(id); el.classList.remove('iris','glin'); void el.offsetWidth; if(cls) el.classList.add(cls); on(id); };
+  const chap=(k,c)=>{ const m=c.split('｜'); $('chL').querySelector('.no').textContent=m.length>1?m[0]:''; $('chL').querySelector('.nm').textContent=m[m.length-1];
+    const cb=$('chL').querySelector('.cbg'); cb.style.backgroundImage=hasSc&&bgs[k%3]?`url(${bgs[k%3]})`:'none'; cb.style.backgroundSize=one?'190%':'cover'; cb.style.backgroundPosition=one?crop[k%3]:'center'; $('chL').classList.remove('on'); void $('chL').offsetWidth; };
+  const scene=(src)=>{ $('sA').querySelector('img').src=src||P; };
+  const poster=async(hold,txt)=>{ on('pfL'); requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('pf').classList.add('dev'); setTimeout(()=>$('pf').classList.add('z'),200); })); await W(500); if(txt) sub(txt); await W(hold); sub(''); };
+  const typeQ=async(per,snd)=>{ if(!quote) return; on('qL'); const cs=[...$('qL').querySelectorAll('i')]; for(let i=0;i<cs.length;i++){ cs[i].classList.add('v'); if(snd&&i%2===0) snd(); await W(per); } };
+  const typeSub=async(txt,per,snd)=>{ const e=$('sub'); e.classList.add('on'); for(let i=1;i<=[...txt].length;i++){ e.textContent=[...txt].slice(0,i).join(''); if(snd&&i%2) snd(); await W(per); } };
+  const letters=(el,txt)=>{ el.innerHTML=[...txt].map(c=>`<span class="ch">${c}</span>`).join(''); return [...el.querySelectorAll('.ch')]; };
+  const card=t=>{ $('it').querySelector('.card').textContent=t; };
+  const yearCap=`${a.film.year}　《${a.film.zh}》`;
+
+  if(MODE==='slam'){
+    sk(); fxo(.9); on('skL'); cap(yearCap); draw($('sk'),2200); SFX.rise(1.4,1.4); await W(2900);
+    if(P){ hit(0,.3); on('sA'); fxo(.3); sub(h1); await W(3100); sub(''); } else { hit(0,.25); on('scL'); draw($('sc'),1800); fxo(.55); sub(h1); await W(3100); sub(''); }
+    fxo(.85); cap('');
+    for(const [k,c] of pick.entries()){ chap(k,c); hit(0,.5); boom(0,60,.35); on('chL'); if(hasSc) await W(700); else { await W(520); on('c'+(k%2+1)); $('c'+(k%2+1)).firstElementChild.classList.add('gl'); await W(130); } }
+    fxo(.35); await poster(3200,h2);
+    if(quote){ fxo(.6); await typeQ(45); await W(800); }
+    if(numLine[0]){ hit(0,.5); on('num'); await W(1200); } else { hit(0,.4); on('c1'); await W(420); hit(0,.4); on('c2'); await W(420); }
+    SFX.rise(0,.9); await W(900); boom(0,42,1); white(); fxo(.9); on('tt'); await W(2700);
+    on('end'); fxo(.5); await W(2200);
+  }
+  else if(MODE==='whisper'){
+    sk(); fxo(.6); on('skL'); cap(yearCap); draw($('sk'),2800); SFX.chime(.6,660); await W(3200);
+    if(P){ on('sA'); fxo(.25); } else { on('scL'); draw($('sc'),2200); fxo(.4); } await W(500); sub(h1); await W(3000); sub('');
+    cap(''); for(const [k,c] of pick.slice(0,2).entries()){ chap(k+1,c); SFX.heart(0); on('chL'); await W(1500); }
+    fxo(.3); await poster(3000,h2);
+    if(quote){ await typeQ(80); await W(900); }
+    on('tt'); const L1=letters($('tt').querySelector('h1'),seqTitle); SFX.chime(0,523); SFX.chime(.5,784);
+    for(const l of L1){ l.classList.add('v'); await W(110); } fxo(.6); await W(1600);
+    on('end'); fxo(.4); await W(2300);
+  }
+  else if(MODE==='digital'){
+    sk(); fxo(.9); on('skL'); cap(yearCap); draw($('sk'),2000); for(let k=0;k<6;k++) SFX.beep(.3+k*.35,1800+k*120,.03); await W(2600);
+    SFX.static(0,.25); enter(P?'sA':'scL','glin'); if(!P) draw($('sc'),1600); fxo(.35); await typeSub(h1,45,SFX.key); await W(1300); sub('');
+    cap(''); fxo(.85);
+    for(const [k,c] of pick.entries()){ chap(k,c); SFX.static(0,.12); SFX.beep(0,880,.05); enter('chL','glin'); await W(330); $('chL').style.opacity=.2; await W(60); $('chL').style.opacity=''; SFX.beep(0,1320,.04); await W(380); }
+    fxo(.4); on('pfL'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev','z'))); await W(500); await typeSub(h2,40,SFX.key); await W(1400); sub('');
+    if(quote){ SFX.static(0,.15); await typeQ(55,SFX.key); await W(700); }
+    if(numLine[0]){ SFX.beep(0,660,.2); enter('num','glin'); await W(1200); }
+    on(null); sub(''); await W(450); SFX.static(0,.3); enter('tt','glin'); const L1=letters($('tt').querySelector('h1'),seqTitle); for(const l of L1){ l.classList.add('v'); SFX.key(); await W(70); } SFX.beep(0,1760,.15); fxo(.9); await W(1800);
+    SFX.static(0,.2); enter('end','glin'); fxo(.5); await W(2200);
+  }
+  else if(MODE==='clock'){
+    const tk=setInterval(()=>{ SFX.tick(); setTimeout(()=>SFX.tock(),250); },500);
+    sk(); fxo(.8); on('skL'); cap(yearCap); draw($('sk'),2300); await W(2900);
+    enter(P?'sA':'scL','iris'); if(!P) draw($('sc'),1800); fxo(.35); sub(h1); await W(3000); sub('');
+    cap(''); fxo(.75);
+    for(const [k,c] of pick.entries()){ chap(k,c); SFX.whoosh(0,.4); enter('chL','iris'); await W(820); }
+    fxo(.35); enter('pfL','iris'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev','z'))); await W(500); sub(h2); await W(3000); sub('');
+    if(quote){ await typeQ(60); await W(700); }
+    clearInterval(tk); await W(300); SFX.bell(0); enter('tt','iris'); fxo(.85); await W(2900);
+    enter('end','iris'); fxo(.4); await W(2200);
+  }
+  else if(MODE==='cosmic'){
+    SFX.drone(0,9,49); sk(); fxo(.9); on('skL'); cap(yearCap); draw($('sk'),3400); await W(3800);
+    on(P?'sA':'scL'); if(!P) draw($('sc'),2600); fxo(.3); await W(600); sub(h1); await W(3400); sub('');
+    cap(''); const mid=pick[Math.floor(pick.length/2)]; if(mid){ chap(1,mid); SFX.chime(0,330); on('chL'); fxo(.7); await W(1800); }
+    fxo(.25); await poster(3000,h2);
+    SFX.drone(0,7,41); on('tt'); fxo(.9); await W(3600);
+    on('end'); fxo(.5); await W(2400);
+  }
+  else if(MODE==='memento'){
+    // 倒敘：從片名的「結局」倒回去，彩色與黑白交錯，每一刀都是拍立得快門
+    const pol=(src,t)=>{ $('mem').querySelector('img').src=src; $('mem').querySelector('span').textContent=t; };
+    pol(SC[2]||P||img,seqTitle); SFX.shutter(0); white(); on('mem'); fxo(.2); cap(yearCap); await W(1900);
+    SFX.rewind(0); await W(450);
+    if(quote){ $('qL').classList.add('bw'); await typeQ(50); await W(700); }
+    SFX.shutter(0); white(); $('pfL').classList.remove('bw'); fxo(.2); await poster(2600,h2);
+    cap(''); for(const [k,c] of pick.slice().reverse().entries()){ chap(k,c); SFX.shutter(0); white(); $('chL').classList.toggle('bw',k%2===0); on('chL'); await W(750); }
+    SFX.rewind(0); await W(400); $('sA').classList.add('bw'); on(P?'sA':'scL'); sub(h1); await W(2600); sub('');
+    sk(); on('skL'); draw($('sk'),1600); await W(1800);
+    SFX.shutter(0); white(); on('tt'); fxo(.6); await W(2600);
+    on('end'); fxo(.4); await W(2100);
+  }
+  else if(MODE==='silent'){
+    SFX.projector(0,21); ['skL','sA','pfL','chL','tt','end','qL'].forEach(id=>$(id).classList.add('bw','jit'));
+    sk(); fxo(1); enter('skL','iris'); cap(yearCap); draw($('sk'),2000); await W(2400);
+    cap(''); card(h1); enter('it','iris'); await W(2300);
+    if(P){ scene(SC[0]||P); enter('sA','iris'); await W(2200); }
+    for(const [k,c] of pick.slice(0,2).entries()){ chap(k+1,c); enter('chL','iris'); await W(1100); }
+    fxo(.8); enter('pfL','iris'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev','z'))); await W(2600);
+    card(h2||quote); enter('it','iris'); await W(2200);
+    card(seqTitle); $('it').querySelector('.card').style.fontSize='6vh'; enter('it','iris'); SFX.chime(0,392); await W(2600);
+    enter('end','iris'); await W(2100);
+  }
+  SCORE.stop(false); fxo(0); await W(700);
   window.__done=true;
 }
 window.__start=async()=>{ const n=+new URLSearchParams(location.search).get('n')||12;
