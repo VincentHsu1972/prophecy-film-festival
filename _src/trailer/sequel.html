@@ -123,9 +123,9 @@ async function run(n,hook){
   $('sc').innerHTML=window.SCENE?window.SCENE(n):'';
   // 場景圖（img/scene/NN-a/b/c.webp）：有就用，沒有就沿用中場插圖線稿
   const SC=await Promise.all(['a','b','c'].map(x=>new Promise(r=>{ const i=new Image(); i.onload=()=>r(i.src); i.onerror=()=>r(null); i.src=`../../img/scene/${pad(n)}-${x}.webp`; })));
-  const hasSc=!!SC[0];   // 只有一張時，章名底圖改用同一張的不同局部
-  if(SC[0]) $('sA').querySelector('img').src=SC[0];
-  if(SC[2]||SC[0]) $('qL').querySelector('.bg').style.backgroundImage=`url(${SC[2]||SC[0]})`;
+  const P=SC[0]||SC[1]||SC[2], hasSc=!!P;   // 只有一張時，章名底圖改用同一張的不同局部
+  if(P) $('sA').querySelector('img').src=P;
+  if(P) $('qL').querySelector('.bg').style.backgroundImage=`url(${SC[2]||P})`;
   await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));
   FX.start($('fx'),n,C);
   ac=new AudioContext(); SCORE.play(n,ac,.6);
@@ -133,11 +133,11 @@ async function run(n,hook){
   $('sk').innerHTML=window.SKETCH(n); const sv=$('sk').querySelector('svg'); sv.removeAttribute('class'); sv.removeAttribute('width'); sv.removeAttribute('height');
   fxo(.9); on('skL'); cap(`${a.film.year}　《${a.film.zh}》`); draw($('sk'),2200); await W(2900);
   // 3–6：中場插圖動起來＋原片結局
-  if(SC[0]){ hit(0,.25); on('sA'); fxo(.3); sub(h1); await W(3100); sub(''); }
+  if(P){ hit(0,.25); on('sA'); fxo(.3); sub(h1); await W(3100); sub(''); }
   else { hit(0,.25); on('scL'); draw($('sc'),1800); fxo(.55); sub(h1); await W(3100); sub(''); }
   // 6–8：章名快剪
   fxo(.85); cap('');
-  const bgs=[SC[1]||SC[0],SC[2]||SC[0],SC[0]], crop=['22% 30%','78% 62%','50% 45%'], one=!SC[1]&&!SC[2];
+  const bgs=[SC[1]||P,SC[2]||P,P], crop=['22% 30%','78% 62%','50% 45%'], one=SC.filter(Boolean).length===1;
   for(const [k,c] of pick.entries()){ const m=c.split('｜'); $('chL').querySelector('.no').textContent=m.length>1?m[0]:''; $('chL').querySelector('.nm').textContent=m[m.length-1];
     { const cb=$('chL').querySelector('.cbg'); cb.style.backgroundImage=hasSc&&bgs[k]?`url(${bgs[k]})`:'none'; cb.style.backgroundSize=one?'190%':'cover'; cb.style.backgroundPosition=one?crop[k]:'center'; }
     $('chL').classList.remove('on'); void $('chL').offsetWidth; hit(0,.45); on('chL');

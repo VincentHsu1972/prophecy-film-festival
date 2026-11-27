@@ -316,7 +316,7 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); if(sb) sb.onclick=()=>{ stopScore&&stopScore(); window.playTrailer(`media/sequel/${sb.dataset.seq}.mp4?v=5`,`《${a.film.zh}》續集預告`); }; } flick(); tick(); drawSketch($('#opsk')); playScore(a.n); 
+  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); if(sb) sb.onclick=()=>{ stopScore&&stopScore(); window.playTrailer(`media/sequel/${sb.dataset.seq}.mp4?v=6`,`《${a.film.zh}》續集預告`); }; } flick(); tick(); drawSketch($('#opsk')); playScore(a.n); 
   setTimeout(()=>op.classList.add('go'),reduce?0:250);
   const y0=a.film.year, y1=2026, dur=reduce?0:1500, t0=performance.now()+500; let last=y0;
   (function f(now){ const p=Math.min(1,Math.max(0,(now-t0)/dur)); const e=1-Math.pow(1-p,3); const y=Math.round(y0+(y1-y0)*e);
