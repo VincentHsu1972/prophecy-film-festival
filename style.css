@@ -1198,3 +1198,11 @@ h1,h2,h3,h4,.lobby-title,.gate-title,.st-title{font-weight:700}
 .sh-alt{margin-top:16px;padding-top:14px;border-top:1px solid rgba(236,232,223,.1)}
 .sh-alt p{margin:0 0 10px;font-size:12.5px;color:#a9a497;line-height:1.6}
 @media (max-width:480px){.sh-igrow{grid-template-columns:110px 1fr}.sh-igrow img{width:110px}}
+/* 劇情版劇照 */
+.st-body .still-sc{margin:2.2em calc(-1 * min(9vw,120px)) 2.6em;position:relative}
+.st-body .still-sc img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:2px;box-shadow:0 18px 50px rgba(0,0,0,.35);background:#111}
+.st-body .still-sc figcaption{display:flex;gap:12px;align-items:baseline;margin-top:10px;font-size:13px;color:var(--smute,var(--mute));letter-spacing:.04em}
+.st-body .still-sc figcaption span{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--c)}
+@media (max-width:820px){.st-body .still-sc{margin:1.8em -20px 2.2em}.st-body .still-sc img{border-radius:0}.st-body .still-sc figcaption{padding:0 20px}}
+/* 默片字卡 */
+.st-body .tcard{margin:1.6em auto;max-width:30em;padding:1.1em 1.6em;text-align:center;border:3px double currentColor;font-family:var(--serif);letter-spacing:.06em;line-height:1.8;opacity:.92}

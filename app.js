@@ -345,16 +345,23 @@ function modeBar(a){ if(!hasStory(a)) return ''; const s=window.STORIES[a.n];
   return `<div class="modebar" id="modebar"><div class="mb-in"><span class="mono">選擇觀看版本</span>
    <button data-m="story" aria-pressed="${readMode==='story'}"><b>劇情版</b><small>${esc((s.style||'電影改編').replace('　','，'))}　約 ${Math.max(3,Math.round(s.text.replace(/\s/g,'').length/450))} 分鐘</small></button>
    <button data-m="orig" aria-pressed="${readMode!=='story'}"><b>原文版</b><small>預告片・影評・正片　${a.mins} 分鐘</small></button></div></div>`; }
+/* 劇情版劇照：每篇最多 3 張場景圖，放在故事開場、中段、後段那一章的第一景之後 */
+const SCN={1:'abc',2:'abc',3:'abc',4:'abc',5:'abc',6:'abc',7:'abc',8:'abc',9:'abc',10:'abc',11:'abc',12:'abc',13:'abc',14:'abc',15:'abc',16:'abc',17:'ab',18:'abc',19:'abc',20:'abc',21:'abc',22:'ac'};
 function fmtStory(txt,n){
   const lines=txt.split(/\n+/).map(l=>l.trim()).filter(Boolean);
-  const acts=lines.filter(l=>l.startsWith('## ')).length, mid=Math.max(2,Math.floor(acts/2)); let ai=0, sc=0;
+  const acts=lines.filter(l=>l.startsWith('## ')).length, mid=Math.max(2,Math.floor(acts/2)); let ai=0, sc=0, still=null, chName='', shot=0;
+  const have=[...(SCN[n]||'')]; const slots=[]; [2,mid+1,acts-1].forEach(k=>{ let v=Math.min(Math.max(2,k),acts); while(slots.includes(v)&&v<acts) v++; if(!slots.includes(v)) slots.push(v); });
+  const fig=()=>{ const x=have[shot++]; still=null; if(!x) return ''; return `<figure class="still-sc rv"><img src="img/scene/${pad(n)}-${x}.webp" alt="" loading="lazy" decoding="async" width="1600" height="900"><figcaption><span>劇照 ${shot}</span>${esc(chName)}</figcaption></figure>`; };
   return lines.map(l=>{
-    if(l.startsWith('## ')){ ai++; const sk=(ai===mid&&acts>=4&&window.SCENE)?`<figure class="midsk rv" aria-hidden="true">${window.SCENE(n)}<figcaption>中場休息</figcaption></figure>`:''; return `${sk}<h3 class="act rv">${esc(l.slice(3))}</h3>`; }
-    if(l.startsWith('NUM: ')){ const [big,cap]=l.slice(5).split('｜'); return `<figure class="num rv"><b>${esc(big)}</b><figcaption>${esc(cap||'')}</figcaption></figure>`; }
-    if(l.startsWith('> ')) return `<p class="card rv">${esc(l.slice(2))}</p>`;
-    if(l.startsWith('[依據] ')) return `<li>${esc(l.slice(5))}</li>`;
-    if(l.startsWith('~ ')){ sc++; return `<p class="dir rv"><span class="sc">第 ${sc} 景</span>${esc(l.slice(2))}</p>`; }
-    return `<p class="rv">${esc(l)}</p>`; }).join('').replace(/(<li>.*<\/li>)/s,'<div class="basis"><span class="mono">情節依據</span><ul>$1</ul></div>');
+    let pre='';
+    if(still!==null&&!l.startsWith('~ ')) pre=fig();
+    if(l.startsWith('## ')){ ai++; const sk=(ai===mid&&acts>=4&&window.SCENE)?`<figure class="midsk rv" aria-hidden="true">${window.SCENE(n)}<figcaption>中場休息</figcaption></figure>`:''; chName=l.slice(3).split('｜').pop().replace(/^第.+?[章幕場卷樂]\s*/,''); if(slots.includes(ai)&&shot<have.length) still=ai; return `${pre}${sk}<h3 class="act rv">${esc(l.slice(3))}</h3>`; }
+    if(l.startsWith('NUM: ')){ const [big,cap]=l.slice(5).split('｜'); return `${pre}<figure class="num rv"><b>${esc(big)}</b><figcaption>${esc(cap||'')}</figcaption></figure>`; }
+    if(l.startsWith('> ')) return `${pre}<p class="card rv">${esc(l.slice(2))}</p>`;
+    if(l.startsWith('【字卡】')) return `${pre}<p class="tcard rv">${esc(l.slice(4))}</p>`;
+    if(l.startsWith('[依據] ')) return `${pre}<li>${esc(l.slice(5))}</li>`;
+    if(l.startsWith('~ ')){ sc++; const d=`<p class="dir rv"><span class="sc">第 ${sc} 景</span>${esc(l.slice(2))}</p>`; return still!==null?d+fig():d; }
+    return `${pre}<p class="rv">${esc(l)}</p>`; }).join('').replace(/(<li>.*<\/li>)/s,'<div class="basis"><span class="mono">情節依據</span><ul>$1</ul></div>');
 }
 function storyPane(a){ if(!hasStory(a)) return ''; const s=window.STORIES[a.n];
   return `<div id="storyPane" class="story sty-${a.n} ${readMode==='story'?'':'hide'}"><div class="sec"><div class="mono">劇情版　改編自原文，情節為虛構</div>
