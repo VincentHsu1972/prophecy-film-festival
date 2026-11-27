@@ -123,9 +123,9 @@ async function run(n,hook){
   $('sc').innerHTML=window.SCENE?window.SCENE(n):'';
   // 場景圖（img/scene/NN-a/b/c.webp）：有就用，沒有就沿用中場插圖線稿
   const SC=await Promise.all(['a','b','c'].map(x=>new Promise(r=>{ const i=new Image(); i.onload=()=>r(i.src); i.onerror=()=>r(null); i.src=`../../img/scene/${pad(n)}-${x}.webp`; })));
-  const hasSc=SC.filter(Boolean).length>=2;
+  const hasSc=!!SC[0];   // 只有一張時，章名底圖改用同一張的不同局部
   if(SC[0]) $('sA').querySelector('img').src=SC[0];
-  if(SC[2]) $('qL').querySelector('.bg').style.backgroundImage=`url(${SC[2]})`;
+  if(SC[2]||SC[0]) $('qL').querySelector('.bg').style.backgroundImage=`url(${SC[2]||SC[0]})`;
   await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));
   FX.start($('fx'),n,C);
   ac=new AudioContext(); SCORE.play(n,ac,.6);
@@ -137,9 +137,9 @@ async function run(n,hook){
   else { hit(0,.25); on('scL'); draw($('sc'),1800); fxo(.55); sub(h1); await W(3100); sub(''); }
   // 6–8：章名快剪
   fxo(.85); cap('');
-  const bgs=[SC[1],SC[2],SC[0]];
+  const bgs=[SC[1]||SC[0],SC[2]||SC[0],SC[0]], crop=['22% 30%','78% 62%','50% 45%'], one=!SC[1]&&!SC[2];
   for(const [k,c] of pick.entries()){ const m=c.split('｜'); $('chL').querySelector('.no').textContent=m.length>1?m[0]:''; $('chL').querySelector('.nm').textContent=m[m.length-1];
-    $('chL').querySelector('.cbg').style.backgroundImage=hasSc&&bgs[k]?`url(${bgs[k]})`:'none';
+    { const cb=$('chL').querySelector('.cbg'); cb.style.backgroundImage=hasSc&&bgs[k]?`url(${bgs[k]})`:'none'; cb.style.backgroundSize=one?'190%':'cover'; cb.style.backgroundPosition=one?crop[k]:'center'; }
     $('chL').classList.remove('on'); void $('chL').offsetWidth; hit(0,.45); on('chL');
     if(hasSc){ await W(760); } else { await W(560); on('c'+(k%2+1)); $('c'+(k%2+1)).firstElementChild.classList.add('gl'); await W(130); } }
   // 8–11.6：海報顯影＋懸疑
