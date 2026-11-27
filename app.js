@@ -356,7 +356,7 @@ function modeBar(a){ if(!hasStory(a)) return ''; const s=window.STORIES[a.n];
    <button data-m="story" aria-pressed="${readMode==='story'}"><b>劇情版</b><small>${esc((s.style||'電影改編').replace('　','，'))}　約 ${Math.max(3,Math.round(s.text.replace(/\s/g,'').length/450))} 分鐘</small></button>
    <button data-m="orig" aria-pressed="${readMode!=='story'}"><b>原文版</b><small>預告片・影評・正片　${a.mins} 分鐘</small></button></div></div>`; }
 /* 劇情版劇照：每篇最多 3 張場景圖，放在故事開場、中段、後段那一章的第一景之後 */
-const SCN={1:'abc',2:'abc',3:'abc',4:'abc',5:'abc',6:'abc',7:'abc',8:'abc',9:'abc',10:'abc',11:'abc',12:'abc',13:'abc',14:'abc',15:'abc',16:'abc',17:'ab',18:'abc',19:'abc',20:'abc',21:'abc',22:'ac'};
+const SCN={1:'abc',2:'abc',3:'abc',4:'abc',5:'abc',6:'abc',7:'abc',8:'abc',9:'abc',10:'a',11:'a',12:'a',13:'abc',14:'abc',15:'abc',16:'abc',17:'ab',18:'abc',19:'abc',20:'ab',21:'ab',22:'ac'};
 function fmtStory(txt,n){
   const lines=txt.split(/\n+/).map(l=>l.trim()).filter(Boolean);
   const acts=lines.filter(l=>l.startsWith('## ')).length, mid=Math.max(2,Math.floor(acts/2)); let ai=0, sc=0, still=null, chName='', shot=0;
