@@ -10,7 +10,7 @@
 <meta property="og:type" content="website"><meta property="og:site_name" content="預言成真影展"><meta property="og:title" content="預言成真影展｜當年的科幻，今年的日常。"><meta property="og:description" content="22 部科幻電影，22 部 2026 續集。每一部都有專屬海報、配樂與 20 秒預告。"><meta property="og:url" content="https://vincenthsu1972.github.io/prophecy-film-festival/"><meta property="og:image" content="https://vincenthsu1972.github.io/prophecy-film-festival/img/og/site.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://vincenthsu1972.github.io/prophecy-film-festival/img/og/site.jpg">
 <link rel="icon" href="img/logo/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="style.css?v=120240">
+<link rel="stylesheet" href="style.css?v=171506">
 </head>
 <body class="gated">
 <canvas id="dust" aria-hidden="true"></canvas>
@@ -151,7 +151,8 @@
 <div class="ticket-stage" id="tStage" aria-live="polite"></div>
 <div class="trailer" id="trailer" role="dialog" aria-modal="true" aria-label="預言成真影展預告片" hidden>
   <video id="trailerVid" src="media/trailer.mp4" poster="media/trailer.jpg" controls playsinline preload="none"></video>
-  <button class="btn" id="trailerClose" type="button">關閉</button>
+  <div class="tr-bar"><p class="tr-hint" id="trailerHint" hidden>第一次進場，先看 20 秒續集預告。播完會自動回到正片。</p>
+  <button class="btn" id="trailerClose" type="button">關閉</button></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="sh" id="shareSheet" hidden>
@@ -184,6 +185,6 @@
 <script src="stories.js?v=193038"></script>
 <script src="scene.js?v=211917"></script>
 <script src="score.js?v=202740"></script>
-<script src="app.js?v=171141"></script>
+<script src="app.js?v=171506"></script>
 </body>
 </html>
