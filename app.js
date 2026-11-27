@@ -321,7 +321,7 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); const src=`media/sequel/${a.n}.mp4?v=17`, lab=`《${a.film.zh}》續集預告`;
+  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); const src=`media/sequel/${a.n}.mp4?v=18`, lab=`《${a.film.zh}》續集預告`;
     const after=()=>{ window.__afterTrailer=()=>{ if(cur===a&&$('#reader').classList.contains('open')) playScore(a.n); }; };
     if(sb) sb.onclick=()=>{ markSeq(a.n); stopScore&&stopScore(); after(); window.playTrailer(src,lab); };
     /* 第一次進這部片：開場片名定格後自動播一次續集預告，播完自動收起、配樂接回來 */
@@ -361,7 +361,7 @@ function fmtStory(txt,n){
   const lines=txt.split(/\n+/).map(l=>l.trim()).filter(Boolean);
   const acts=lines.filter(l=>l.startsWith('## ')).length, mid=Math.max(2,Math.floor(acts/2)); let ai=0, sc=0, still=null, chName='', shot=0;
   const have=[...(SCN[n]||'')]; const slots=[]; [2,mid+1,acts-1].forEach(k=>{ let v=Math.min(Math.max(2,k),acts); while(slots.includes(v)&&v<acts) v++; if(!slots.includes(v)) slots.push(v); });
-  const fig=()=>{ const x=have[shot++]; still=null; if(!x) return ''; return `<figure class="still-sc rv"><img src="img/scene/${pad(n)}-${x}.webp?v=6" alt="" loading="lazy" decoding="async" width="1600" height="900"><figcaption><span>劇照 ${shot}</span>${esc(chName)}</figcaption></figure>`; };
+  const fig=()=>{ const x=have[shot++]; still=null; if(!x) return ''; return `<figure class="still-sc rv"><img src="img/scene/${pad(n)}-${x}.webp?v=7" alt="" loading="lazy" decoding="async" width="1600" height="900"><figcaption><span>劇照 ${shot}</span>${esc(chName)}</figcaption></figure>`; };
   return lines.map(l=>{
     let pre='';
     if(still!==null&&!l.startsWith('~ ')) pre=fig();
