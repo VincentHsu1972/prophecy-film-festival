@@ -321,7 +321,7 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); const src=`media/sequel/${a.n}.mp4?v=13`, lab=`《${a.film.zh}》續集預告`;
+  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); const src=`media/sequel/${a.n}.mp4?v=14`, lab=`《${a.film.zh}》續集預告`;
     const after=()=>{ window.__afterTrailer=()=>{ if(cur===a&&$('#reader').classList.contains('open')) playScore(a.n); }; };
     if(sb) sb.onclick=()=>{ markSeq(a.n); stopScore&&stopScore(); after(); window.playTrailer(src,lab); };
     /* 第一次進這部片：開場片名定格後自動播一次續集預告，播完自動收起、配樂接回來 */

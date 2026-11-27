@@ -79,6 +79,23 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:"Noto
 .pol img{width:46vh;height:46vh;object-fit:cover;display:block;filter:sepia(.25) contrast(1.05)}
 .pol span{position:absolute;left:0;right:0;bottom:2.6vh;text-align:center;color:#2a2620;font-size:3.6vh;font-weight:700;letter-spacing:.06em}
 #mem{background:#000}
+/* 字級放大（手機上看預告也讀得到） */
+#sub{font-size:5.8vh;line-height:1.45;padding:0 7vw;bottom:7vh}
+.m-whisper #sub{font-size:5.4vh;letter-spacing:.08em}
+.m-cosmic #sub{font-size:4.6vh;letter-spacing:.22em}
+.m-digital #sub{font-size:5vh}
+#cap{font-size:3.8vh}
+#qL q{font-size:8vh;line-height:1.45;max-width:82vw}
+#it .card{font-size:6.4vh;max-width:80vw;padding:5vh 5vw}
+#num span{font-size:4.6vh;letter-spacing:.12em}
+#tt .k{font-size:3.2vh}#tt h1{font-size:9vh}
+#chL .no{font-size:3vh}#chL .nm{font-size:10vh}
+#end .f{font-size:6.4vh}#end .s{font-size:3vh}
+#sub{font-size:7.2vh;line-height:1.4;padding:0 6vw;bottom:6vh;text-wrap:balance}
+.m-whisper #sub{font-size:6.6vh}.m-cosmic #sub{font-size:5.8vh;letter-spacing:.16em}.m-digital #sub{font-size:6.2vh}
+#qL q{font-size:10.5vh;line-height:1.4;max-width:86vw;text-wrap:balance}
+#it .card{font-size:8vh;max-width:86vw;text-wrap:balance}
+#num span{font-size:5.4vh}#cap{font-size:4.4vh}
 </style>
 <script src="../../data.js"></script>
 <script src="../../sketch.js"></script>
@@ -203,8 +220,8 @@ async function run(n,hook){
     sk(); fxo(.9); on('skL'); cap(yearCap); draw($('sk'),2200); SFX.rise(1.4,1.4); await W(2900);
     if(P){ hit(0,.3); on('sA'); fxo(.3); sub(h1); await W(3100); sub(''); } else { hit(0,.25); on('scL'); draw($('sc'),1800); fxo(.55); sub(h1); await W(3100); sub(''); }
     fxo(.85); cap('');
-    for(const [k,c] of pick.entries()){ chap(k,c); hit(0,.5); boom(0,60,.35); on('chL'); if(hasSc) await W(700); else { await W(520); on('c'+(k%2+1)); $('c'+(k%2+1)).firstElementChild.classList.add('gl'); await W(130); } }
-    await flip(()=>{ boom(0,50,.6); white(); }); fxo(.35); await poster(3200,ins1);
+    for(const [k,c] of pick.slice(0,2).entries()){ chap(k,c); hit(0,.5); boom(0,60,.35); on('chL'); if(hasSc) await W(700); else { await W(520); on('c'+(k%2+1)); $('c'+(k%2+1)).firstElementChild.classList.add('gl'); await W(130); } }
+    await flip(()=>{ boom(0,50,.6); white(); }); fxo(.35); await poster(4000,ins1);
     if(ins2){ fxo(.6); await typeQ(42); await W(1300); }
     SFX.rise(0,.9); await W(900); boom(0,42,1); white(); fxo(.9); on('tt'); await W(2700);
     on('end'); fxo(.5); await W(2200);
@@ -213,7 +230,7 @@ async function run(n,hook){
     sk(); fxo(.6); on('skL'); cap(yearCap); draw($('sk'),2400); SFX.chime(.6,660); await W(2700);
     if(P){ on('sA'); fxo(.25); } else { on('scL'); draw($('sc'),2200); fxo(.4); } await W(500); sub(h1); await W(3000); sub('');
     cap(''); for(const [k,c] of pick.slice(0,2).entries()){ chap(k+1,c); SFX.heart(0); on('chL'); await W(1500); }
-    await flip(()=>SFX.chime(0,880)); fxo(.3); await poster(3000,ins1);
+    await flip(()=>SFX.chime(0,880)); fxo(.3); await poster(3600,ins1);
     if(ins2){ await typeQ(70); await W(1300); }
     on('tt'); const L1=letters($('tt').querySelector('h1'),seqTitle); SFX.chime(0,523); SFX.chime(.5,784);
     for(const l of L1){ l.classList.add('v'); await W(110); } fxo(.6); await W(1600);
@@ -223,8 +240,8 @@ async function run(n,hook){
     sk(); fxo(.9); on('skL'); cap(yearCap); draw($('sk'),2000); for(let k=0;k<6;k++) SFX.beep(.3+k*.35,1800+k*120,.03); await W(2600);
     SFX.static(0,.25); enter(P?'sA':'scL','glin'); if(!P) draw($('sc'),1600); fxo(.35); await typeSub(h1,45,SFX.key); await W(1300); sub('');
     cap(''); fxo(.85);
-    for(const [k,c] of pick.entries()){ chap(k,c); SFX.static(0,.12); SFX.beep(0,880,.05); enter('chL','glin'); await W(330); $('chL').style.opacity=.2; await W(60); $('chL').style.opacity=''; SFX.beep(0,1320,.04); await W(380); }
-    await flip(()=>{ SFX.static(0,.2); SFX.beep(0,1980,.1); },'glin'); fxo(.4); on('pfL'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev','z'))); await W(500); await typeSub(ins1,40,SFX.key); await W(1400); sub('');
+    for(const [k,c] of pick.slice(0,2).entries()){ chap(k,c); SFX.static(0,.12); SFX.beep(0,880,.05); enter('chL','glin'); await W(330); $('chL').style.opacity=.2; await W(60); $('chL').style.opacity=''; SFX.beep(0,1320,.04); await W(380); }
+    await flip(()=>{ SFX.static(0,.2); SFX.beep(0,1980,.1); },'glin'); fxo(.4); on('pfL'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev','z'))); await W(500); await typeSub(ins1,34,SFX.key); await W(2200); sub('');
     if(ins2){ SFX.static(0,.15); await typeQ(48,SFX.key); await W(1200); }
     on(null); sub(''); await W(450); SFX.static(0,.3); enter('tt','glin'); const L1=letters($('tt').querySelector('h1'),seqTitle); for(const l of L1){ l.classList.add('v'); SFX.key(); await W(70); } SFX.beep(0,1760,.15); fxo(.9); await W(1800);
     SFX.static(0,.2); enter('end','glin'); fxo(.5); await W(2200);
@@ -234,8 +251,8 @@ async function run(n,hook){
     sk(); fxo(.8); on('skL'); cap(yearCap); draw($('sk'),2300); await W(2900);
     enter(P?'sA':'scL','iris'); if(!P) draw($('sc'),1800); fxo(.35); sub(h1); await W(3000); sub('');
     cap(''); fxo(.75);
-    for(const [k,c] of pick.entries()){ chap(k,c); SFX.whoosh(0,.4); enter('chL','iris'); await W(820); }
-    await flip(()=>SFX.chime(0,1046),'iris'); fxo(.35); enter('pfL','iris'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev','z'))); await W(500); sub(ins1); await W(3000); sub('');
+    for(const [k,c] of pick.slice(0,2).entries()){ chap(k,c); SFX.whoosh(0,.4); enter('chL','iris'); await W(820); }
+    await flip(()=>SFX.chime(0,1046),'iris'); fxo(.35); enter('pfL','iris'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev','z'))); await W(500); sub(ins1); await W(3800); sub('');
     if(ins2){ await typeQ(55); await W(1200); }
     clearInterval(tk); await W(300); SFX.bell(0); enter('tt','iris'); fxo(.85); await W(2900);
     enter('end','iris'); fxo(.4); await W(2200);
@@ -244,7 +261,7 @@ async function run(n,hook){
     SFX.drone(0,8,49); sk(); fxo(.9); on('skL'); cap(yearCap); draw($('sk'),2800); await W(3000);
     on(P?'sA':'scL'); if(!P) draw($('sc'),2600); fxo(.3); await W(500); sub(h1); await W(2800); sub('');
     cap(''); const mid=pick[Math.floor(pick.length/2)]; if(mid){ chap(1,mid); SFX.chime(0,330); on('chL'); fxo(.7); await W(1800); }
-    await flip(()=>SFX.chime(0,440)); fxo(.25); await poster(3000,ins1);
+    await flip(()=>SFX.chime(0,440)); fxo(.25); await poster(3600,ins1);
     if(ins2){ await typeQ(65); await W(1400); }
     SFX.drone(0,7,41); on('tt'); fxo(.9); await W(3600);
     on('end'); fxo(.5); await W(2400);
@@ -272,7 +289,7 @@ async function run(n,hook){
     fxo(.8); enter('pfL','iris'); requestAnimationFrame(()=>requestAnimationFrame(()=>$('pf').classList.add('dev','z'))); await W(2600);
     card(ins1); enter('it','iris'); await W(2200);
     if(ins2){ card(ins2); enter('it','iris'); await W(2400); }
-    card(seqTitle); $('it').querySelector('.card').style.fontSize='6vh'; enter('it','iris'); SFX.chime(0,392); await W(2600);
+    card(seqTitle); $('it').querySelector('.card').style.fontSize='10vh'; enter('it','iris'); SFX.chime(0,392); await W(2600);
     enter('end','iris'); await W(2100);
   }
   SCORE.stop(false); fxo(0); await W(700);
