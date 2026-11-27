@@ -321,7 +321,7 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); const src=`media/sequel/${a.n}.mp4?v=18`, lab=`《${a.film.zh}》續集預告`;
+  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); const src=`media/sequel/${a.n}.mp4?v=19`, lab=`《${a.film.zh}》續集預告`;
     const after=()=>{ window.__afterTrailer=()=>{ if(cur===a&&$('#reader').classList.contains('open')) playScore(a.n); }; };
     if(sb) sb.onclick=()=>{ markSeq(a.n); stopScore&&stopScore(); after(); window.playTrailer(src,lab); };
     /* 第一次進這部片：開場片名定格後自動播一次續集預告，播完自動收起、配樂接回來 */
@@ -356,12 +356,12 @@ function modeBar(a){ if(!hasStory(a)) return ''; const s=window.STORIES[a.n];
    <button data-m="story" aria-pressed="${readMode==='story'}"><b>劇情版</b><small>${esc((s.style||'電影改編').replace('　','，'))}　約 ${Math.max(3,Math.round(s.text.replace(/\s/g,'').length/450))} 分鐘</small></button>
    <button data-m="orig" aria-pressed="${readMode!=='story'}"><b>原文版</b><small>預告片・影評・正片　${a.mins} 分鐘</small></button></div></div>`; }
 /* 劇情版劇照：每篇最多 3 張場景圖，放在故事開場、中段、後段那一章的第一景之後 */
-const SCN={1:'abc',2:'abc',3:'abc',4:'abc',5:'abc',6:'abc',7:'abc',8:'abc',9:'abc',10:'abc',11:'abc',12:'abc',13:'abc',14:'abc',15:'abc',16:'abc',17:'abc',18:'abc',19:'abc',20:'ab',21:'ab',22:'abc'};
+const SCN={1:'abc',2:'abc',3:'abc',4:'abc',5:'abc',6:'abc',7:'abc',8:'abc',9:'abc',10:'abc',11:'abc',12:'abc',13:'abc',14:'abc',15:'abc',16:'abc',17:'abc',18:'abc',19:'abc',20:'abc',21:'abc',22:'abc'};
 function fmtStory(txt,n){
   const lines=txt.split(/\n+/).map(l=>l.trim()).filter(Boolean);
   const acts=lines.filter(l=>l.startsWith('## ')).length, mid=Math.max(2,Math.floor(acts/2)); let ai=0, sc=0, still=null, chName='', shot=0;
   const have=[...(SCN[n]||'')]; const slots=[]; [2,mid+1,acts-1].forEach(k=>{ let v=Math.min(Math.max(2,k),acts); while(slots.includes(v)&&v<acts) v++; if(!slots.includes(v)) slots.push(v); });
-  const fig=()=>{ const x=have[shot++]; still=null; if(!x) return ''; return `<figure class="still-sc rv"><img src="img/scene/${pad(n)}-${x}.webp?v=7" alt="" loading="lazy" decoding="async" width="1600" height="900"><figcaption><span>劇照 ${shot}</span>${esc(chName)}</figcaption></figure>`; };
+  const fig=()=>{ const x=have[shot++]; still=null; if(!x) return ''; return `<figure class="still-sc rv"><img src="img/scene/${pad(n)}-${x}.webp?v=8" alt="" loading="lazy" decoding="async" width="1600" height="900"><figcaption><span>劇照 ${shot}</span>${esc(chName)}</figcaption></figure>`; };
   return lines.map(l=>{
     let pre='';
     if(still!==null&&!l.startsWith('~ ')) pre=fig();
