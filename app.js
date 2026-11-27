@@ -316,7 +316,7 @@ function openReader(n){
   r.querySelectorAll('.jump [data-j]').forEach(b=>b.onclick=()=>{ if(readMode==='story'&&hasStory(a)){ const ob=r.querySelector('#modebar [data-m="orig"]'); if(ob) ob.onclick(); } const el=document.getElementById(b.dataset.j); if(el) r.scrollTo({top:el.offsetTop-70,behavior:'smooth'}); });
   const fb=r.querySelector('[data-fin]'); if(fb) fb.onclick=()=>{ location.hash='finale'; };
   // opening sequence
-  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); if(sb) sb.onclick=()=>{ stopScore&&stopScore(); window.playTrailer(`media/sequel/${sb.dataset.seq}.mp4?v=11`,`《${a.film.zh}》續集預告`); }; } flick(); tick(); drawSketch($('#opsk')); playScore(a.n); 
+  const op=$('#opening'), odo=$('#odo'); { const shb=op.querySelector('.sh-btn'); if(shb) shb.onclick=()=>shareFilm(a); } { const sr=$('#shareR'); if(sr) sr.onclick=()=>shareFilm(a); } { const sb=op.querySelector('.seq-btn'); if(sb) sb.onclick=()=>{ stopScore&&stopScore(); window.playTrailer(`media/sequel/${sb.dataset.seq}.mp4?v=12`,`《${a.film.zh}》續集預告`); }; } flick(); tick(); drawSketch($('#opsk')); playScore(a.n); 
   setTimeout(()=>op.classList.add('go'),reduce?0:250);
   const y0=a.film.year, y1=2026, dur=reduce?0:1500, t0=performance.now()+500; let last=y0;
   (function f(now){ const p=Math.min(1,Math.max(0,(now-t0)/dur)); const e=1-Math.pow(1-p,3); const y=Math.round(y0+(y1-y0)*e);
@@ -351,7 +351,7 @@ function fmtStory(txt,n){
   const lines=txt.split(/\n+/).map(l=>l.trim()).filter(Boolean);
   const acts=lines.filter(l=>l.startsWith('## ')).length, mid=Math.max(2,Math.floor(acts/2)); let ai=0, sc=0, still=null, chName='', shot=0;
   const have=[...(SCN[n]||'')]; const slots=[]; [2,mid+1,acts-1].forEach(k=>{ let v=Math.min(Math.max(2,k),acts); while(slots.includes(v)&&v<acts) v++; if(!slots.includes(v)) slots.push(v); });
-  const fig=()=>{ const x=have[shot++]; still=null; if(!x) return ''; return `<figure class="still-sc rv"><img src="img/scene/${pad(n)}-${x}.webp?v=2" alt="" loading="lazy" decoding="async" width="1600" height="900"><figcaption><span>劇照 ${shot}</span>${esc(chName)}</figcaption></figure>`; };
+  const fig=()=>{ const x=have[shot++]; still=null; if(!x) return ''; return `<figure class="still-sc rv"><img src="img/scene/${pad(n)}-${x}.webp?v=3" alt="" loading="lazy" decoding="async" width="1600" height="900"><figcaption><span>劇照 ${shot}</span>${esc(chName)}</figcaption></figure>`; };
   return lines.map(l=>{
     let pre='';
     if(still!==null&&!l.startsWith('~ ')) pre=fig();
