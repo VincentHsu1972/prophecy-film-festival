@@ -161,7 +161,7 @@ const markSeq=n=>{ try{ const l=JSON.parse(localStorage.getItem('pff-seq')||'[]'
   const close=()=>{ v.pause(); t.hidden=true; $('#trailerHint').hidden=true; $('#trailerClose').textContent='關閉'; if(ac&&soundOn) ac.resume().catch(()=>{}); const f=window.__afterTrailer; window.__afterTrailer=null; if(f) f(); };
   v.addEventListener('ended',close);   // 播完自動收起
   window.closeTrailer=()=>{ if(!t.hidden||!v.paused) close(); }; addEventListener('hashchange',()=>window.closeTrailer());
-  window.playTrailer=(src,label,auto=false)=>{ v.src=src; t.setAttribute('aria-label',label); t.hidden=false; $('#trailerHint').hidden=!auto; $('#trailerClose').textContent=auto?'略過預告':'關閉';
+  window.playTrailer=(src,label,auto=false)=>{ v.src=src; t.setAttribute('aria-label',label); t.hidden=false; $('#trailerHint').hidden=true; $('#trailerClose').textContent=auto?'略過預告':'關閉';
     if(ac) ac.suspend().catch(()=>{}); v.muted=auto&&!soundOn; v.currentTime=0;
     const p=v.play(); if(p) p.catch(()=>{ v.muted=true; v.play().catch(()=>close()); }); $('#trailerClose').focus(); };
   $('#trailerBtn').onclick=()=>{ v.src='media/trailer.mp4'; t.hidden=false; if(ac) ac.suspend().catch(()=>{}); v.currentTime=0; const p=v.play(); if(p) p.catch(()=>{}); $('#trailerClose').focus(); };
